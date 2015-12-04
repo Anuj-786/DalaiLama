@@ -1,0 +1,34 @@
+{
+  "name": "ohhdl",
+  "version": "1.0.0",
+  "description": "Archival for OHHDL",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mindgreppers/OHHDL.git"
+  },
+  "keywords": [
+    "ohhdl"
+  ],
+  "bugs": {
+    "url": "https://github.com/Mindgreppers/OHHDL/issues"
+  },
+  "homepage": "https://github.com/Mindgreppers/OHHDL#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "material-ui": "^0.13.4",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-tap-event-plugin": "^0.2.1",
+    "reflux": "^0.3.0",
+    "socket.io": "^1.3.7"
+  },
+  "devDependencies": {
+    "babel-core": "^6.3.2",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-react": "^6.1.18",
+    "jsx-loader": "^0.13.2",
+    "webpack": "^1.12.9"
+  }
+}
