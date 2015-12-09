@@ -1,10 +1,6 @@
 var React = require('react');
 var RaisedButton = require('material-ui/lib/raised-button');
-var AppBar = require('material-ui/lib/app-bar')
-var IconButton = require('material-ui/lib/icon-button')
 var FontIcon = require('material-ui/lib/font-icon')
-var IconMenu = require('material-ui/lib/menus/icon-menu')
-var MenuItem = require('material-ui/lib/menus/menu-item')
 var TextField = require('material-ui/lib/text-field')
 var DropDownMenu = require('material-ui/lib/drop-down-menu')
 var injectTapEventPlugin = require("react-tap-event-plugin");
@@ -42,36 +38,16 @@ var iconMenuItems = [
 var Header = React.createClass({
   render:function() {
     return (
-      <Toolbar>
+      <Toolbar style={styles.header}>
         <ToolbarGroup key={0} float="left">
           <TextField hintText="Search....." style={styles.search} />
         </ToolbarGroup>
         <ToolbarGroup key={1} float="left">
-          <DropDownMenu menuItems={filterOptions} style={styles.filterOptions}/>
+          <DropDownMenu menuItems={filterOptions} style={styles.filterOptions} label="Language"/>
           <DropDownMenu menuItems={entityOptions} />
           <RaisedButton label="Activities" />
         </ToolbarGroup>
       </Toolbar>
-      /*
-      <AppBar
-        title={
-          <Menu>
-            <MenuItem primaryText="Maps" />
-            <MenuItem primaryText="Books" />
-            <MenuItem primaryText="Flights" />
-            <MenuItem primaryText="Apps" />
-          </Menu>
-        }
-        iconElementRight={
-          <IconMenu iconButtonElement={
-            <IconButton><FontIcon className="material-icons">more_vert</FontIcon></IconButton>
-          }>
-            <MenuItem primaryText="Refresh" />
-            <MenuItem primaryText="Help" />
-            <MenuItem primaryText="Sign out" />
-          </IconMenu>
-        } 
-      />*/       
     );
   },
 });
