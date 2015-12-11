@@ -1,4 +1,4 @@
-var epicsearch = require('epicsearch')
+var epicSearch = require('epicsearch');
 
 // Database connection
-module.exports = new epicearch(require('../config').epicsearch);
+module.exports = new epicSearch(require('../config').epicsearch);
