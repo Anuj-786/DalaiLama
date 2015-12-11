@@ -15,6 +15,7 @@
   },
   "homepage": "https://github.com/Mindgreppers/OHHDL#readme",
   "dependencies": {
+    "epicsearch": "^1.4.3",
     "express": "^4.13.3",
     "material-ui": "^0.13.4",
     "react": "^0.14.3",
@@ -22,7 +23,8 @@
     "react-router": "^1.0.1",
     "react-tap-event-plugin": "^0.2.1",
     "reflux": "^0.3.0",
-    "socket.io": "^1.3.7"
+    "socket.io": "^1.3.7",
+    "socket.io-client": "^1.3.7"
   },
   "devDependencies": {
     "babel-core": "^6.3.2",
