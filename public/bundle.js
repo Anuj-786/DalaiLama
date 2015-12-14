@@ -66,8 +66,9 @@
 	var UserMangement = __webpack_require__(324);
 	var RawVideoList = __webpack_require__(335);
 	var SessionList = __webpack_require__(336);
+	var AddUser = __webpack_require__(337);
 
-	ReactDOM.render(React.createElement(Router, null, React.createElement(Route, { path: "/", component: App }, "// ", React.createElement(IndexRoute, { component: About }), "// ", React.createElement(IndexRoute, { component: EventPage }), "// ", React.createElement(IndexRoute, { component: CreateEvent }), React.createElement(IndexRoute, { component: SessionList }))), document.getElementById('test'));
+	ReactDOM.render(React.createElement(Router, null, React.createElement(Route, { path: "/", component: App }, "// ", React.createElement(IndexRoute, { component: About }), "// ", React.createElement(IndexRoute, { component: EventPage }), "// ", React.createElement(IndexRoute, { component: CreateEvent }), React.createElement(IndexRoute, { component: AddUser }))), document.getElementById('test'));
 
 /***/ },
 /* 1 */
@@ -38616,6 +38617,31 @@
 	});
 
 	module.exports = SessionList;
+
+/***/ },
+/* 337 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var TextField = __webpack_require__(267);
+	var FlatButton = __webpack_require__(209);
+	var FontIcon = __webpack_require__(261);
+
+	var styles = __webpack_require__(265);
+
+	var AddUser = React.createClass({ displayName: "AddUser",
+	  render: function () {
+	    return React.createElement("div", { className: "large-5 columns" }, React.createElement("div", { className: "viewEntity mangementView" }, React.createElement("div", { className: "entityHeader mangement" }, React.createElement("p", { className: "createEntityHeader" }, "User Mangement: Add User"), React.createElement(FontIcon, { className: "material-icons icon" }, "close")), React.createElement("div", { className: "addUserFields" }, React.createElement(TextField, {
+	      hintText: "name",
+	      floatingLabelText: "Name", style: styles.loginInputs }), React.createElement(TextField, {
+	      hintText: "username",
+	      floatingLabelText: "Username", style: styles.loginInputs }), React.createElement(TextField, {
+	      hintText: "password",
+	      floatingLabelText: "Password", style: styles.loginInputs })), React.createElement("div", { className: "addUserButton" }, React.createElement(FlatButton, { label: "AddUser", secondary: true }))));
+	  }
+	});
+
+	module.exports = AddUser;
 
 /***/ }
 /******/ ]);

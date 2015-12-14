@@ -24,6 +24,7 @@ var ModerationViewComment = require('./components/ModerationViewComment')
 var UserMangement = require('./components/UserMangement')
 var RawVideoList = require('./components/RawVideoList')
 var SessionList = require('./components/SessionList')
+var AddUser = require('./components/AddUser')
 
 ReactDOM.render((
   <Router>
@@ -31,7 +32,7 @@ ReactDOM.render((
      // <IndexRoute component={About} />
      // <IndexRoute component={EventPage} />
      // <IndexRoute component={CreateEvent}/>
-      <IndexRoute component={SessionList}/>
+      <IndexRoute component={AddUser}/>
     </Route>
   </Router>
 ), document.getElementById('test'))

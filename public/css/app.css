@@ -221,3 +221,10 @@
 .dataLink {
   flex: 1;
 }
+.addUserFields {
+  display: flex;
+  flex-direction: column;
+}
+.addUserButton {
+  margin-top: 1.9em;
+}
