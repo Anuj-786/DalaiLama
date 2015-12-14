@@ -210,3 +210,14 @@
 .RVLlinks {
  margin-bottom: -1.3em; 
 }
+.dataLinks {
+  display: flex;
+  align-items: center;
+}
+.SVLink {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.dataLink {
+  flex: 1;
+}
