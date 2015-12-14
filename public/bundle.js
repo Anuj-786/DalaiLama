@@ -64,8 +64,9 @@
 	var ModerationViewEditVideo = __webpack_require__(322);
 	var ModerationViewComment = __webpack_require__(323);
 	var UserMangement = __webpack_require__(324);
+	var RawVideoList = __webpack_require__(335);
 
-	ReactDOM.render(React.createElement(Router, null, React.createElement(Route, { path: "/", component: App }, "// ", React.createElement(IndexRoute, { component: About }), "// ", React.createElement(IndexRoute, { component: EventPage }), "// ", React.createElement(IndexRoute, { component: CreateEvent }), React.createElement(IndexRoute, { component: UserMangement }))), document.getElementById('test'));
+	ReactDOM.render(React.createElement(Router, null, React.createElement(Route, { path: "/", component: App }, "// ", React.createElement(IndexRoute, { component: About }), "// ", React.createElement(IndexRoute, { component: EventPage }), "// ", React.createElement(IndexRoute, { component: CreateEvent }), React.createElement(IndexRoute, { component: RawVideoList }))), document.getElementById('test'));
 
 /***/ },
 /* 1 */
@@ -29797,6 +29798,9 @@
 	  addUserButton: {
 	    marginTop: '1em',
 	    backgroundColor: '#00C8F8'
+	  },
+	  RVLbutton: {
+	    marginLeft: '0.3em'
 	  }
 	};
 	module.exports = styles;
@@ -38573,6 +38577,25 @@
 	});
 
 	module.exports = TableRow;
+
+/***/ },
+/* 335 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var FlatButton = __webpack_require__(209);
+	var FontIcon = __webpack_require__(261);
+	var TextField = __webpack_require__(267);
+
+	var styles = __webpack_require__(265);
+
+	var RawVideoList = React.createClass({ displayName: "RawVideoList",
+	  render: function () {
+	    return React.createElement("div", { className: "large-7 columns" }, React.createElement("div", { className: "viewEntity rawVideoList" }, React.createElement("div", { className: "entityHeader EVHeader" }, React.createElement("p", { className: "createEntityHeader" }, "Raw Video List"), React.createElement(FontIcon, { className: "material-icons icon" }, "close")), React.createElement("div", { className: "headerTitleDiv" }, React.createElement("p", { className: "headerTitle" }, "4 Raw Video"), React.createElement("div", null, React.createElement(FlatButton, { label: "Link" }))), React.createElement("div", { className: "RVLBody" }, React.createElement("div", { className: "RVLVideo" }, React.createElement("div", { className: "RVLBodyItem" }, React.createElement("p", { className: "RVLItemTitle" }, "Front-Cam-KalaChakra-Ladakh-2014.mp4"), React.createElement(FlatButton, { label: "View", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Edit", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Unlink", style: styles.RVLbutton })), React.createElement("p", { className: "RVLTime" }, "230MB 00:48:37.57")), React.createElement("div", { className: "RVLVideo" }, React.createElement("div", { className: "RVLBodyItem" }, React.createElement("p", { className: "RVLItemTitle" }, "Front-Cam-KalaChakra-Ladakh-2014.mp4"), React.createElement(FlatButton, { label: "View", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Edit", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Unlink", style: styles.RVLbutton })), React.createElement("p", { className: "RVLTime" }, "230MB 00:48:37.57")), React.createElement("div", { className: "RVLVideo" }, React.createElement("div", { className: "RVLBodyItem" }, React.createElement("p", { className: "RVLItemTitle" }, "Front-Cam-KalaChakra-Ladakh-2014.mp4"), React.createElement(FlatButton, { label: "View", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Edit", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Unlink", style: styles.RVLbutton })), React.createElement("p", { className: "RVLTime" }, "230MB 00:48:37.57")), React.createElement("div", { className: "RVLVideo" }, React.createElement("div", { className: "RVLBodyItem" }, React.createElement("p", { className: "RVLItemTitle" }, "Front-Cam-KalaChakra-Ladakh-2014.mp4"), React.createElement(FlatButton, { label: "View", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Edit", style: styles.RVLbutton }), React.createElement(FlatButton, { label: "Unlink", style: styles.RVLbutton })), React.createElement("p", { className: "RVLTime" }, "230MB 00:48:37.57")), React.createElement("div", null, React.createElement("div", { className: "linkEvent RVLlinks" }, React.createElement("p", { className: "esName" }, "1 Event"), React.createElement("p", { className: "linkUnlink" }, "Link")), React.createElement("div", { className: "linkEvent RVLlinks" }, React.createElement("p", { className: "esName" }, "The 33rd Kalachakra-Ladakh"), React.createElement("p", { className: "linkUnlink" }, "Unlink")), React.createElement("div", { className: "linkEvent RVLlinks" }, React.createElement("p", { className: "esName" }, "1 Session"), React.createElement("p", { className: "linkUnlink" }, "Link")), React.createElement("div", { className: "linkEvent RVLlinks" }, React.createElement("p", { className: "esName" }, "Session #1 of 30th Kalachakra-Ladakh"), React.createElement("p", { className: "linkUnlink" }, "Unlink"))))));
+	  }
+	});
+
+	module.exports = RawVideoList;
 
 /***/ }
 /******/ ]);
