@@ -1,36 +1,100 @@
+var _ = require('lodash')
 var es = require('../es')
-
+  /**
+  {
+      type: "entitytype",
+       _id: "id",
+      fields: [
+          'fieldname'
+      ],
+      joins: {
+          "entityType": [
+              "fieldname"
+          ]
+      }
+  }
+  **/
 module.exports = function(params, socket) {
-  console.log('params', params);
-  // to do : need to work on 400 status code errors.
-  es.get({
-    index: 'events',
-    type: 'event',
-    id: params._id
-  }).then(function(response) {
-    // emit the Successful creationg messages.
-    socket.emit('read.done', {
-      data: response._source,
-      status: 20
-    });
-  }).catch(function(err) {
-    // emit error in creating event in database
-    console.log(err);
-    socket.emit('read.done', {
-      message: 'Error in reading event in database',
+  var missingArgumentMessage
+  if (!params._id) {
+    missingArgumentMessage = "_id missing"
+  } else if (!params.type) {
+    missingArgumentMessage = "type missing"
+  }
+  if (missingArgumentMessage) {
+    socket.emit('r-entity.error', {
+      message: "Illegal Argument Exception: " + missingArgumentMessage,
+      code: 400
+    })
+  }
+
+  var toFetchFields = params.fields
+  if (toFetchFields && !toFetchFields.length) {
+    toFetchFields = toFetchFields.concat(_.keys(params.joins))
+  }
+
+  return es.get({
+    index: params.type + "s",
+    type: params.type,
+    id: params._id,
+    fields: toFetchFields
+  })
+  .then(function(response) {
+    if (params.joins) {
+      return resolveJoins(response._source || response.fields, params.joins)
+    } else {
+      return response._source || response.fields
+    }
+  })
+  .then(function(res) {
+    socket.emit("r-entity.done", {
+      message: "Successfully read " + params.type,
+      code: 200,
+      body: res
+    })
+  })
+  .catch(function(err) {
+    socket.emit("r-entity.error", {
+      message: "Error in reading " + params.type,
       code: 500,
       err: err
     })
-
-    // throw err
   })
-
-  .done()
-
 }
 
-if (require.main === module) {
-  module.exports({
-    foo: 'bar'
+function resolveJoins(doc, joins) {
+
+  var mgetInstructions = []
+  var joinFields = _.keys(joins)
+
+  _.each(joinFields, function(joinField) {
+
+    var toJoinValues = (_.isArray(doc[joinField]) && doc[joinField]) || [doc[joinField]]
+
+    _.each(toJoinValues, function(id) {
+
+      mgetInstructions.push({
+        _index: joinField + 's',
+        _type: joinField,
+        _id: id,
+        fields: joins[joinField].fields
+      })
+
+    })
+
+    doc[joinField] = []
+  })
+
+  return es.mget({
+    body: {
+      docs: mgetInstructions
+    }
+  })
+  .then(function(res) {
+    _.each(res.docs, function(toJoinDoc){
+        doc[toJoinDoc._type].push(toJoinDoc._source || toJoinDoc.fields)
+      }
+    )
+    return doc
   })
 }

@@ -3,12 +3,12 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var _ = require('lodash')
+var _ = require('lodash');
 
 var consumers = {
   // CRUD Operation
-  'create': 'crud/create',
-  'read': 'crud/read'
+  'c-entity': 'crud/create',
+  'r-entity': 'crud/read'
 }
 
 io.on('connection', function(socket) {
@@ -21,7 +21,6 @@ io.on('connection', function(socket) {
     eventConsumers.forEach(function(evc) {
       evc = './' + evc
       var consume = require(evc)
-      console.log(consume)
       socket.on(ev, function(data) {
         consume(data, socket)
       })

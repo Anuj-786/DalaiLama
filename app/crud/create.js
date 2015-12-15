@@ -6,23 +6,22 @@ module.exports = function(params, socket) {
   es.index({
     index: params.index,
     type: params.type,
-    id: params._id,
-    body: params
-  }).then(function() {
+    body: params.body
+  }).then(function(res) {
     // emit the Successful messages for creation of entiy.
-    socket.emit('create.done', {
-      message: 'Event created successfully!',
-      status: 201
+    socket.emit('c-entity.done', {
+      message: params.type + ' created successfully!',
+      status: 201,
+      response: res
     });
   }).catch(function(err) {
+    console.log(err)
     // emit error in creating entity in database
-    socket.emit('create.done', {
-      message: 'Error in creating event in database',
+    socket.emit('c-entity.error', {
+      message: 'Error in creating '+ params.index +' in database',
       code: 500,
-      err: err
+      error: err
     })
-
-    throw err
   })
 
   .done()
