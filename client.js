@@ -2,6 +2,27 @@ var io = require('socket.io-client');
 var client = io.connect("http://0.0.0.0:3030");
 
 // Testing Reading Entity
+client.emit('u-entity', {
+  type: "event",
+  _id: "AVGly6IMhZb3Opo_wyaM",
+  update: {
+    pull: {
+      session: "1"
+    }
+  }
+})
+
+client.on('u-entity.done', function(data) {
+  console.log(data);
+})
+
+client.on('u-entity.error', function(data) {
+  console.log(data);
+})
+
+
+// Testing Reading Entity
+/*
 client.emit('r-entity', {
   type: "event",
   _id: "AVGly6IMhZb3Opo_wyaM",
@@ -19,7 +40,7 @@ client.on('r-entity.done', function(data) {
 client.on('r-entity.error', function(data) {
   console.log(data);
 })
-
+*/
 // Testing Creating Event
 /*
 client.emit('c-entity', {

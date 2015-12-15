@@ -50,14 +50,16 @@ module.exports = function(params, socket) {
     socket.emit("r-entity.done", {
       message: "Successfully read " + params.type,
       code: 200,
-      body: res
+      body: res,
+      params: params
     })
   })
   .catch(function(err) {
     socket.emit("r-entity.error", {
       message: "Error in reading " + params.type,
       code: 500,
-      err: err
+      err: err,
+      params: params
     })
   })
 }

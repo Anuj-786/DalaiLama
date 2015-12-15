@@ -8,7 +8,8 @@ var _ = require('lodash');
 var consumers = {
   // CRUD Operation
   'c-entity': 'crud/create',
-  'r-entity': 'crud/read'
+  'r-entity': 'crud/read',
+  'u-entity': 'crud/update'
 }
 
 io.on('connection', function(socket) {
