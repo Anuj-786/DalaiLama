@@ -22,6 +22,7 @@ var ViewEditVideo = require('./components/ViewEditVideo')
 var ModerationViewEditVideo = require('./components/ModerationViewEditVideo')
 var ModerationViewComment = require('./components/ModerationViewComment')
 var UserMangement = require('./components/UserMangement')
+var RawVideoList = require('./components/RawVideoList')
 
 ReactDOM.render((
   <Router>
@@ -29,7 +30,7 @@ ReactDOM.render((
      // <IndexRoute component={About} />
      // <IndexRoute component={EventPage} />
      // <IndexRoute component={CreateEvent}/>
-      <IndexRoute component={UserMangement}/>
+      <IndexRoute component={RawVideoList}/>
     </Route>
   </Router>
 ), document.getElementById('test'))

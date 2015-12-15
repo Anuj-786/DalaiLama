@@ -45,6 +45,9 @@ var styles ={
   addUserButton: {
     marginTop: '1em',
     backgroundColor: '#00C8F8'
+  },
+  RVLbutton: {
+    marginLeft: '0.3em'
   }
 }
 module.exports = styles

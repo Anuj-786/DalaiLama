@@ -90,6 +90,9 @@
 .mangementView {
   border: 1px solid #00C8F8;
 }
+.rawVideoList {
+  border: 1px solid #72BB53;
+}
 .icon {
   cursor: pointer;
 }
@@ -182,4 +185,28 @@
 }
 .mc {
   background-color:rgb(255, 102, 36); 
+}
+.RVLVideo {
+  width: 100%;
+  align-items: center;
+  padding: 1em;
+  margin-bottom: -1.9em;
+}
+.RVLBodyItem {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.RVLItemTitle {
+  flex: 1;
+}
+.RVLTime {
+  width: 100%;
+  margin-top: -0.3em;
+}
+.RVLBody {
+  width: 100%;
+}
+.RVLlinks {
+ margin-bottom: -1.3em; 
 }
