@@ -18,8 +18,8 @@ var CreateEvent = React.createClass({
     return (
      <div className='row'>
         <div className="large-6 columns">
-          <div className="createEntity">
-            <div className="entityHeader">
+          <div className="createEntity moderationView">
+            <div className="entityHeader moderation">
               <p className="createEntityHeader">Add Event</p>
               <FontIcon className="material-icons icon">close</FontIcon>
             </div>

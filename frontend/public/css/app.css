@@ -1,6 +1,9 @@
 .row {
   max-width: 100%
 }
+label {
+  font-weight: 500;
+}
 .center {
   margin: 0 auto;
 }
