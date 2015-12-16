@@ -17,8 +17,10 @@
   "dependencies": {
     "epicsearch": "^1.4.3",
     "express": "^4.13.3",
+    "form-generator-react": "^1.1.3",
     "material-ui": "^0.13.4",
     "react": "^0.14.3",
+    "react-bootstrap": "^0.28.1",
     "react-dom": "^0.14.3",
     "react-router": "^1.0.1",
     "react-tap-event-plugin": "^0.2.1",

@@ -25,6 +25,7 @@ var UserMangement = require('./components/UserMangement')
 var RawVideoList = require('./components/RawVideoList')
 var SessionList = require('./components/SessionList')
 var AddUser = require('./components/AddUser')
+var Form = require('./components/ReactFormGen')
 
 ReactDOM.render((
   <Router>
@@ -32,7 +33,7 @@ ReactDOM.render((
      // <IndexRoute component={About} />
      // <IndexRoute component={EventPage} />
      // <IndexRoute component={CreateEvent}/>
-      <IndexRoute component={AddUser}/>
+      <IndexRoute component={Form}/>
     </Route>
   </Router>
 ), document.getElementById('test'))
