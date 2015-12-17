@@ -43,27 +43,27 @@ var languages = {
       hintText: 'file name'
     },
     fileSize: {
-      label: 'File Size',
+      label: 'ཕི༹ལེ་ སིཟེ་',
       hintText: 'file size'
     },
     duration: {
-      label: 'Duration',
+      label: 'ཌུརཏིཨོན་',
       hintText: 'duration'
     },
     generalBitrate: {
-      label: 'General Bitrate',
+      label: 'གེནེརལ་ བིཏྲཏེ་',
       hintText: 'general bitrate'
     },
     videoFormat: {
-      label: 'Video Format',
+      label: 'བི༹དེཨོ་ ཕོ༹རྨཏ་',
       hintText: 'video format'
     },
     videoCodecID: {
-      label: 'Video Codec ID',
+      label: 'བི༹དེཨོ་ ཅོདེཅ་ ཨིད་',
       hintText: 'video codec id'
     },
     location: {
-      label: 'Location',
+      label: 'ལོཅཏིཨོན་',
       hintText: 'location'
     },
     keywords: {
@@ -71,7 +71,7 @@ var languages = {
       hintText: 'keywords'
     },
     laguage: {
-      label: 'Language',
+      label: 'ལངུཨགེ་',
       hintText: 'language'
     }
   },
