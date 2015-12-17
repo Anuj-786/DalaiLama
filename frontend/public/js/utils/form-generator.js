@@ -1,8 +1,9 @@
 var _ = require('underscore');
 var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
 var RaisedButton = require('material-ui/lib/raised-button');
 var TextField = require('material-ui/lib/text-field');
+
+var styles = require('../../css/styles')
 
 var FormGenerator = {
   /**
@@ -14,12 +15,13 @@ var FormGenerator = {
    * @param  {Boolean} validateOnSubmit Wait until submit to validate
    * @return {JSX} The FormGeneratorForm for this schema
    */
-  create: function(schema, ref, onSubmit, validateOnSubmit) {
+  create: function(schema, ref, onSubmit, onCancel, validateOnSubmit) {
     return (
       React.createElement(FormGeneratorForm, {
         schema: schema, 
         ref: ref, 
         onSubmit: onSubmit, 
+        onCancel: onCancel,
         validateOnSubmit: validateOnSubmit})
     );
   },
@@ -305,10 +307,18 @@ var FormGeneratorForm = React.createClass({displayName: "FormGeneratorForm",
           onChange: this.onChange, 
           validateOnSubmit: this.state.validateOnSubmit}), 
         React.createElement(RaisedButton, {
+          style: styles.fileSubmitButton,
           label: "Submit", 
           onClick: this.onSubmit, 
           disabled: buttonDisabled}
+        ),
+        React.createElement(RaisedButton, {
+          style: styles.fileSubmitButton,
+          label: "Cancel", 
+          onClick: this.props.onCancel, 
+          disabled: buttonDisabled}
         )
+
       )
     );
   }
@@ -518,7 +528,7 @@ var ArrayField = React.createClass({displayName: "ArrayField",
     });
     return (
       React.createElement("div", null, 
-        React.createElement(ReactBootstrap.Panel, {header: that.props.label}, 
+        React.createElement('div', {header: that.props.label}, 
           arrayFields, 
           React.createElement(RaisedButton, {
             bsStyle: "primary", 
@@ -670,7 +680,7 @@ var FlatField = React.createClass({displayName: "FlatField",
           )
         );
         case 'checkbox': return (
-          React.createElement(ReactBootstrap.Input, {
+          React.createElement('input', {
             type: that.props.type, 
             label: that.props.label, 
             placeholder: that.props.placeholder, 
@@ -678,7 +688,7 @@ var FlatField = React.createClass({displayName: "FlatField",
             checked: that.getValue()})
         );
         case 'select': return (
-          React.createElement(ReactBootstrap.Input, {
+          React.createElement('input', {
             type: that.props.type, 
             label: that.props.label, 
             placeholder: that.props.placeholder, 

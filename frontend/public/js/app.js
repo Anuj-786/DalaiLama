@@ -31,8 +31,8 @@ ReactDOM.render((
   <Router>
     <Route path="/" component={App}>
      // <IndexRoute component={About} />
-     // <IndexRoute component={EventPage} />
-     // <IndexRoute component={CreateEvent}/>
+     //<IndexRoute component={EventPage} />
+     // <IndexRoute component={Form}/>
       <IndexRoute component={Form}/>
     </Route>
   </Router>

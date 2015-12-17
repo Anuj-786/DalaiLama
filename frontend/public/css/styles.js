@@ -48,6 +48,10 @@ var styles ={
   },
   RVLbutton: {
     marginLeft: '0.3em'
+  },
+  fileSubmitButton: {
+    marginTop: '1em',
+    marginRight: '1em'
   }
 }
 module.exports = styles
