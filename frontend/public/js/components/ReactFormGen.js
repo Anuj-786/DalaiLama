@@ -24,60 +24,6 @@ var Example = React.createClass({
     }
   },
 
-  onSubmit: function(data) {
-    console.log('Parsed form data', data);
-    // Reset fields back to default values
-    this.refs.myFormRef.reset();
-  },
-
-  changeLaguage: function(event, index, menuItem) {
-    if(index === 0){
-      this.setState({language: englishLanguage})
-    }
-    else {
-      this.setState({language: tibetanLanguage})
-    }
-    this.setState({index: index})
-  },
-  render: function() {
-
-    var ref = 'myFormRef';
-    return (
-    //return <div>{formElement}</div>
-      <div className="large-5 columns">
-        <div className="createEntity moderationView">
-          <div className="entityHeader moderation">
-            <p className="createEntityHeader">Add Event</p>
-            <FontIcon className="material-icons icon">close</FontIcon>
-          </div>
-          <div className="languageSelectorDiv">
-            <DropDownMenu menuItems={filterOptions} onChange={this.changeLaguage} selectedIndex={this.state.index} ref={ref}/>
-          </div>
-          <div className="headerTitleDiv">
-            <p className="headerTitle">Front-Cam-Kalachakra-Ladakh-2014.mp4</p>
-            <div>
-              <FlatButton label="Archive"/>
-            </div>
-          </div>
-          <div className="entityFields">
-            <LanguageForm onSubmit={this.onSubmit} language={this.state.language} />
-          </div>
-        </div>
-      </div>
-    )
-  }
-})
-
-var LanguageForm = React.createClass({
-
-  getInitialState: function(){
-    return {
-      language: this.props.language
-    }
-  },
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({language: nextProps.language })
-  },
   schema: function() {
     return {
       FileName: {
@@ -128,14 +74,53 @@ var LanguageForm = React.createClass({
     }
   },
 
+  onSubmit: function(data) {
+    console.log('Parsed form data', data);
+    // Reset fields back to default values
+    this.refs.myFormRef.reset();
+  },
+
+  changeLaguage: function(event, index, menuItem) {
+    if(index === 0){
+      this.setState({language: englishLanguage})
+    }
+    else {
+      this.setState({language: tibetanLanguage})
+    }
+    this.setState({index: index})
+  },
+
   render: function() {
+
     var schema = this.schema();
-    console.log(schema)
-    var onSubmit = this.props.onSubmit;
-    var formElement = FormGenerator.create(schema, this.props.ref, onSubmit);
+    var ref = 'myFormRef';
+    var onSubmit = this.onSubmit;
+    var formElement = FormGenerator.create(schema, ref, onSubmit);
+
     return (
-      <div>{formElement}</div>
-    ) 
+    //return <div>{formElement}</div>
+      <div className="large-5 columns">
+        <div className="createEntity moderationView">
+          <div className="entityHeader moderation">
+            <p className="createEntityHeader">Add Event</p>
+            <FontIcon className="material-icons icon">close</FontIcon>
+          </div>
+          <div className="languageSelectorDiv">
+            <DropDownMenu menuItems={filterOptions} onChange={this.changeLaguage} selectedIndex={this.state.index}/>
+          </div>
+          <div className="headerTitleDiv">
+            <p className="headerTitle">Front-Cam-Kalachakra-Ladakh-2014.mp4</p>
+            <div>
+              <FlatButton label="Archive"/>
+            </div>
+          </div>
+          <div className="entityFields">
+            {formElement}
+          </div>
+        </div>
+      </div>
+    )
   }
 })
+
 module.exports = Example
