@@ -26,14 +26,12 @@ var RawVideoList = require('./components/RawVideoList')
 var SessionList = require('./components/SessionList')
 var AddUser = require('./components/AddUser')
 var Form = require('./components/ReactFormGen')
+var WindowHeader = require('./components/WindowHeader')
 
 ReactDOM.render((
   <Router>
     <Route path="/" component={App}>
-     // <IndexRoute component={About} />
-     //<IndexRoute component={EventPage} />
-     // <IndexRoute component={Form}/>
-      <IndexRoute component={Form}/>
+      <IndexRoute component={AddUser}/>
     </Route>
   </Router>
 ), document.getElementById('test'))
