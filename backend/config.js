@@ -35,6 +35,9 @@ module.exports = {
   },
   socket: {
     port: 3000
+  },
+  secret: {
+    secret: 'thisisthesecret'
   }
 
 }
