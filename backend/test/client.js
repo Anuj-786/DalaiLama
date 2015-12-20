@@ -6,8 +6,8 @@ client.emit('u-entity', {
   type: "event",
   _id: "AVGly6IMhZb3Opo_wyaM",
   update: {
-    pull: {
-      session: "1"
+    unset: {
+      session: ["4"]
     }
   }
 })
