@@ -52,6 +52,8 @@ var styles ={
   fileSubmitButton: {
     marginTop: '1em',
     marginRight: '1em'
+  },
+  searchBarWidth: {
   }
 }
 module.exports = styles
