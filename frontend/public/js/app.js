@@ -26,14 +26,15 @@ var RawVideoList = require('./components/RawVideoList')
 var SessionList = require('./components/SessionList')
 var AddUser = require('./components/AddUser')
 var Form = require('./components/ReactFormGen')
+var WindowHeader = require('./components/WindowHeader')
+var ViewEvent = require('./components/ViewEvent')
+var SearchResults = require('./components/SearchResults')
+var SearchAndLink = require('./components/SearchAndLink')
 
 ReactDOM.render((
   <Router>
     <Route path="/" component={App}>
-     // <IndexRoute component={About} />
-     // <IndexRoute component={EventPage} />
-     // <IndexRoute component={CreateEvent}/>
-      <IndexRoute component={Form}/>
+      <IndexRoute component={SearchAndLink}/>
     </Route>
   </Router>
 ), document.getElementById('test'))

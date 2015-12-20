@@ -1,5 +1,12 @@
+.contentContainer {
+  margin-bottom: 2em;
+  margin-top: 1em;
+}
 .row {
   max-width: 100%
+}
+label {
+  font-weight: 500;
 }
 .center {
   margin: 0 auto;
@@ -44,7 +51,7 @@
 .entityHeader {
   width: 100%;
   height: 3em;
-  padding: 0em 1em 0em 1em;
+  padding-left: 1em;
   transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   box-sizing: border-box;
   font-family: Roboto, sans-serif;
@@ -61,6 +68,24 @@
 }
 .EVHeader {
   background-color: #72BB53;
+}
+.bggreen {
+  background-color: #72BB53;  
+}
+.bgreen {
+  border: 1px solid #72BB53;
+}
+.bgorange {
+  background-color: #FF6624;
+}
+.borange {
+  border: 1px solid #FF6634;
+}
+.bgsky {
+  background-color: #75A9F9;
+}
+.bsky {
+  border: 1px solid #75A9F9;
 }
 .createEntityHeader {
     color: rgba(0, 0, 0, 0.87);
@@ -225,6 +250,74 @@
   display: flex;
   flex-direction: column;
 }
+.addUserForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 2em;
+}
 .addUserButton {
   margin-top: 1.9em;
+}
+.eventContent {
+  padding: 0em 1em 0em 1em;
+  margin-top: -1em;
+}
+.VESheader {
+  display: flex;
+  align-items: center;
+}
+.speakerCount {
+  flex: 1;
+  font-weight: 500;
+  font-size: 1.3em;
+}
+.speakerDescription {
+  display: flex;
+  align-items: baseline;
+}
+.speakerInfo {
+  flex: 1;
+}
+.speakerName {
+  font-weight: 500; 
+  font-family: Roboto, sans-serif;
+}
+.speakerType {
+  margin-top: -0.6em;
+}
+.entityCount {
+  display: flex;
+  align-items: center;
+  margin-bottom: -1em;
+}
+.entityName {
+  flex: 1;
+  color: #00BCD4; 
+}
+.linkedEntity {
+  padding-bottom: 1em;
+}
+.searchResultsCon {
+  display: flex;
+  align-items: stretch;
+}
+.searchResults {
+  flex: 1;
+}
+.entityType {
+  border-right: 1px solid #E0E0E0;
+}
+.SReventInfo {
+  display: flex !important;
+  align-items: flex-end;
+}
+.eitem {
+  margin-right: 1em;
+}
+.linkSearchBar {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #E0E0E0;
 }
