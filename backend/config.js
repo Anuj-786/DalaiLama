@@ -1,7 +1,11 @@
 module.exports = {
   epicsearch: {
     clientParams: {
-      hosts: [{ host: 'localhost', protocol: 'http', port: 9200}],
+      hosts: [{
+        host: 'localhost',
+        protocol: 'http',
+        port: 9200
+      }],
       requestTimeout: 90000,
       maxConnections: 200,
       log: 'error'
@@ -19,8 +23,8 @@ module.exports = {
       mget: 2,
       get: 1,
       bulk_index: 2,
-      search: 1//This is required as 1, since search internally
-      //uses msearch and stripArrayResponses doesn'y work if timeout or size is not set
+      search: 1 //This is required as 1, since search internally
+        //uses msearch and stripArrayResponses doesn'y work if timeout or size is not set
     },
     timeouts: {
       bulk: 2000,
@@ -32,9 +36,25 @@ module.exports = {
       mget: 1000,
       msearch: 1000
     }
+
   },
   socket: {
     port: 3000
+  },
+  searchEntities: {
+    event: {
+      fields: ['title_english', 'session'],
+      joins: {
+        session: {
+          fields: ['name', 'venue']
+        }
+      }
+    },
+    session: {
+      fields: ['name', 'venue']
+    },
+    person: {
+      fields: ['name']
+    }
   }
-
 }

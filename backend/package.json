@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async-q": "^0.2.2",
     "epicsearch": "^1.4.3",
     "express": "^4.13.3",
     "js-object-updater": "^1.0.1",
