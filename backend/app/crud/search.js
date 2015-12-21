@@ -46,25 +46,21 @@ module.exports = function(params, socket) {
         }
       }
     }).then(function(response) {
-      var res = response.hits.hits
-      return async.each(res, function(value, index) {
-        console.log(value, index);
-        console.log("resolving, joins", resolveJoins(value, config.searchEntities.event.joins))
+      return async.each(response.hits.hits, function(value, index) {
+        return resolveJoins(value, config.searchEntities.event.joins)
       })
     })
     .then(function(res) {
       socket.emit("r-search.done", {
           message: "Successfully seached " + params.q,
-          // code: res.status || 204,
+          code: res.status || 204,
           params: params,
           res: res
         })
-        // console.log("res:failures", res._shards.failures);
     }).catch(function(err) {
-      console.log(err)
       socket.emit("r-search.error", {
         message: "Error in searching " + params.q,
-        // code: err.status || 500,
+        code: err.status || 500,
         error: err,
         params: params
       })
