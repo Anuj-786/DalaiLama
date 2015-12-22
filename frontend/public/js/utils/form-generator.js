@@ -2,6 +2,7 @@ var _ = require('underscore');
 var React = require('react');
 var RaisedButton = require('material-ui/lib/raised-button');
 var TextField = require('material-ui/lib/text-field');
+var Snackbar = require('material-ui/lib/snackbar');
 
 var styles = require('../../css/styles')
 
@@ -672,9 +673,7 @@ var FlatField = React.createClass({displayName: "FlatField",
               value: that.state.value}), 
              _.map(that.state.errorMessages, function(msg) {
                 return (
-                  React.createElement("span", {className: "help-block"}, 
-                    msg
-                  )
+                    React.createElement(Snackbar, {openOnMount: true, message: msg, autoHideDuration:10000})
                 );
             })
           )

@@ -34,7 +34,7 @@ var SearchAndLink = require('./components/SearchAndLink')
 ReactDOM.render((
   <Router>
     <Route path="/" component={App}>
-      <IndexRoute component={SearchAndLink}/>
+      <IndexRoute component={Form}/>
     </Route>
   </Router>
 ), document.getElementById('test'))
