@@ -24,40 +24,70 @@ module.exports = function(params, socket) {
       code: 400
     })
   }
+  var fields = 
+    _.chain(config.searchEntities)
+    .reduce(
+      function(result, value, prop) {
+          
+        if (value.fields) {
+          result.push(value.fields);
+        }
+        var joinFields = _.toArray(_.keys(value.joins))
+        result.push(joinFields)
 
-  es.search({
-      index: _.keys(config.searchEntities).map(function(entities) {
-        return entities + 's'
+        return result;
+      }, 
+      []
+    )
+    .flatten()
+    .uniq()
+    .compact()
+    .value()
+
+  var mustClauses = params.filters || []
+  if (params.q) {
+    mustClauses.push({
+      query_string: {
+        query: params.q
+      }
+    })
+  }
+  
+  return es.search({
+
+      index: _.keys(config.searchEntities).map(function(entityType) {
+        return entityType + 's'
       }),
+
       type: _.keys(config.searchEntities),
-      fields: _.uniq(
-        _.reduce(config.searchEntities, function(result, value, prop) {
-          if (_.isArray(value.fields)) {
-            result.push.apply(result, value.fields);
-          }
-          return result;
-        }, [])
-      ),
+
+      fields: fields,
+      from: params.from || 0,
+      size: params.size || 2,
       body: {
         query: {
-          query_string: {
-            query: params.q
+          bool: {
+            must: mustClauses
           }
         }
       }
     }).then(function(response) {
-      return async.each(response.hits.hits, function(value, index) {
-        return resolveJoins(value, config.searchEntities.event.joins)
+
+      return async.each(response.hits.hits, function(value) {
+        console.log(value)
+        return resolveJoins(value, config.searchEntities[value._type].joins)
       })
     })
     .then(function(res) {
+
       socket.emit("r-search.done", {
-          message: "Successfully seached " + params.q,
-          code: res.status || 204,
-          params: params,
-          res: res
-        })
+        message: "Successfully seached " + params.q,
+        code: res.status || 204,
+        params: params,
+        res: res
+      })
     }).catch(function(err) {
+
       socket.emit("r-search.error", {
         message: "Error in searching " + params.q,
         code: err.status || 500,
@@ -69,20 +99,15 @@ module.exports = function(params, socket) {
 
 
 function resolveJoins(doc, joins) {
-  // console.log("\n doc:", doc, "\n joins:", joins);
   var mgetInstructions = []
   var joinFields = _.keys(joins)
-  // console.log("\n joinFields", joinFields);
 
   _.each(joinFields, function(joinField) {
-    // console.log("\n joinField", joinField)
-    // console.log("\n isArray", _.isArray(doc[joinField]))
-    // console.log("\n doc", doc, "\n docField", doc.fields[joinField])
 
     var toJoinValues = (_.isArray(doc.fields[joinField])) && doc.fields[joinField] || [doc.fields[joinField]]
-    // console.log('\n tojoinvalues:', toJoinValues)
+
     _.each(toJoinValues, function(id) {
-      // console.log('\n id', id, joinField + 's', joinField, id, joins[joinField].fields)
+
       mgetInstructions.push({
         _index: joinField + 's',
         _type: joinField,
@@ -94,20 +119,18 @@ function resolveJoins(doc, joins) {
 
     doc.fields[joinField] = []
   })
-  //console.log('\n mgetInstructions', mgetInstructions)
-  return es.mget({
+
+  return es.mget.agg({
       body: {
         docs: mgetInstructions
       }
     })
     .then(function(res) {
-      // console.log('/n res:', res.docs)
+
       _.each(res.docs, function(toJoinDoc) {
-        // console.log('/n toJoinDoc', toJoinDoc)
-        // console.log('/n doc', doc)
         doc.fields[toJoinDoc._type].push(toJoinDoc._source || toJoinDoc.fields)
       })
-      console.log('final doc:', doc);
+
       return doc
     })
 }

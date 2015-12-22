@@ -20,7 +20,7 @@ module.exports = {
       msearch: 2,
       bulk: 2,
       index: 20,
-      mget: 2,
+      mget: 50,
       get: 1,
       bulk_index: 2,
       search: 1 //This is required as 1, since search internally
@@ -33,7 +33,7 @@ module.exports = {
       get_first: 20,
       bulk_index: 1000,
       get: 0,
-      mget: 1000,
+      mget: 50,
       msearch: 1000
     }
 
@@ -43,7 +43,7 @@ module.exports = {
   },
   searchEntities: {
     event: {
-      fields: ['title_english', 'session'],
+      fields: ['title_english', 'session'], // dont write session
       joins: {
         session: {
           fields: ['name', 'venue']
