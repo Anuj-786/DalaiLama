@@ -533,12 +533,14 @@ var ArrayField = React.createClass({displayName: "ArrayField",
           arrayFields, 
           React.createElement(RaisedButton, {
             bsStyle: "primary", 
+            style: styles.fileSubmitButton,
             bsSize: "xsmall", 
             onClick: that.addField}, 
             "Add"
           ), 
           React.createElement(RaisedButton, {
             bsStyle: "primary", 
+            style: styles.fileSubmitButton,
             bsSize: "xsmall", 
             onClick: that.removeField}, 
             "Remove"
@@ -661,6 +663,7 @@ var FlatField = React.createClass({displayName: "FlatField",
       : '';
 
     return (function(that) {
+      console.log(that.props)
       switch (that.props.type) {
         case 'text':
         case 'password': return (
@@ -668,6 +671,7 @@ var FlatField = React.createClass({displayName: "FlatField",
             React.createElement(TextField, { 
               type: that.props.type, 
               hintText: that.props.label, 
+              multiLine: that.props.multiline,
               floatingLabelText: that.props.placeholder, 
               onChange: that.onChange, 
               value: that.state.value}), 

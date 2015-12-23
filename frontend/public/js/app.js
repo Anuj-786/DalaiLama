@@ -30,11 +30,12 @@ var WindowHeader = require('./components/WindowHeader')
 var ViewEvent = require('./components/ViewEvent')
 var SearchResults = require('./components/SearchResults')
 var SearchAndLink = require('./components/SearchAndLink')
+var EntityEvent = require('./components/EntityEvent')
 
 ReactDOM.render((
   <Router>
     <Route path="/" component={App}>
-      <IndexRoute component={Form}/>
+      <IndexRoute component={EntityEvent}/>
     </Route>
   </Router>
 ), document.getElementById('test'))

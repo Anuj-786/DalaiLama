@@ -18,7 +18,6 @@ var filterOptions = [
 var Example = React.createClass({
 
   getInitialState: function() {
-    console.log(englishLanguage)
     return {
       index: 0,
       language: englishLanguage,
@@ -112,7 +111,7 @@ var Example = React.createClass({
     var formElement = FormGenerator.create(schema, ref, onSubmit,onCancel, true);
 
     return (
-    //return <div>{formElement}</div>
+
       <div className="large-5 columns">
         <div className="createEntity moderationView">
           <div className="entityHeader moderation">
@@ -133,6 +132,7 @@ var Example = React.createClass({
           </div>
         </div>
       </div>
+
     )
   }
 })
