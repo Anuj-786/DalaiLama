@@ -3,7 +3,6 @@ var React = require('react');
 var RaisedButton = require('material-ui/lib/raised-button');
 var TextField = require('material-ui/lib/text-field');
 var Snackbar = require('material-ui/lib/snackbar');
-
 var styles = require('../../css/styles')
 
 var FormGenerator = {
@@ -678,7 +677,7 @@ var FlatField = React.createClass({displayName: "FlatField",
              _.map(that.state.errorMessages, function(msg) {
                 return (
                     React.createElement(Snackbar, {openOnMount: true, message: msg, autoHideDuration:10000})
-                );
+                  )
             })
           )
         );
