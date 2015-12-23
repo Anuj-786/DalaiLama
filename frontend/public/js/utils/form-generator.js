@@ -663,7 +663,6 @@ var FlatField = React.createClass({displayName: "FlatField",
       : '';
 
     return (function(that) {
-      console.log(that.props)
       switch (that.props.type) {
         case 'text':
         case 'password': return (
