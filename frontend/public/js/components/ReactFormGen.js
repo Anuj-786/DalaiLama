@@ -8,6 +8,7 @@ var DropDownMenu = require('material-ui/lib/drop-down-menu')
 var englishLanguage = require('./LanguageJson').english
 var tibetanLanguage = require('./LanguageJson').tibetan
 
+var socket = require('../socket');
 var styles = require('../../css/styles')
 
 var filterOptions = [
@@ -18,7 +19,6 @@ var filterOptions = [
 var Example = React.createClass({
 
   getInitialState: function() {
-    console.log(englishLanguage)
     return {
       index: 0,
       language: englishLanguage,
@@ -79,6 +79,40 @@ var Example = React.createClass({
   },
 
   onSubmit: function(data) {
+
+/**
+ * Creating an entity
+ */
+
+socket.emit('c-entity', {
+  index: 'events',
+  type: 'event',
+  body: {
+    title_english: "KalaChakra 2014",
+    title_tibetan: "དས་ཀ་འཁར་ལ།",
+    speakers: [{
+      person: "AVGlWN-6hZb3Opo_wyZk",
+      type: "speaker"
+    }, {
+      speaker: "AVGlXJZbhZb3Opo_wyZo",
+      type: "speaker"
+    }],
+    session: ["AVGlWtJEhZb3Opo_wyZl"]
+  }
+});
+
+socket.on('c-entity.done', function(data) {
+  console.log(data);
+})
+
+socket.on('c-entity.error', function(data) {
+  console.log(data);
+})
+
+
+/**
+ * Code ends here
+ */
     console.log('Parsed form data', data);
     // Reset fields back to default values
     console.log(this.refs.myFormRef)
@@ -112,7 +146,7 @@ var Example = React.createClass({
     var formElement = FormGenerator.create(schema, ref, onSubmit,onCancel, true);
 
     return (
-    //return <div>{formElement}</div>
+
       <div className="large-5 columns">
         <div className="createEntity moderationView">
           <div className="entityHeader moderation">
@@ -133,6 +167,7 @@ var Example = React.createClass({
           </div>
         </div>
       </div>
+
     )
   }
 })

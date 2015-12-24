@@ -2,7 +2,7 @@ var _ = require('underscore');
 var React = require('react');
 var RaisedButton = require('material-ui/lib/raised-button');
 var TextField = require('material-ui/lib/text-field');
-
+var Snackbar = require('material-ui/lib/snackbar');
 var styles = require('../../css/styles')
 
 var FormGenerator = {
@@ -532,12 +532,14 @@ var ArrayField = React.createClass({displayName: "ArrayField",
           arrayFields, 
           React.createElement(RaisedButton, {
             bsStyle: "primary", 
+            style: styles.fileSubmitButton,
             bsSize: "xsmall", 
             onClick: that.addField}, 
             "Add"
           ), 
           React.createElement(RaisedButton, {
             bsStyle: "primary", 
+            style: styles.fileSubmitButton,
             bsSize: "xsmall", 
             onClick: that.removeField}, 
             "Remove"
@@ -667,15 +669,14 @@ var FlatField = React.createClass({displayName: "FlatField",
             React.createElement(TextField, { 
               type: that.props.type, 
               hintText: that.props.label, 
+              multiLine: that.props.multiline,
               floatingLabelText: that.props.placeholder, 
               onChange: that.onChange, 
               value: that.state.value}), 
              _.map(that.state.errorMessages, function(msg) {
                 return (
-                  React.createElement("span", {className: "help-block"}, 
-                    msg
+                    React.createElement(Snackbar, {openOnMount: true, message: msg, autoHideDuration:10000})
                   )
-                );
             })
           )
         );

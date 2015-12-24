@@ -75,5 +75,55 @@ var languages = {
       hintText: 'language'
     }
   },
+  entityEventEnglish: {
+    title: {
+      label: 'Title'
+    },
+    classification: {
+      label: 'Classification'
+    },
+    startingDate: {
+      label: 'Starting Date'
+    },
+    endingDate: {
+      label: 'Ending Date'
+    },
+    venue: {
+      label: 'Venue'
+    },
+    city: {
+      label: 'City'
+    },
+    state: {
+      label: 'State'
+    },
+    country: {
+      label: 'Country'
+    },
+    languages: {
+      label: 'Laguagues'
+    },
+    description: {
+      label: 'Description' 
+    },
+    startingTime: {
+      label: 'Starting Time'
+    },
+    speakers: {
+      label: 'Speakers'
+    },
+    translation: {
+      label: 'Translation'        
+    },
+    sessions: {
+      label: 'Sessions'
+    },
+    keywords: {
+      label: 'Keywords'
+    },
+    publications: {
+      label: 'Publications'
+    }
+  }
 }
 module.exports = languages
