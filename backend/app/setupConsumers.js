@@ -4,6 +4,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var _ = require('lodash');
+var config = require('../config.js');
 
 var consumers = {
   // CRUD Operation
@@ -32,6 +33,6 @@ io.on('connection', function(socket) {
 
 
 // start the server
-server.listen(process.env.PORT || 3030, function() {
+server.listen(process.env.PORT || config.socket.port, function() {
   console.log('\nServer ready on port %d\n', server.address().port);
 });
