@@ -4,6 +4,12 @@ var RaisedButton = require('material-ui/lib/raised-button');
 var TextField = require('material-ui/lib/text-field');
 var Snackbar = require('material-ui/lib/snackbar');
 var styles = require('../../css/styles')
+var TagsInput = require('react-tagsinput')
+var SelectField = require('material-ui/lib/select-field')
+var DatePicker = require('material-ui/lib/date-picker/date-picker')
+var DatePickerDialog = require('material-ui/lib/date-picker/date-picker-dialog')
+var injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
 
 var FormGenerator = {
   /**
@@ -17,12 +23,11 @@ var FormGenerator = {
    */
   create: function(schema, ref, onSubmit, onCancel, validateOnSubmit) {
     return (
-      React.createElement(FormGeneratorForm, {
-        schema: schema, 
-        ref: ref, 
-        onSubmit: onSubmit, 
-        onCancel: onCancel,
-        validateOnSubmit: validateOnSubmit})
+      <FormGeneratorForm
+        schema={schema}
+        ref={ref}
+        onSubmit={onSubmit}
+        validateOnSubmit={validateOnSubmit}/>
     );
   },
 
@@ -38,10 +43,10 @@ var FormGenerator = {
     // Special case for array schemas
     if (_.isArray(schema)) {
       return [
-        React.createElement(ArrayField, {
-          ref: key, 
-          schema: schema[0], 
-          onChange: onChange})
+        <ArrayField
+          ref={key}
+          schema={schema[0]}
+          onChange={onChange}/>
       ];
     }
     var fields = [];
@@ -57,24 +62,24 @@ var FormGenerator = {
           // Array of native type like [String]
           // or [{ object: type, like: this }]
           fields.push(
-            React.createElement(ArrayField, {
-              ref: key, 
-              label: field.label, 
-              schema: field.type[0], 
-              onChange: onChange, 
-              defaultValue: defaultVal, 
-              validateOnSubmit: validateOnSubmit})
+            <ArrayField
+              ref={key}
+              label={field.label}
+              schema={field.type[0]}
+              onChange={onChange}
+              defaultValue={defaultVal}
+              validateOnSubmit={validateOnSubmit}/>
           );
         } else {
           // Regular { embedded: object }
           fields.push(
-            React.createElement(ObjectField, {
-              ref: key, 
-              label: field.label, 
-              schema: field.type, 
-              onChange: onChange, 
-              defaultValue: defaultVal, 
-              validateOnSubmit: validateOnSubmit})
+            <ObjectField
+              ref={key}
+              label={field.label}
+              schema={field.type}
+              onChange={onChange}
+              defaultValue={defaultVal}
+              validateOnSubmit={validateOnSubmit}/>
           );
         }
       } else {
@@ -104,74 +109,89 @@ var FormGenerator = {
 
     if (field.hidden) {
       return (
-        React.createElement(FlatField, {
-          type: "hidden", 
-          ref: name, 
-          defaultValue: defaultValue})
+        <FlatField
+          type='hidden'
+          ref={name}
+          defaultValue={defaultValue}/>
       );
     }
 
     if (field.type === String || field.type === Number) {
       if (field.enum) {
         return (
-          React.createElement(FlatField, {
-            type: "select", 
-            ref: name, 
-            label: field.label || '', 
-            placeholder: field.enum[0] || '', 
-            defaultValue: defaultValue || field.enum[0], 
-            children:  _.map(field.enum, function(val) {
-                return (
-                  React.createElement("option", {value: val}, val)
-                );
-              }), 
-            
-            validators: validators, 
-            onChange: onChange, 
-            isRequired: field.isRequired, 
-            validateOnSubmit: validateOnSubmit})
+          <FlatField
+            type='select'
+            ref={name}
+            label={field.label || ''}
+            placeholder={field.enum[0] || ''}
+            defaultValue={defaultValue || field.enum[0]}
+            fields={ _.map(field.enum, function(val, key) {
+                return {payload: key, text: val}
+              })
+            }
+            validators={validators}
+            onChange={onChange}
+            isRequired={field.isRequired}
+            validateOnSubmit={validateOnSubmit}/>
+        );
+      } 
+      else if (field.multiselect) {
+        return (
+          <FlatField
+            type='multiselect'
+            ref={name}
+            label={field.label}
+            placeholder={field.label || ''}
+            defaultValue={defaultValue}
+            validators={validators}
+            onChange={onChange}
+            isRequired={field.isRequired}
+            multiline={field.multiline || false}
+            isNumerical={field.type === Number}
+            validateOnSubmit={validateOnSubmit}/>
         );
       }
       else {
         return (
-          React.createElement(FlatField, {
-            type: field.isPassword ? 'password' : 'text', 
-            ref: name, 
-            label: field.label, 
-            placeholder: field.label || '', 
-            defaultValue: defaultValue, 
-            validators: validators, 
-            onChange: onChange, 
-            isRequired: field.isRequired, 
-            isNumerical: field.type === Number, 
-            validateOnSubmit: validateOnSubmit})
+          <FlatField
+            type={field.isPassword ? 'password' : 'text'}
+            ref={name}
+            label={field.label}
+            placeholder={field.label || ''}
+            defaultValue={defaultValue}
+            validators={validators}
+            onChange={onChange}
+            isRequired={field.isRequired}
+            multiline={field.multiline || false}
+            isNumerical={field.type === Number}
+            validateOnSubmit={validateOnSubmit}/>
         );
       }
     }
     else if (field.type === Boolean) {
       return (
-        React.createElement(FlatField, {
-          type: "checkbox", 
-          label: field.label, 
-          ref: name, 
-          defaultValue: defaultValue, 
-          validators: validators, 
-          onChange: onChange, 
-          isRequired: field.isRequired, 
-          validateOnSubmit: validateOnSubmit})
+        <FlatField
+          type='checkbox'
+          label={field.label}
+          ref={name}
+          defaultValue={defaultValue}
+          validators={validators}
+          onChange={onChange}
+          isRequired={field.isRequired}
+          validateOnSubmit={validateOnSubmit}/>
       );
     }
     else if (field.type === Date) {
       return (
-        React.createElement(FlatField, {
-          type: "date", 
-          label: field.label, 
-          ref: name, 
-          defaultValue: defaultValue, 
-          validators: validators, 
-          onChange: onChange, 
-          isRequired: field.isRequired, 
-          validateOnSubmit: validateOnSubmit})
+        <FlatField
+          type='date'
+          label={field.label}
+          ref={name}
+          defaultValue={new Date(parseInt(defaultValue))}
+          validators={validators}
+          onChange={onChange}
+          isRequired={field.isRequired}
+          validateOnSubmit={validateOnSubmit}/>
       );
     }
     else {
@@ -231,7 +251,7 @@ var FormGenerator = {
   }
 };
 
-var FormGeneratorForm = React.createClass({displayName: "FormGeneratorForm",
+var FormGeneratorForm = React.createClass({
   propTypes: {
     schema: React.PropTypes.object.isRequired,
     onSubmit: React.PropTypes.func,
@@ -299,32 +319,23 @@ var FormGeneratorForm = React.createClass({displayName: "FormGeneratorForm",
       : !this.state.isValid;
 
     return (
-      React.createElement("form", null, 
-        React.createElement(ObjectField, {ref: "toplevelForm", 
-          schema: this.props.schema, 
-          defaultValue: this.props.defaultValue, 
-          label: this.props.label, 
-          onChange: this.onChange, 
-          validateOnSubmit: this.state.validateOnSubmit}), 
-        React.createElement(RaisedButton, {
-          style: styles.fileSubmitButton,
-          label: "Submit", 
-          onClick: this.onSubmit, 
-          disabled: buttonDisabled}
-        ),
-        React.createElement(RaisedButton, {
-          style: styles.fileSubmitButton,
-          label: "Cancel", 
-          onClick: this.props.onCancel, 
-          disabled: buttonDisabled}
-        )
-
-      )
+      <form>
+        <ObjectField ref='toplevelForm'
+          schema={this.props.schema}
+          defaultValue={this.props.defaultValue}
+          label={this.props.label}
+          onChange={this.onChange}
+          validateOnSubmit={this.state.validateOnSubmit}/>
+        <RaisedButton
+          label="Submit"
+          onClick={this.onSubmit}
+          disabled={buttonDisabled}/>
+      </form>
     );
   }
 });
 
-var ObjectField = React.createClass({displayName: "ObjectField",
+var ObjectField = React.createClass({
   propTypes: {
     schema: React.PropTypes.object.isRequired,
     onChange: React.PropTypes.func.isRequired,
@@ -389,14 +400,14 @@ var ObjectField = React.createClass({displayName: "ObjectField",
       this.props.validateOnSubmit
     );
     return (
-      React.createElement('div', {header: this.props.label}, 
-        subFields
-      )
+      <div>
+        {subFields}
+      </div>
     );
   }
 });
 
-var ArrayField = React.createClass({displayName: "ArrayField",
+var ArrayField = React.createClass({
   propTypes: {
     schema: React.PropTypes.oneOfType([
       React.PropTypes.func,
@@ -527,30 +538,20 @@ var ArrayField = React.createClass({displayName: "ArrayField",
       }
     });
     return (
-      React.createElement("div", null, 
-        React.createElement('div', {header: that.props.label}, 
-          arrayFields, 
-          React.createElement(RaisedButton, {
-            bsStyle: "primary", 
-            style: styles.fileSubmitButton,
-            bsSize: "xsmall", 
-            onClick: that.addField}, 
-            "Add"
-          ), 
-          React.createElement(RaisedButton, {
-            bsStyle: "primary", 
-            style: styles.fileSubmitButton,
-            bsSize: "xsmall", 
-            onClick: that.removeField}, 
-            "Remove"
-          )
-        )
-      )
+      <div>
+        {arrayFields}
+        <RaisedButton
+          label="Add"
+          onClick={that.addField}/>
+        <RaisedButton
+          label="Remove"
+          onClick={that.removeField}/>
+      </div>
     );
   }
 });
 
-var FlatField = React.createClass({displayName: "FlatField",
+var FlatField = React.createClass({
   propTypes: {
     // text or select
     type: React.PropTypes.string,
@@ -576,13 +577,15 @@ var FlatField = React.createClass({displayName: "FlatField",
       onChange: function() {},
       defaultValue: '',
       isRequired: false,
-      isNumerical: false
+      isNumerical: false,
     };
   },
 
   getInitialState: function() {
+    console.log(this.props.defaultValue)
     return {
       value: this.props.defaultValue || '',
+      tags: ['asdf', 'aaa'],
       errorMessages: []
     };
   },
@@ -656,6 +659,18 @@ var FlatField = React.createClass({displayName: "FlatField",
     this.setValue(newValue);
   },
 
+  onChangeSelect: function(e) {
+    this.setValue(e.target.value) 
+  },
+
+  _handleChange: function(e, date) {
+    this.setValue(date) 
+  },
+
+  addtag: function(tags) {
+    this.setValue(tags)
+  },
+
   render: function() {
     var errorClass = this.state.errorMessages.length
       ? ' has-error'
@@ -665,40 +680,38 @@ var FlatField = React.createClass({displayName: "FlatField",
       switch (that.props.type) {
         case 'text':
         case 'password': return (
-          React.createElement("div", {className: 'form-group' + errorClass}, 
-            React.createElement(TextField, { 
-              type: that.props.type, 
-              hintText: that.props.label, 
-              multiLine: that.props.multiline,
-              floatingLabelText: that.props.placeholder, 
-              onChange: that.onChange, 
-              value: that.state.value}), 
-             _.map(that.state.errorMessages, function(msg) {
-                return (
-                    React.createElement(Snackbar, {openOnMount: true, message: msg, autoHideDuration:10000})
-                  )
-            })
-          )
+          <div className={'form-group' + errorClass}>
+            <TextField
+              type={that.props.type}
+              floatingLabelText={that.props.label}
+              hintText={that.props.placeholder}
+              multiLine={that.props.multiline}
+              errorText={that.state.errorMessages[0]}
+              onChange={that.onChange}
+              value={that.state.value}/>
+          </div>
         );
+      case 'multiselect': return (
+        <TagsInput value={that.state.tags} onChange={that.change} /> 
+      )
         case 'checkbox': return (
-          React.createElement('input', {
-            type: that.props.type, 
-            label: that.props.label, 
-            placeholder: that.props.placeholder, 
-            onChange: that.onChange, 
-            checked: that.getValue()})
+          <input
+            type={that.props.type}
+            label={that.props.label}
+            placeholder={that.props.placeholder}
+            onChange={that.onChange}
+            checked={that.getValue()}/>
         );
         case 'select': return (
-          React.createElement('input', {
-            type: that.props.type, 
-            label: that.props.label, 
-            placeholder: that.props.placeholder, 
-            onChange: that.onChange, 
-            value: that.state.value}, 
-            that.props.children
-          )
+          <SelectField value={that.state.value} onChange={that.onChangeSelect} floatingLabelText={that.props.label} menuItems={that.props.fields} style={{marginBottom: 15}}/>
         );
-        case 'date': throw 'Unimplemented';
+        case 'date': return (
+          <DatePicker
+            hintText="Starting Date"
+            value={that.state.value}
+            mode="landscape"
+            onChange={that._handleChange} />
+        );
         case 'hidden': return null;
       }
     })(this);
