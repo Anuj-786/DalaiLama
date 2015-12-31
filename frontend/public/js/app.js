@@ -31,6 +31,7 @@ var ViewEvent = require('./components/ViewEvent')
 var SearchResults = require('./components/SearchResults')
 var SearchAndLink = require('./components/SearchAndLink')
 var EntityEvent = require('./components/EntityEvent')
+var Tags = require('./components/tags')
 
 ReactDOM.render((
   <Router>

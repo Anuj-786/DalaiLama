@@ -1,0 +1,26 @@
+.tagsContainer {
+  width: 39%;
+  margin-top: 19px;
+}
+.tag {
+  min-width: 3rem;
+  padding: 0 6px;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  right: auto;
+  font-size: .85rem;
+  background: #00bfff;
+  font-weight: 300;
+  border-radius: 4px;
+  margin-right: 2px;
+  margin-bottom: 2px;
+  color: #fff;
+  display: inline-block;
+}
+.closeIcon {
+  font-size: 17px;
+  padding-left: 5px;
+  cursor: pointer;
+  vertical-align: sub;
+}

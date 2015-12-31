@@ -1,10 +1,9 @@
-var _ = require('underscore');
 var React = require('react');
 var RaisedButton = require('material-ui/lib/raised-button');
+var _ = require('underscore')
 var TextField = require('material-ui/lib/text-field');
 var Snackbar = require('material-ui/lib/snackbar');
 var styles = require('../../css/styles')
-var TagsInput = require('react-tagsinput')
 var SelectField = require('material-ui/lib/select-field')
 var DatePicker = require('material-ui/lib/date-picker/date-picker')
 var DatePickerDialog = require('material-ui/lib/date-picker/date-picker-dialog')
@@ -436,7 +435,9 @@ var ArrayField = React.createClass({
     var initialLength = negativeOrZero(this.props.initialLength);
     var actualLength = defaultLength || initialLength || 1;
     return {
-      size: actualLength
+      size: actualLength,
+      tags: this.props.defaultValue,
+      value: '',
     };
   },
 
@@ -444,10 +445,10 @@ var ArrayField = React.createClass({
     var that = this;
     var refPrefix = this.props.refPrefix;
     var values = [];
-    _.times(this.state.size, function(i) {
+    /*_.times(this.state.size, function(i) {
       values.push(that.refs[refPrefix + i].getValue());
-    });
-    return values;
+    });*/
+    return this.state.tags;
   },
 
   setValue: function(values) {
@@ -464,6 +465,7 @@ var ArrayField = React.createClass({
   },
 
   reset: function() {
+    this.setState({tags: [], value: ''})
     this.setValue(this.props.defaultValue);
   },
 
@@ -471,9 +473,9 @@ var ArrayField = React.createClass({
     var that = this;
     var refPrefix = this.props.refPrefix;
     var valid = true;
-    _.times(this.state.size, function(i) {
+    /*_.times(this.state.size, function(i) {
       valid = valid && that.refs[refPrefix + i].isValid();
-    });
+    });*/
     return valid;
   },
 
@@ -497,6 +499,31 @@ var ArrayField = React.createClass({
     this.setState({
       size: decremented || 1
     });
+  },
+
+  addTag: function(e) {
+    
+    if(e.keyCode == 13 || e.keyCode === 9) {
+      if(!_.includes(this.state.tags, this.state.value) && this.state.value.length && !this.state.value.trim() == '') {
+    console.log(this.state.value.length)
+        this.state.tags.push(this.state.value)
+        this.setState({value: ''})
+
+        if(e.preventDefault) {
+          e.preventDefault();
+        }
+      }
+    }
+
+  },
+
+  onChangeTag: function(e) {
+    this.setState({value: e.target.value})
+  },
+
+  removeTag: function(e) {
+    this.state.tags.splice(e.target.dataset.val, 1)
+    this.forceUpdate()
   },
 
   render: function() {
@@ -539,13 +566,24 @@ var ArrayField = React.createClass({
     });
     return (
       <div>
-        {arrayFields}
-        <RaisedButton
-          label="Add"
-          onClick={that.addField}/>
-        <RaisedButton
-          label="Remove"
-          onClick={that.removeField}/>
+        <div className="tagsContainer">
+          <div className="tags">
+            {that.state.tags.map(function(value, key) {
+              return (
+                <span className="tag" key={key}>{value}
+                <span><i data-val={key} onClick={that.removeTag} className="material-icons closeIcon">close</i></span>
+                </span>
+              )
+            }.bind(that))}            
+          </div>
+          <TextField 
+            value={that.state.value} 
+            onKeyDown={that.addTag} 
+            onChange={that.onChangeTag} 
+            floatingLabelText={that.props.label}
+            hintText={that.props.label}/> 
+        </div>
+
       </div>
     );
   }
@@ -585,7 +623,7 @@ var FlatField = React.createClass({
     console.log(this.props.defaultValue)
     return {
       value: this.props.defaultValue || '',
-      tags: ['asdf', 'aaa'],
+      tags: [],
       errorMessages: []
     };
   },
@@ -667,8 +705,29 @@ var FlatField = React.createClass({
     this.setValue(date) 
   },
 
-  addtag: function(tags) {
-    this.setValue(tags)
+  addTag: function(e) {
+    
+
+    if(e.keyCode == 13 || e.keyCode === 9) {
+      if(!_.includes(this.state.tags, this.state.value)) {
+        this.state.tags.push(this.state.value)
+        this.setState({value: ''})
+
+        if(e.preventDefault) {
+          e.preventDefault();
+        }
+      }
+    }
+
+  },
+
+  onChangeTag: function(e) {
+    this.setValue(e.target.value)
+  },
+
+  removeTag: function(e) {
+    this.state.tags.splice(e.taget.dataset.val, 1)
+    this.forceUpdate()
   },
 
   render: function() {
@@ -691,9 +750,25 @@ var FlatField = React.createClass({
               value={that.state.value}/>
           </div>
         );
-      case 'multiselect': return (
-        <TagsInput value={that.state.tags} onChange={that.change} /> 
-      )
+      case 'multiselect': console.log('pankaj')/* return (
+        <div className="tagsContainer">
+          <div className="tags">
+            {that.state.tags.map(function(value, key) {
+              return (
+                <span className="tag" key={key}>{value}
+                <span><i data-val={key} onClick={that.remove} className="material-icons closeIcon">close</i></span>
+                </span>
+              )
+            }.bind(that))}            
+          </div>
+          <TextField 
+            value={that.state.value} 
+            onKeyDown={that.addTag} 
+            onChange={that.onChangeTag} 
+            errorText={that.state.errorMessages[0]}
+            hintText="Language"/> 
+        </div>
+      )*/
         case 'checkbox': return (
           <input
             type={that.props.type}

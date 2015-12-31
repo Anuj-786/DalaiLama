@@ -52,8 +52,6 @@ var EntityEvent = React.createClass({
       venue: {
         type: String,
         label: this.state.language.venue.label,
-        multiselect: true,
-        isRequired: true
       },
       city: {
         type: String,
@@ -89,6 +87,7 @@ var EntityEvent = React.createClass({
       speakers: {
         type: [String],
         label: this.state.language.speakers.label,
+        defaultValue: [],
         isRequired: true,
       },
       translation: {
@@ -99,11 +98,13 @@ var EntityEvent = React.createClass({
       sessions: {
         type: [String],
         label: this.state.language.sessions.label,
+        defaultValue: [],
         isRequired: true,
       },
       keywords: {
         type: [String],
         label: this.state.language.keywords.label,
+        defaultValue: [],
         isRequired: true,
       },
       publications: {
