@@ -515,6 +515,14 @@ var ArrayField = React.createClass({
       }
     }
 
+    if(e.keyCode == 8) {
+      if(this.state.tags.length && !this.state.value.length) {
+        console.log(e.keyCode)
+        this.state.tags.pop() 
+        this.forceUpdate()
+      }
+    }
+
   },
 
   onChangeTag: function(e) {
