@@ -3,6 +3,7 @@ var RaisedButton = require('material-ui/lib/raised-button');
 var _ = require('underscore')
 var TextField = require('material-ui/lib/text-field');
 var Snackbar = require('material-ui/lib/snackbar');
+var TimePicker = require('material-ui/lib/time-picker')
 var styles = require('../../css/styles')
 var SelectField = require('material-ui/lib/select-field')
 var DatePicker = require('material-ui/lib/date-picker/date-picker')
@@ -192,6 +193,18 @@ var FormGenerator = {
           isRequired={field.isRequired}
           validateOnSubmit={validateOnSubmit}/>
       );
+    } else if(field.type === 'Time') {
+      return (
+        <FlatField
+          type='time'
+          label={field.label}
+          ref={name}
+          defaultValue={defaultValue}
+          validators={validators}
+          onChange={onChange}
+          isRequired={field.isRequired}
+          validateOnSubmit={validateOnSubmit}/>
+      )
     }
     else {
       throw 'Unsupported type';
@@ -608,7 +621,7 @@ var ArrayField = React.createClass({
             value={that.state.value} 
             onKeyDown={that.addTag} 
             onChange={that.onChangeTag} 
-            style={{width: '93px', marginLeft: '2px'}}
+            style={{width: '50px', marginLeft: '2px'}}
             underlineStyle={{display: 'none'}}
             onFocus={this.changeColor}
             onBlur={this.removeColor}
@@ -777,6 +790,7 @@ var FlatField = React.createClass({
               multiLine={that.props.multiline}
               errorText={that.state.errorMessages[0]}
               onChange={that.onChange}
+              style={{width: '400px'}}
               value={that.state.value}/>
           </div>
         );
@@ -817,6 +831,11 @@ var FlatField = React.createClass({
             mode="landscape"
             onChange={that._handleChange} />
         );
+        case 'time': return (
+          <TimePicker
+            format="ampm"
+            hintText={that.props.label} />
+        )
         case 'hidden': return null;
       }
     })(this);

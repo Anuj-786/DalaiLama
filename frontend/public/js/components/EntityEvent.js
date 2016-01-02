@@ -33,9 +33,9 @@ var EntityEvent = React.createClass({
         label: this.state.language.title.label,
         isRequired: true 
       },
-      Language: {
+      classifications: {
         type: String,
-        enum: ['Hindi', 'English', 'Tibetan'],
+        enum: ['Teaching', 'Talk', 'Address', 'message', 'Interaction', 'Longlife'],
         label: this.state.language.classification.label,
         defaultValue: 1,
       },
@@ -46,13 +46,15 @@ var EntityEvent = React.createClass({
         isRequired: true,
       },
       endingDate: {
-        type: String,
+        type: Date,
         label: this.state.language.endingDate.label,
+        defaultValue: '1212, 12, 12',
         isRequired: true,
       },
       venue: {
         type: String,
         label: this.state.language.venue.label,
+        isRequired: true,
       },
       city: {
         type: String,
@@ -70,8 +72,9 @@ var EntityEvent = React.createClass({
         isRequired: true,
       },
       languages: {
-        type: String,
+        type: [String],
         label: this.state.language.languages.label,
+        defaultValue: [],
         isRequired: true,
       },
       description: {
@@ -81,7 +84,7 @@ var EntityEvent = React.createClass({
         isRequired: true,
       },
       startingTime: {
-        type: String,
+        type: 'Time',
         label: this.state.language.startingTime.label,
         isRequired: true,
       },
