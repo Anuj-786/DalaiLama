@@ -3,6 +3,7 @@ var FormGenerator = require('../utils/form-generator')
 var FontIcon = require('material-ui/lib/font-icon')
 var FlatButton = require('material-ui/lib/flat-button');
 var TextField = require('material-ui/lib/text-field')
+var Paper = require('material-ui/lib/paper')
 var DropDownMenu = require('material-ui/lib/drop-down-menu')
 var WindowHeader = require('./WindowHeader')
 var entityEventEnglish = require('./LanguageJson').entityEventEnglish
@@ -122,6 +123,11 @@ var EntityEvent = React.createClass({
     this.refs.myFormRef.reset();
   },
 
+  onCancel: function() {
+  
+    this.refs.myFormRef.reset();
+
+  },
 
   render: function() {
     var schema = this.schema();

@@ -26,6 +26,7 @@ var FormGenerator = {
         schema={schema}
         ref={ref}
         onSubmit={onSubmit}
+        onCancel={onCancel}
         validateOnSubmit={validateOnSubmit}/>
     );
   },
@@ -145,7 +146,6 @@ var FormGenerator = {
             validators={validators}
             onChange={onChange}
             isRequired={field.isRequired}
-            multiline={field.multiline || false}
             isNumerical={field.type === Number}
             validateOnSubmit={validateOnSubmit}/>
         );
@@ -326,9 +326,14 @@ var FormGeneratorForm = React.createClass({
           onChange={this.onChange}
           validateOnSubmit={this.state.validateOnSubmit}/>
         <RaisedButton
+          style={styles.fileSubmitButton}
           label="Submit"
           onClick={this.onSubmit}
           disabled={buttonDisabled}/>
+        <RaisedButton
+          label="Cancel"
+          onClick={this.props.onCancel}
+        />
       </form>
     );
   }
@@ -438,6 +443,7 @@ var ArrayField = React.createClass({
       size: actualLength,
       tags: this.props.defaultValue,
       value: '',
+      focusDiv: {'border-bottom': '1px solid #E0E0E0'}
     };
   },
 
@@ -534,6 +540,22 @@ var ArrayField = React.createClass({
     this.forceUpdate()
   },
 
+  changeColor: function() {
+    this.setState({
+      focusDiv: {
+        'border-bottom': '2px solid #00bcd4'
+      }
+    })
+  },
+
+  removeColor: function() {
+    this.setState({
+      focusDiv: {
+        'border-bottom': '1px solid #E0E0E0'
+      }
+    })
+  },
+
   render: function() {
     var that = this;
     var schema = this.props.schema;
@@ -574,8 +596,7 @@ var ArrayField = React.createClass({
     });
     return (
       <div>
-        <div className="tagsContainer">
-          <div className="tags">
+          <div className="tags" style={this.state.focusDiv}>
             {that.state.tags.map(function(value, key) {
               return (
                 <span className="tag" key={key}>{value}
@@ -583,15 +604,16 @@ var ArrayField = React.createClass({
                 </span>
               )
             }.bind(that))}            
-          </div>
           <TextField 
             value={that.state.value} 
             onKeyDown={that.addTag} 
             onChange={that.onChangeTag} 
-            floatingLabelText={that.props.label}
+            style={{width: '93px', marginLeft: '2px'}}
+            underlineStyle={{display: 'none'}}
+            onFocus={this.changeColor}
+            onBlur={this.removeColor}
             hintText={that.props.label}/> 
-        </div>
-
+          </div>
       </div>
     );
   }

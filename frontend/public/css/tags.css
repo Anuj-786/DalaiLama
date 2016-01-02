@@ -1,8 +1,4 @@
-.tagsContainer {
-  width: 39%;
-  margin-top: 19px;
-}
-.tag {
+/*.tag {
   min-width: 3rem;
   padding: 0 6px;
   text-align: center;
@@ -17,6 +13,24 @@
   margin-bottom: 2px;
   color: #fff;
   display: inline-block;
+}*/
+.tags {
+  width: 16em;
+  margin-top: 19px;
+  border-bottom: ''
+}
+.tag {
+  display: inline-block;
+  margin-right: 2px;
+  margin-top: 2px;
+  height: 32px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.6);
+  line-height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  background-color: #e4e4e4;
 }
 .closeIcon {
   font-size: 17px;

@@ -15,7 +15,7 @@ var App = React.createClass({
   }
 })
 
-var About = require('./components/Home')
+var Home = require('./components/Home')
 var EventPage = require('./components/EventPage')
 var CreateEvent = require('./components/CreateEvent')
 var ViewEditVideo = require('./components/ViewEditVideo')
@@ -31,12 +31,11 @@ var ViewEvent = require('./components/ViewEvent')
 var SearchResults = require('./components/SearchResults')
 var SearchAndLink = require('./components/SearchAndLink')
 var EntityEvent = require('./components/EntityEvent')
-var Tags = require('./components/tags')
 
 ReactDOM.render((
   <Router>
     <Route path="/" component={App}>
-      <IndexRoute component={EntityEvent}/>
+      <IndexRoute component={Home}/>
     </Route>
   </Router>
 ), document.getElementById('test'))
