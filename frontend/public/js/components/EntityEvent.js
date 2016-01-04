@@ -15,6 +15,8 @@ var filterOptions = [
   { payload: '2', text: 'Tibtitan' },
 ]
 
+var classifications = ['Teaching', 'Talk', 'Address', 'message', 'Interaction', 'Longlife']
+
 var EntityEvent = React.createClass({
   getInitialState: function() {
     return {
@@ -35,14 +37,14 @@ var EntityEvent = React.createClass({
       },
       classifications: {
         type: String,
-        enum: ['Teaching', 'Talk', 'Address', 'message', 'Interaction', 'Longlife'],
+        enum: classifications,
         label: this.state.language.classification.label,
         defaultValue: 1,
       },
       startingDate: {
         type: Date,
         label: this.state.language.startingDate.label,
-        defaultValue: '1212, 12, 12',
+        defaultValue: '',
         isRequired: true,
       },
       endingDate: {
@@ -88,21 +90,9 @@ var EntityEvent = React.createClass({
         label: this.state.language.startingTime.label,
         isRequired: true,
       },
-      speakers: {
-        type: [String],
-        label: this.state.language.speakers.label,
-        defaultValue: [],
-        isRequired: true,
-      },
       translation: {
         type: String,
         label: this.state.language.translation.label,
-        isRequired: true,
-      },
-      sessions: {
-        type: [String],
-        label: this.state.language.sessions.label,
-        defaultValue: [],
         isRequired: true,
       },
       keywords: {
@@ -120,6 +110,7 @@ var EntityEvent = React.createClass({
   },
 
   onSubmit: function(data) {
+    data.classifications  = classifications[data.classifications]  
     console.log('Parsed form data', data);
     // Reset fields back to default values
     console.log(this.refs.myFormRef)

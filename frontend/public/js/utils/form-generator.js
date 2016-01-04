@@ -4,9 +4,12 @@ var _ = require('underscore')
 var TextField = require('material-ui/lib/text-field');
 var Snackbar = require('material-ui/lib/snackbar');
 var TimePicker = require('material-ui/lib/time-picker')
+var moment = require('moment')
 var styles = require('../../css/styles')
 var SelectField = require('material-ui/lib/select-field')
 var DatePicker = require('material-ui/lib/date-picker/date-picker')
+var DropDownMenu = require('material-ui/lib/DropDownMenu')
+var MenuItem = require('material-ui/lib/menus/menu-item')
 var DatePickerDialog = require('material-ui/lib/date-picker/date-picker-dialog')
 var injectTapEventPlugin = require("react-tap-event-plugin");
 injectTapEventPlugin();
@@ -187,7 +190,7 @@ var FormGenerator = {
           type='date'
           label={field.label}
           ref={name}
-          defaultValue={new Date(parseInt(defaultValue))}
+          defaultValue={defaultValue.length && new Date(parseInt(defaultValue)) || ''}
           validators={validators}
           onChange={onChange}
           isRequired={field.isRequired}
@@ -199,7 +202,7 @@ var FormGenerator = {
           type='time'
           label={field.label}
           ref={name}
-          defaultValue={defaultValue}
+          defaultValue={defaultValue || ''}
           validators={validators}
           onChange={onChange}
           isRequired={field.isRequired}
@@ -740,12 +743,16 @@ var FlatField = React.createClass({
     this.setValue(newValue);
   },
 
-  onChangeSelect: function(e) {
-    this.setValue(e.target.value) 
+  onChangeSelect: function(e, index, value) {
+    this.setValue(value) 
   },
 
   _handleChange: function(e, date) {
     this.setValue(date) 
+  },
+
+  changeTime: function(e, time) {
+    this.setValue(moment(time).format('h:mm a'))
   },
 
   addTag: function(e) {
@@ -764,7 +771,8 @@ var FlatField = React.createClass({
 
   },
 
-  onChangeTag: function(e) {
+  onChangeTag: function(e , index) {
+    console.log(index)
     this.setValue(e.target.value)
   },
 
@@ -790,29 +798,9 @@ var FlatField = React.createClass({
               multiLine={that.props.multiline}
               errorText={that.state.errorMessages[0]}
               onChange={that.onChange}
-              style={{width: '400px'}}
               value={that.state.value}/>
           </div>
         );
-      case 'multiselect': console.log('pankaj')/* return (
-        <div className="tagsContainer">
-          <div className="tags">
-            {that.state.tags.map(function(value, key) {
-              return (
-                <span className="tag" key={key}>{value}
-                <span><i data-val={key} onClick={that.remove} className="material-icons closeIcon">close</i></span>
-                </span>
-              )
-            }.bind(that))}            
-          </div>
-          <TextField 
-            value={that.state.value} 
-            onKeyDown={that.addTag} 
-            onChange={that.onChangeTag} 
-            errorText={that.state.errorMessages[0]}
-            hintText="Language"/> 
-        </div>
-      )*/
         case 'checkbox': return (
           <input
             type={that.props.type}
@@ -822,7 +810,11 @@ var FlatField = React.createClass({
             checked={that.getValue()}/>
         );
         case 'select': return (
-          <SelectField value={that.state.value} onChange={that.onChangeSelect} floatingLabelText={that.props.label} menuItems={that.props.fields} style={{marginBottom: 15}}/>
+          <DropDownMenu maxHeight={300} style={{width: '20em', marginLeft: '-1.4em', marginBottom: '1em'}} value={that.state.value} onChange={that.onChangeSelect}>
+            {that.props.fields.map(function(field) {
+              return (<MenuItem value={field.payload} primaryText={field.text} style={{width: '17em'}}/>)
+            })} 
+          </DropDownMenu>
         );
         case 'date': return (
           <DatePicker
@@ -834,6 +826,9 @@ var FlatField = React.createClass({
         case 'time': return (
           <TimePicker
             format="ampm"
+            style={{marginTop: '1em'}}
+            value={that.state.value}
+            onChange={that.changeTime}
             hintText={that.props.label} />
         )
         case 'hidden': return null;
