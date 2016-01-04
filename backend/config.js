@@ -43,7 +43,7 @@ module.exports = {
   },
   searchEntities: {
     event: {
-      fields: ['title_english', 'session'], // dont write session
+      fields: ['title'], 
       joins: {
         session: {
           fields: ['name', 'venue']

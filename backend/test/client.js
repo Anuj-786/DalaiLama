@@ -4,7 +4,7 @@ var client = io.connect("http://0.0.0.0:3030");
 // Testing Search 
 client.emit('r-search', {
   q: "KalaChakra",
-  lang: "_english"
+  lang: "english"
 })
 
 client.on('r-search.done', function(data) {

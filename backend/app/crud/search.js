@@ -4,10 +4,17 @@ var config = require('../../config')
 var async = require('async-q')
 
 /*
-async-q each method
-search result config field joins.
-
-es.seach, resolve join for the array, then emit.
+{
+  "english" : {
+  "name": "Kalachakra"
+  },
+  "french" : {
+  "name": "le français"
+  },
+  "common" : {
+  "location":"ladakh"
+  }
+}
 */
 
 
