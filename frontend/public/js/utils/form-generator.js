@@ -128,7 +128,7 @@ var FormGenerator = {
             ref={name}
             label={field.label || ''}
             placeholder={field.enum[0] || ''}
-            defaultValue={defaultValue || field.enum[0]}
+            defaultValue={defaultValue || ''}
             fields={ _.map(field.enum, function(val, key) {
                 return {payload: key, text: val}
               })

@@ -13,7 +13,7 @@ var Home = React.createClass({
   getInitialState: function() {
     
     return {
-      edit: false 
+      edit: true 
     }
 
   },

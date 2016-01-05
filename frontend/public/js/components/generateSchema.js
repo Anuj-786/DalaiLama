@@ -19,6 +19,6 @@ module.exports = function(config, data, lang, enumValues) {
     }
 
   })
-
+  console.log(schema)
   return schema
 }
