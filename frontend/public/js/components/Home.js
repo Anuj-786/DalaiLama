@@ -9,6 +9,15 @@ var SearchResults = require('./SearchResults')
 var Login = require('./Login')
 
 var Home = React.createClass({
+
+  getInitialState: function() {
+    
+    return {
+      edit: false 
+    }
+
+  },
+
   render:function() {
     return (
       <div>
@@ -18,7 +27,7 @@ var Home = React.createClass({
         <div>
           <SearchResults/>
           <SessionList/>
-          <EntityEvent />
+          <EntityEvent edit={this.state.edit}/>
           <SearchAndLink/>
         </div>
       </div>

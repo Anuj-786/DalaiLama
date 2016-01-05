@@ -3,7 +3,7 @@ var es = require('../es')
 module.exports = function(params, socket) {
   console.log('params', params);
 
-  es.index({
+ return es.index({
     index: params.index,
     type: params.type,
     body: params.body
@@ -23,9 +23,6 @@ module.exports = function(params, socket) {
       error: err
     })
   })
-
-  .done()
-
 }
 
 if (require.main === module) {

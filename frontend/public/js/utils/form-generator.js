@@ -190,7 +190,7 @@ var FormGenerator = {
           type='date'
           label={field.label}
           ref={name}
-          defaultValue={defaultValue.length && new Date(parseInt(defaultValue)) || ''}
+          defaultValue={defaultValue || ''}
           validators={validators}
           onChange={onChange}
           isRequired={field.isRequired}
@@ -459,7 +459,7 @@ var ArrayField = React.createClass({
       size: actualLength,
       tags: this.props.defaultValue,
       value: '',
-      focusDiv: {'border-bottom': '1px solid #E0E0E0'}
+      focusDiv: {borderBottom: '1px solid #E0E0E0'}
     };
   },
 
@@ -488,7 +488,6 @@ var ArrayField = React.createClass({
 
   reset: function() {
     this.setState({tags: [], value: ''})
-    this.setValue(this.props.defaultValue);
   },
 
   isValid: function() {
@@ -559,7 +558,7 @@ var ArrayField = React.createClass({
   changeColor: function() {
     this.setState({
       focusDiv: {
-        'border-bottom': '2px solid #00bcd4'
+        borderBottom: '2px solid #00bcd4'
       }
     })
   },
@@ -567,7 +566,7 @@ var ArrayField = React.createClass({
   removeColor: function() {
     this.setState({
       focusDiv: {
-        'border-bottom': '1px solid #E0E0E0'
+        borderBottom: '1px solid #E0E0E0'
       }
     })
   },
@@ -731,6 +730,7 @@ var FlatField = React.createClass({
 
   reset: function() {
     this.setValue(this.props.defaultValue);
+    this.setState({value: ''})
   },
 
   onChange: function(e) {
@@ -810,15 +810,15 @@ var FlatField = React.createClass({
             checked={that.getValue()}/>
         );
         case 'select': return (
-          <DropDownMenu maxHeight={300} style={{width: '20em', marginLeft: '-1.4em', marginBottom: '1em'}} value={that.state.value} onChange={that.onChangeSelect}>
-            {that.props.fields.map(function(field) {
-              return (<MenuItem value={field.payload} primaryText={field.text} style={{width: '17em'}}/>)
+          <DropDownMenu maxHeight={300} labelMember="Classification" style={{width: '20em', marginLeft: '-1.4em', marginBottom: '1em'}} value={that.state.value} onChange={that.onChangeSelect}>
+            {that.props.fields.map(function(field, key) {
+              return (<MenuItem key={key} value={field.payload} primaryText={field.text} style={{width: '17em'}}/>)
             })} 
           </DropDownMenu>
         );
         case 'date': return (
           <DatePicker
-            hintText="Starting Date"
+            hintText={that.props.label}
             value={that.state.value}
             mode="landscape"
             onChange={that._handleChange} />
