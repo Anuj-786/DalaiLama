@@ -47,7 +47,7 @@ var Header = React.createClass({
   },
 
   submitSearch: function() {
-    console.log(this.state.value)
+    socket.emit('r-search', {})
   },
 
   changeLang: function(e, index) {
