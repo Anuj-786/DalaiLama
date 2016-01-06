@@ -65,30 +65,6 @@ var EntityEvent = React.createClass({
 
     return generateSchema(eventConfig, this.state.defaultValues, this.state.index === 1 && 'french' || this.state.index === 0 && 'english' , {classification: classifications})
 
-     /* return {
-        objectField: {
-        type: [{
-          embeddedString: {
-            type: String,
-            label: 'Object String'
-          },
-          type: {
-            type: String,
-            label: 'Type',
-            enum: ['apnakj', 'kali'],
-            defaultValue: ''
-          },
-          Language: {
-            type: String,
-            label: 'Language',
-            enum: ['English', 'Tibetan'],
-            defaultValue: ''
-          }
-        }],
-        defaultValue: [],
-      label: 'Object Field'
-    },  
-      }*/
   },
 
   onSubmit: function(data) {
@@ -101,7 +77,7 @@ var EntityEvent = React.createClass({
     console.log('Parsed form data', this.language);
 
     if(this.props.edit) {
-      socket.emit('u-entity', {type: 'event', _id: 'AVIMMh2OFs21aZysquQi', update: {set: this.language.english}})
+      socket.emit('u-entity', {type: 'event', _id: 'AVIRisUFFs21aZysquQ0', update: {set: this.language.english}})
     } 
     else {
       socket.emit('c-entity', {index: 'events', type: 'event', body: this.language.english})

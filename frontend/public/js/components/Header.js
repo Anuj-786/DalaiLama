@@ -1,9 +1,9 @@
-var React = require('react');
-var RaisedButton = require('material-ui/lib/raised-button');
+var React = require('react')
+var RaisedButton = require('material-ui/lib/raised-button')
 var FontIcon = require('material-ui/lib/font-icon')
 var TextField = require('material-ui/lib/text-field')
-var DropDownMenu = require('material-ui/lib/drop-down-menu')
-var injectTapEventPlugin = require("react-tap-event-plugin");
+var SelectField = require('material-ui/lib/select-field')
+var injectTapEventPlugin = require("react-tap-event-plugin")
 
 
 var Toolbar = require('material-ui/lib/toolbar/toolbar');
@@ -19,7 +19,7 @@ var entityOptions = [
    { payload: '3', text: 'Raw Video' },
    { payload: '4', text: 'Raw Audio' },
    { payload: '5', text: 'Edited Video' },
-   { payload: '5', text: 'Edited Audio' },
+   { payload: '6', text: 'Edited Audio' },
 ]
 
 var Menu = require('material-ui/lib/menus/menu');
@@ -31,21 +31,55 @@ var filterOptions = [
   { payload: '3', text: 'Tibtitan' },
   { payload: '4', text: 'Chinese' },
 ];
-var iconMenuItems = [
-  { payload: '1', text: 'Download' },
-  { payload: '2', text: 'More Info' }
-];
+
 var Header = React.createClass({
+
+  getInitialState: function() {
+    return {
+      value: '',
+      lang: '1',
+      entity: '1',
+    }
+  },
+
+  changeSearchTxt: function(e) {
+    this.setState({value: e.target.value})
+  },
+
+  submitSearch: function() {
+    console.log(this.state.value)
+  },
+
+  changeLang: function(e, index) {
+    this.setState({lang: e.target.value})
+  },
+
+  changeEntity: function(e, index) {
+    this.setState({entity: e.target.value})
+  },
+
   render:function() {
     return (
-      <Toolbar style={styles.header}>
+      <Toolbar style={styles.header} className='pageHeader'>
         <ToolbarGroup key={0} float="left">
-          <TextField hintText="Search....." style={styles.search} />
+          <TextField hintText="Search....." style={styles.search} onChange={this.changeSearchTxt} value={this.state.value} onEnterKeyDown={this.submitSearch}/>
         </ToolbarGroup>
         <ToolbarGroup key={1} float="left">
-          <DropDownMenu menuItems={filterOptions} style={styles.filterOptions} label="Language"/>
-          <DropDownMenu menuItems={entityOptions} />
-          <RaisedButton label="Activities" />
+          <div className='dropdownDiv'>
+            <SelectField
+              style={styles.searchDropDown}
+              value={this.state.lang}
+              onChange={this.changeLang}
+              hintText="language"
+              menuItems={filterOptions} />
+            <SelectField
+              style={styles.searchDropDown}
+              value={this.state.entity}
+              onChange={this.changeEntity}
+              hintText="entity"
+              menuItems={entityOptions}/>
+            <RaisedButton label="Activities" style={styles.activities}/>
+          </div>
         </ToolbarGroup>
       </Toolbar>
     );
