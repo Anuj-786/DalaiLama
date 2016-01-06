@@ -35,9 +35,6 @@ module.exports = function(params, socket) {
       error: err
     })
   })
-
-  .done()
-
 }
 
 if (require.main === module) {

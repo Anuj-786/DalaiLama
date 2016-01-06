@@ -2,6 +2,14 @@
   margin-bottom: 2em;
   margin-top: 1em;
 }
+.pageHeader {
+  display: flex;
+  align-items: center;
+}
+.dropdownDiv {
+  display: flex;
+  align-items: center;
+}
 .row {
   max-width: 100%
 }

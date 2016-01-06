@@ -122,7 +122,7 @@ var languages = {
       label: 'Keywords'
     },
     publications: {
-      label: 'Publications'
+      label: 'Publication'
     }
   }
 }

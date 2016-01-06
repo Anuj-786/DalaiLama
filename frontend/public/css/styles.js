@@ -1,6 +1,12 @@
 var styles ={
   search: {
-    marginTop: 8, 
+  },
+  activities: {
+    marginLeft: 40,
+  },
+  searchDropDown: {
+    marginLeft: 20,
+    width: 180,
   },
   filterOptions: {
     marginLeft: -14,
