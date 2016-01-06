@@ -810,11 +810,13 @@ var FlatField = React.createClass({
             checked={that.getValue()}/>
         );
         case 'select': return (
-          <SelectField
-            value={that.state.value}
-            onChange={that.onChangeSelect}
-            hintText={that.props.label}
-            menuItems={that.props.fields} />
+          <div>
+            <SelectField
+              value={that.state.value}
+              onChange={that.onChangeSelect}
+              hintText={that.props.label}
+              menuItems={that.props.fields} />
+          </div>
         );
         case 'date': return (
           <DatePicker

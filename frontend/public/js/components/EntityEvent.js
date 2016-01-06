@@ -65,6 +65,30 @@ var EntityEvent = React.createClass({
 
     return generateSchema(eventConfig, this.state.defaultValues, this.state.index === 1 && 'french' || this.state.index === 0 && 'english' , {classification: classifications})
 
+     /* return {
+        objectField: {
+        type: [{
+          embeddedString: {
+            type: String,
+            label: 'Object String'
+          },
+          type: {
+            type: String,
+            label: 'Type',
+            enum: ['apnakj', 'kali'],
+            defaultValue: ''
+          },
+          Language: {
+            type: String,
+            label: 'Language',
+            enum: ['English', 'Tibetan'],
+            defaultValue: ''
+          }
+        }],
+        defaultValue: [],
+      label: 'Object Field'
+    },  
+      }*/
   },
 
   onSubmit: function(data) {

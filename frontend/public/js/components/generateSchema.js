@@ -17,6 +17,12 @@ module.exports = function(config, data, lang, enumValues) {
       schema[key].enum = _.get(enumValues, (config[key].enum).replace('*', ''))
 
     }
+    
+    if(config[key].multiline) {
+
+      schema[key].multiline = config[key].multiline
+      
+    }
 
   })
   console.log(schema)

@@ -108,6 +108,7 @@ module.exports = {
   },
   description: {
     isRequired: true,
+    multiline: true,
     type: String,
     english: {
       label: 'Description',
