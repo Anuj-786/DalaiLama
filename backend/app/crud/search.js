@@ -2,19 +2,17 @@ var _ = require('lodash')
 var es = require('../es')
 var config = require('../../config')
 var async = require('async-q')
+var debug = require('debug')("search")
 
 /*
-{
-  "english" : {
-  "name": "Kalachakra"
-  },
-  "french" : {
-  "name": "le français"
-  },
-  "common" : {
-  "location":"ladakh"
+  {
+    "english" : {
+    "name": "Kalachakra"
+    },
+    "french" : {
+    "name": "le français"
+    }
   }
-}
 */
 
 
@@ -31,11 +29,11 @@ module.exports = function(params, socket) {
       code: 400
     })
   }
-  var fields = 
+  var fields =
     _.chain(config.searchEntities)
     .reduce(
       function(result, value, prop) {
-          
+
         if (value.fields) {
           result.push(value.fields);
         }
@@ -43,14 +41,18 @@ module.exports = function(params, socket) {
         result.push(joinFields)
 
         return result;
-      }, 
-      []
+      }, []
     )
     .flatten()
     .uniq()
     .compact()
     .value()
+    .map(function(value) {
+      return params.lang + "." + value
+    })
 
+
+  debug(fields)
   var mustClauses = params.filters || []
   if (params.q) {
     mustClauses.push({
@@ -59,10 +61,12 @@ module.exports = function(params, socket) {
       }
     })
   }
-  
+
   return es.search({
 
       index: _.keys(config.searchEntities).map(function(entityType) {
+
+        debug("entityType:", entityType)
         return entityType + 's'
       }),
 
@@ -80,9 +84,11 @@ module.exports = function(params, socket) {
       }
     }).then(function(response) {
 
+      debug("response:", JSON.stringify(response))
       return async.each(response.hits.hits, function(value) {
-        console.log(value)
-        return resolveJoins(value, config.searchEntities[value._type].joins)
+
+        debug("values:", value)
+        return resolveJoins(value, config.searchEntities[value._type].joins, params.lang)
       })
     })
     .then(function(res) {
@@ -105,21 +111,37 @@ module.exports = function(params, socket) {
 }
 
 
-function resolveJoins(doc, joins) {
+function resolveJoins(doc, joins, lang) {
+  debug("joins", joins)
+
   var mgetInstructions = []
-  var joinFields = _.keys(joins)
+  var joinFields = _.keys(joins).map(function(value) {
+    return lang + "." + value
+  })
 
   _.each(joinFields, function(joinField) {
 
+    debug("joinField:", joinField)
+
     var toJoinValues = (_.isArray(doc.fields[joinField])) && doc.fields[joinField] || [doc.fields[joinField]]
+    var toJoinFieldFields = joins[_.last(joinField.split('.'))].fields
+
+    if (toJoinFieldFields) {
+      toJoinFieldFields = toJoinFieldFields.map(function(toJoinFieldField) {
+        return lang + "." + toJoinFieldField
+      })
+    }
+
+    debug("toJoinValues:", toJoinValues)
+    debug("joinField:", joinField)
 
     _.each(toJoinValues, function(id) {
 
       mgetInstructions.push({
-        _index: joinField + 's',
-        _type: joinField,
+        _index: _.last(joinField.split('.')) + 's',
+        _type: _.last(joinField.split('.')),
         _id: id,
-        fields: joins[joinField].fields
+        fields: toJoinFieldFields
       })
 
     })
@@ -127,15 +149,19 @@ function resolveJoins(doc, joins) {
     doc.fields[joinField] = []
   })
 
+  debug("mgetInstructions2:", mgetInstructions)
+
   return es.mget.agg({
       body: {
         docs: mgetInstructions
       }
     })
     .then(function(res) {
+      debug("res", JSON.stringify(res))
 
       _.each(res.docs, function(toJoinDoc) {
-        doc.fields[toJoinDoc._type].push(toJoinDoc._source || toJoinDoc.fields)
+        debug("doc:", doc.fields, "toJoinDoc", JSON.stringify(toJoinDoc.fields))
+        doc.fields[lang + "." + toJoinDoc._type].push(toJoinDoc._source || toJoinDoc.fields)
       })
 
       return doc
