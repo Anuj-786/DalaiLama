@@ -1,13 +1,29 @@
 var io = require('socket.io-client');
 var client = io.connect("http://0.0.0.0:3030");
 
-// Testing Reading Entity
+// Testing Search 
+client.emit('r-search', {
+  q: "KalaChakra",
+  lang: "english"
+})
+
+client.on('r-search.done', function(data) {
+  console.log("response:", JSON.stringify(data.res));
+})
+
+client.on('r-search.error', function(data) {
+  console.log(data);
+})
+
+
+/*
+ Testing Reading Entity
 client.emit('u-entity', {
   type: "event",
   _id: "AVGly6IMhZb3Opo_wyaM",
   update: {
-    unset: {
-      session: ["4"]
+    set: {
+      session: ["AVGlWtJEhZb3Opo_wyZl"]
     }
   }
 })
@@ -20,15 +36,16 @@ client.on('u-entity.error', function(data) {
   console.log(data);
 })
 
+*/
 
 // Testing Reading Entity
 /*
 client.emit('r-entity', {
   type: "event",
-  _id: "AVGly6IMhZb3Opo_wyaM",
+  _id: "1",
   joins: {
     session: {
-      fields: ["name"]
+      fields: ["title"]
     }
   }
 })
@@ -41,6 +58,7 @@ client.on('r-entity.error', function(data) {
   console.log(data);
 })
 */
+
 // Testing Creating Event
 /*
 client.emit('c-entity', {
@@ -67,4 +85,5 @@ client.on('c-entity.done', function(data) {
 client.on('c-entity.error', function(data) {
   console.log(data);
 })
+  
 */
