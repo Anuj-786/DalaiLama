@@ -52,12 +52,12 @@ var EntityEvent = React.createClass({
       })
     }
     socket.on('r-entity.done', function(data) {
-      console.log(data.body, data.params.body)
+
       this.setState({
         defaultValues: data.body,
         edit: false,
       }) 
-      console.log(this.state.defaultValues.title)
+
     }.bind(this))
   },
 
@@ -82,6 +82,7 @@ var EntityEvent = React.createClass({
     else {
       socket.emit('c-entity', {index: 'events', type: 'event', body: this.language.english})
     }
+
     this.refs.myFormRef.reset()
 
     _.forEach(['c-entity.done', 'c-entity.error', 'u-entity.done', 'u-entity.error'], function(entity) {
@@ -124,7 +125,18 @@ var EntityEvent = React.createClass({
     }
 
     else {
+      var currentValues = this.refs.myFormRef.getValue()
+      currentValues['classification'] = classifications[currentValues['classification']]
+      currentValues['startingDate'] = +moment(currentValues['startingDate'])
+      currentValues['endingDate'] = +moment(currentValues['endingDate'])
       
+      if(_.isMatch(this.state.defaultValues, currentValues)) {
+        this.setState({index: index})
+      }
+      else {
+        this.setState({discardChanges: true})
+      }
+
     }
 
   },
@@ -140,13 +152,13 @@ var EntityEvent = React.createClass({
   },
 
   onDiscard: function() { 
-    this.refs.myFormRef.reset()
 
     this.setState({
       discardChanges: false,
       index: this.state.changeLang,
     })
 
+    this.refs.myFormRef.reset()
   },
 
   render: function() {

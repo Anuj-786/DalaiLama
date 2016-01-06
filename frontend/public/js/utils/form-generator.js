@@ -487,7 +487,7 @@ var ArrayField = React.createClass({
   },
 
   reset: function() {
-    this.setState({tags: [], value: ''})
+    this.setState({tags: this.props.defaultValue, value: ''})
   },
 
   isValid: function() {
@@ -730,7 +730,7 @@ var FlatField = React.createClass({
 
   reset: function() {
     this.setValue(this.props.defaultValue);
-    this.setState({value: ''})
+    this.setState({value: this.props.defaultValue})
   },
 
   onChange: function(e) {
@@ -743,8 +743,8 @@ var FlatField = React.createClass({
     this.setValue(newValue);
   },
 
-  onChangeSelect: function(e, index, value) {
-    this.setValue(value) 
+  onChangeSelect: function(e, index) {
+    this.setValue(index) 
   },
 
   _handleChange: function(e, date) {
@@ -810,11 +810,11 @@ var FlatField = React.createClass({
             checked={that.getValue()}/>
         );
         case 'select': return (
-          <DropDownMenu maxHeight={300} labelMember="Classification" style={{width: '20em', marginLeft: '-1.4em', marginBottom: '1em'}} value={that.state.value} onChange={that.onChangeSelect}>
-            {that.props.fields.map(function(field, key) {
-              return (<MenuItem key={key} value={field.payload} primaryText={field.text} style={{width: '17em'}}/>)
-            })} 
-          </DropDownMenu>
+          <SelectField
+            value={that.state.value}
+            onChange={that.onChangeSelect}
+            hintText={that.props.label}
+            menuItems={that.props.fields} />
         );
         case 'date': return (
           <DatePicker

@@ -164,6 +164,16 @@ module.exports = {
       label: 'Publication',
       defaultValue: '*publication'
     }
-  }
+  },
+  /*speaker: {
+    type : {
+      name : {
+        type: String,
+        label: 'Name',
+        defaultValue: ''
+      }
+    },
+    label: 'Speaker'
+  }*/
 }
 
