@@ -15,8 +15,9 @@ client.on('r-search.error', function(data) {
   console.log(data);
 })
 
+
 /*
-// Testing Reading Entity
+ Testing Reading Entity
 client.emit('u-entity', {
   type: "event",
   _id: "AVGly6IMhZb3Opo_wyaM",
@@ -36,14 +37,15 @@ client.on('u-entity.error', function(data) {
 })
 
 */
+
 // Testing Reading Entity
 /*
 client.emit('r-entity', {
   type: "event",
-  _id: "AVHDEPUuQpxtrIE1g6xi",
+  _id: "1",
   joins: {
     session: {
-      fields: ["name"]
+      fields: ["title"]
     }
   }
 })

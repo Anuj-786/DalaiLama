@@ -43,18 +43,12 @@ module.exports = {
   },
   searchEntities: {
     event: {
-      fields: ['title'], 
+      fields: ['name'],
       joins: {
         session: {
-          fields: ['name', 'venue']
+          fields: ['title']
         }
       }
-    },
-    session: {
-      fields: ['name', 'venue']
-    },
-    person: {
-      fields: ['name']
     }
   }
 }
