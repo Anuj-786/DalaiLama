@@ -1,6 +1,6 @@
 var io = require('socket.io-client');
 var request = require('superagent');
-var debug = require('debug')('testLogin :')
+var debug = require('debug')('testLogin')
 
 function connect_socket(token) {
   debug('get a token', token);
