@@ -503,9 +503,9 @@ var ArrayField = React.createClass({
   showErrorMessages: function() {
     var that = this;
     var refPrefix = this.props.refPrefix;
-    _.times(this.state.size, function(i) {
+    /*_.times(this.state.size, function(i) {
       that.refs[refPrefix + i].showErrorMessages();
-    });
+    });*/
   },
 
   addField: function() {

@@ -198,7 +198,7 @@ var EntityEvent = React.createClass({
           message={this.state.resultMessage}
           action="ok"
           onRequestClose={this.closeMessage}
-          autoHideDuration='3000'
+          autoHideDuration={3000}
         />
         <Dialog
           title="Discard Changes"
