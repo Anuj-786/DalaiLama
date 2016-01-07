@@ -15,6 +15,7 @@ var es = require('../es')
     }
 }
 **/
+
 module.exports = function(params, socket) {
   var missingArgumentMessage
   if (!params._id) {
@@ -70,10 +71,6 @@ function resolveJoins(doc, joins) {
   var joinFields = _.keys(joins)
 
   _.each(joinFields, function(joinField) {
-    console.log("joinField", joinField)
-    console.log("isArray", _.isArray(doc[joinField]))
-    console.log("doc", doc, "docField", doc[joinField])
-    console.log((_.isArray(doc[joinField]) && doc[joinField]))
 
     var toJoinValues = (_.isArray(doc[joinField]) && doc[joinField]) || [doc[joinField]]
 

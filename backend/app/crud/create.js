@@ -15,7 +15,7 @@ module.exports = function(params, socket) {
     })
   }
 
-  es.index({
+  return es.index({
     index: params.type + 's',
     type: params.type,
     body: params.body
@@ -27,8 +27,7 @@ module.exports = function(params, socket) {
       response: res
     });
   }).catch(function(err) {
-    console.log(err)
-      // emit error in creating entity in database
+    // emit error in creating entity in database
     socket.emit('c-entity.error', {
       message: 'Error in creating ' + params.index + ' in database',
       code: 500,

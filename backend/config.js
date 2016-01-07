@@ -23,8 +23,7 @@ module.exports = {
       mget: 50,
       get: 1,
       bulk_index: 2,
-      search: 1 //This is required as 1, since search internally
-        //uses msearch and stripArrayResponses doesn'y work if timeout or size is not set
+      search: 1
     },
     timeouts: {
       bulk: 2000,
@@ -41,7 +40,6 @@ module.exports = {
   socket: {
     port: 3000
   },
-
   searchEntities: {
     event: {
       fields: ['name'],

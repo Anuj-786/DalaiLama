@@ -27,7 +27,9 @@ io.on('connection', function(socket) {
       evc = './' + evc
       var consume = require(evc)
       socket.on(ev, function(data) {
-        consume(data, socket)
+        consume(data, socket).catch(function(err) {
+          console.log(err)
+        }).done()
       })
     })
   })
