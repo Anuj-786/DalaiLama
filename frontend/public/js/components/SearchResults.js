@@ -1,17 +1,16 @@
-var React = require('react')
-var FlatButton = require('material-ui/lib/flat-button');
-var FontIcon = require('material-ui/lib/font-icon')
-var Checkbox = require('material-ui/lib/checkbox')
-var List = require('material-ui/lib/lists/list');
-var ListDivider = require('material-ui/lib/divider');
-var ListItem = require('material-ui/lib/lists/list-item');
-var WindowHeader = require('./WindowHeader')
+import React from 'react';
+import FlatButton from 'material-ui/lib/flat-button'
+import Checkbox from 'material-ui/lib/checkbox'
+import List from 'material-ui/lib/lists/list';
+import Divider from 'material-ui/lib/divider';
+import ListItem from 'material-ui/lib/lists/list-item';
+import WindowHeader from './WindowHeader'
 
 var styles = require('../../css/styles')
 
-var SearchResults = React.createClass({
+export default class SearchResults extends React.Component {
   
-  entityData: {
+  entityData = {
     entityTypes: [
       {
         entityName: 'Raw Video (4)' 
@@ -50,8 +49,9 @@ var SearchResults = React.createClass({
         locationName: 'Norbolingka (5)'
       }
     ],
-  },
-  searchResults: {
+  };
+
+  searchResults = {
     videos: [
       {
         title: 'Back-Cam-KalaChakra-Ladakh-2014.mp4',
@@ -114,18 +114,19 @@ var SearchResults = React.createClass({
         city: 'Leh (Ladakh)'
       }
     ]
-  },
+  };
 
-  getInitialState: function() {
-    return {
+  constructor(props) {
+    super(props)
+    this.state = {
       title: 'Search: Results for "Kalachakra 33rd"',
       columns: 6,
       bgcolor: 'bgsky',
       bcolor: 'bsky',
     }
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} button={this.state.button} searchBar={this.state.searchBar}>
         <div className="searchResultsCon">
@@ -142,7 +143,7 @@ var SearchResults = React.createClass({
                 />)
               })}
             </List>
-            <ListDivider inset={true} />
+            <Divider inset={true} />
             <List subheader="Country">
               {this.entityData.countries.map(function(country, i) {
                 var id = "checkbox" + i
@@ -155,7 +156,7 @@ var SearchResults = React.createClass({
                 />)
               })}
             </List>
-            <ListDivider inset={true} />
+            <Divider inset={true} />
             <List subheader="City">
               {this.entityData.cities.map(function(city, i) {
                 var id = "checkbox" + i
@@ -168,7 +169,7 @@ var SearchResults = React.createClass({
                 />)
               })}
             </List>
-            <ListDivider inset={true} />
+            <Divider inset={true} />
             <List subheader="Location">
               {this.entityData.locations.map(function(location, i) {
                 var id = "checkbox" + i
@@ -239,6 +240,4 @@ var SearchResults = React.createClass({
       </WindowHeader>
     )
   }
-})
-
-module.exports = SearchResults
+}

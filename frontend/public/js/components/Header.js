@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from 'material-ui/lib/text-field';
 import SelectField from 'material-ui/lib/SelectField';
@@ -86,11 +85,6 @@ export default class Header extends React.Component {
         </ToolbarGroup>
       </Toolbar>
     )
-   /*return (
-    <div>
-      <RaisedButton label="Activities" style={styles.activities}/>
-    </div>
-   )*/
   }
 }
 

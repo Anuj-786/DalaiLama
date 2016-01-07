@@ -1,17 +1,15 @@
-var React = require('react');
-var RaisedButton = require('material-ui/lib/raised-button');
-var _ = require('underscore')
-var TextField = require('material-ui/lib/text-field');
-var Snackbar = require('material-ui/lib/snackbar');
-var TimePicker = require('material-ui/lib/time-picker')
-var moment = require('moment')
-var styles = require('../../css/styles')
-var SelectField = require('material-ui/lib/select-field')
-var DatePicker = require('material-ui/lib/date-picker/date-picker')
-var DropDownMenu = require('material-ui/lib/DropDownMenu')
-var MenuItem = require('material-ui/lib/menus/menu-item')
-var DatePickerDialog = require('material-ui/lib/date-picker/date-picker-dialog')
-var injectTapEventPlugin = require("react-tap-event-plugin");
+import React from 'react'
+import RaisedButton from 'material-ui/lib/raised-button'
+import _ from 'underscore'
+import TextField from 'material-ui/lib/text-field'
+import MenuItem from 'material-ui/lib/menus/menu-item'
+import SelectField from 'material-ui/lib/SelectField'
+import Snackbar from 'material-ui/lib/snackbar'
+import TimePicker from 'material-ui/lib/time-picker'
+import moment from 'moment'
+import styles from '../../css/styles'
+import DatePicker from 'material-ui/lib/date-picker/date-picker'
+import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 var FormGenerator = {
@@ -24,7 +22,7 @@ var FormGenerator = {
    * @param  {Boolean} validateOnSubmit Wait until submit to validate
    * @return {JSX} The FormGeneratorForm for this schema
    */
-  create: function(schema, ref, onSubmit, onCancel, validateOnSubmit) {
+  create(schema, ref, onSubmit, onCancel, validateOnSubmit) {
     return (
       <FormGeneratorForm
         schema={schema}
@@ -32,7 +30,7 @@ var FormGenerator = {
         onSubmit={onSubmit}
         onCancel={onCancel}
         validateOnSubmit={validateOnSubmit}/>
-    );
+    )
   },
 
   /**
@@ -43,7 +41,7 @@ var FormGenerator = {
    * @param  {Boolean} validateOnSubmit Wait until submit to validate
    * @return {Array} An array of JSX Input fields representing the schema
    */
-  generate: function(schema, defaultValue, onChange, validateOnSubmit) {
+  generate(schema, defaultValue, onChange, validateOnSubmit) {
     // Special case for array schemas
     if (_.isArray(schema)) {
       return [
@@ -59,7 +57,6 @@ var FormGenerator = {
       // Lower level default values take precedence
       defaultValue = defaultValue || {};
       var defaultVal = field.defaultValue || defaultValue[key] || '';
-
       if (typeof field.type === 'object') {
         // Validate that it's an array
         if (field.type.length && field.type.length === 1) {
@@ -67,11 +64,12 @@ var FormGenerator = {
           // or [{ object: type, like: this }]
           fields.push(
             <ArrayField
+              key={key}
               ref={key}
               label={field.label}
               schema={field.type[0]}
               onChange={onChange}
-              defaultValue={defaultVal}
+              defaultValue={field.defaultValue || []}
               validateOnSubmit={validateOnSubmit}/>
           );
         } else {
@@ -79,6 +77,7 @@ var FormGenerator = {
           fields.push(
             <ObjectField
               ref={key}
+              key={key}
               label={field.label}
               schema={field.type}
               onChange={onChange}
@@ -107,7 +106,7 @@ var FormGenerator = {
    * @param  {Boolean} validateOnSubmit Wait until submit to validate
    * @return {JSX}      A JSX representation of the field
    */
-  generateFlatField: function(name, field, defaultValue, onChange, validateOnSubmit) {
+  generateFlatField(name, field, defaultValue, onChange, validateOnSubmit) {
     var validators =
       field.validators || (field.validate && [field.validate]) || [];
 
@@ -129,10 +128,7 @@ var FormGenerator = {
             label={field.label || ''}
             placeholder={field.enum[0] || ''}
             defaultValue={defaultValue || ''}
-            fields={ _.map(field.enum, function(val, key) {
-                return {payload: key, text: val}
-              })
-            }
+            fields={field.enum}
             validators={validators}
             onChange={onChange}
             isRequired={field.isRequired}
@@ -216,7 +212,7 @@ var FormGenerator = {
 
   // Useful validator functions
   validators: {
-    lengthEquals: function(len) {
+    lengthEquals(len) {
       return function(val) {
         return (val || '').length !== len
           ? 'Error: must be of length ' + len
@@ -224,7 +220,7 @@ var FormGenerator = {
       };
     },
 
-    minLength: function(min) {
+    minLength(min) {
       return function(val) {
         return (val || '').length < min
           ? 'Error: must be at least ' + min + ' characters'
@@ -232,7 +228,7 @@ var FormGenerator = {
       };
     },
 
-    maxLength: function(max) {
+    maxLength(max) {
       return function(val) {
         return (val || '').length > max
           ? 'Error: must be less than ' + (max + 1) + ' characters'
@@ -240,7 +236,7 @@ var FormGenerator = {
       };
     },
 
-    regex: function(regex) {
+    regex(regex) {
       return function(val) {
         return !(val || '').match(regex)
           ? 'Error: invalid input'
@@ -248,7 +244,7 @@ var FormGenerator = {
       };
     },
 
-    nonEmpty: function() {
+    nonEmpty() {
       return function(val) {
         return !val
           ? 'Error: field is required'
@@ -256,7 +252,7 @@ var FormGenerator = {
       };
     },
 
-    number: function() {
+    number() {
       return function(val) {
         return isNaN(val)
           ? 'Error: value must be numerical'
@@ -266,39 +262,40 @@ var FormGenerator = {
   }
 };
 
-var FormGeneratorForm = React.createClass({
-  propTypes: {
+export class FormGeneratorForm extends React.Component {
+  static propTypes = {
     schema: React.PropTypes.object.isRequired,
     onSubmit: React.PropTypes.func,
     defaultValue: React.PropTypes.object,
     label: React.PropTypes.string,
-    validateOnSubmit: React.PropTypes.bool
-  },
+    validateOnSubmit: React.PropTypes.bool,
+  };
 
-  getDefaultProps: function() {
-    return {
+  static defaultProps = {
       label: '',
       onSubmit: function() {}
-    };
-  },
+  };
 
-  getInitialState: function() {
-    return {
+  constructor(props) {
+    super(props)
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.state = {
       isValid: true,
       validateOnSubmit: this.props.validateOnSubmit
-    };
-  },
+    }
+  }
 
-  onChange: function() {
+  onChange() {
     var that = this;
     setTimeout(function() {
       that.setState({
         isValid: that.isValid()
       });
     }, 100);
-  },
+  }
 
-  onSubmit: function() {
+  onSubmit() {
     if (this.state.validateOnSubmit && !this.state.isValid) {
       return this.setState({
         validateOnSubmit: false
@@ -306,33 +303,33 @@ var FormGeneratorForm = React.createClass({
     }
     var onSubmit = this.props.onSubmit;
     onSubmit && onSubmit(this.getValue());
-  },
+  }
 
-  getValue: function() {
+  getValue() {
     return this.refs.toplevelForm.getValue();
-  },
+  }
 
-  setValue: function(val) {
+  setValue(val) {
     this.refs.toplevelForm.setValue(val);
-  },
+  }
 
-  reset: function() {
+  reset() {
     this.refs.toplevelForm.reset();
-  },
+  }
 
-  isValid: function() {
+  isValid() {
     return this.refs.toplevelForm.isValid();
-  },
+  }
 
-  showErrorMessages: function() {
+  showErrorMessages() {
     this.refs.toplevelForm.showErrorMessages();
-  },
+  }
 
-  render: function() {
+  render() {
     var buttonDisabled = this.state.validateOnSubmit
       ? false
       : !this.state.isValid;
-
+  
     return (
       <form>
         <ObjectField ref='toplevelForm'
@@ -353,7 +350,7 @@ var FormGeneratorForm = React.createClass({
       </form>
     );
   }
-});
+}
 
 var ObjectField = React.createClass({
   propTypes: {
@@ -455,9 +452,10 @@ var ArrayField = React.createClass({
     var defaultLength = negativeOrZero(this.props.defaultValue.length);
     var initialLength = negativeOrZero(this.props.initialLength);
     var actualLength = defaultLength || initialLength || 1;
+    var defaultValue = this.props.defaultValue
     return {
       size: actualLength,
-      tags: this.props.defaultValue,
+      tags: defaultValue,
       value: '',
       focusDiv: {borderBottom: '1px solid #E0E0E0'}
     };
@@ -467,9 +465,6 @@ var ArrayField = React.createClass({
     var that = this;
     var refPrefix = this.props.refPrefix;
     var values = [];
-    /*_.times(this.state.size, function(i) {
-      values.push(that.refs[refPrefix + i].getValue());
-    });*/
     return this.state.tags;
   },
 
@@ -487,6 +482,7 @@ var ArrayField = React.createClass({
   },
 
   reset: function() {
+    console.log('reset array', this.props.defaultValue)
     this.setState({tags: this.props.defaultValue, value: ''})
   },
 
@@ -527,7 +523,7 @@ var ArrayField = React.createClass({
     if(e.keyCode == 13 || e.keyCode === 9) {
       if(!_.includes(this.state.tags, this.state.value) && this.state.value.length && !this.state.value.trim() == '') {
     console.log(this.state.value.length)
-        this.state.tags.push(this.state.value)
+        this.setState({tags: this.state.tags.concat(this.state.value)})
         this.setState({value: ''})
 
         if(e.preventDefault) {
@@ -573,42 +569,7 @@ var ArrayField = React.createClass({
 
   render: function() {
     var that = this;
-    var schema = this.props.schema;
-    var refPrefix = this.props.refPrefix;
-    var defaultValue = this.props.defaultValue;
-    var onChange = this.props.onChange;
-    var validateOnSubmit = this.props.validateOnSubmit;
 
-    var arrayFields = [];
-    _.times(this.state.size, function(i) {
-      var defaultVal = (defaultValue && defaultValue[i]) || '';
-      var fieldRef = refPrefix + i;
-      // Flat/native type
-      if (typeof schema === 'function') {
-        var mockSchema = {
-          type: schema,
-          label: that.props.label,
-          defaultValue: defaultVal
-        };
-        arrayFields.push(
-          FormGenerator.generateFlatField(
-            fieldRef, mockSchema, defaultVal, onChange, validateOnSubmit
-          )
-        );
-      } else {
-        // It's an object or an object array, so use 'generate'
-        var schemaWrapper = {};
-        schemaWrapper[fieldRef] = {
-          type: schema,
-          defaultValue: defaultVal
-        };
-        arrayFields.push(
-          FormGenerator.generate(
-            schemaWrapper, defaultVal, onChange, validateOnSubmit
-          )
-        );
-      }
-    });
     return (
       <div>
           <div className="tags" style={this.state.focusDiv}>
@@ -665,9 +626,8 @@ var FlatField = React.createClass({
   },
 
   getInitialState: function() {
-    console.log(this.props.defaultValue)
     return {
-      value: this.props.defaultValue || '',
+      value: this.props.defaultValue,
       tags: [],
       errorMessages: []
     };
@@ -752,33 +712,8 @@ var FlatField = React.createClass({
   },
 
   changeTime: function(e, time) {
-    this.setValue(moment(time).format('h:mm a'))
-  },
-
-  addTag: function(e) {
-    
-
-    if(e.keyCode == 13 || e.keyCode === 9) {
-      if(!_.includes(this.state.tags, this.state.value)) {
-        this.state.tags.push(this.state.value)
-        this.setState({value: ''})
-
-        if(e.preventDefault) {
-          e.preventDefault();
-        }
-      }
-    }
-
-  },
-
-  onChangeTag: function(e , index) {
-    console.log(index)
-    this.setValue(e.target.value)
-  },
-
-  removeTag: function(e) {
-    this.state.tags.splice(e.taget.dataset.val, 1)
-    this.forceUpdate()
+    this.setValue(moment(time).format('hh:mm a'))
+   //this.setState({time: time})
   },
 
   render: function() {
@@ -811,11 +746,12 @@ var FlatField = React.createClass({
         );
         case 'select': return (
           <div>
-            <SelectField
-              value={that.state.value}
-              onChange={that.onChangeSelect}
-              hintText={that.props.label}
-              menuItems={that.props.fields} />
+            <SelectField value={that.state.value} onChange={that.onChangeSelect} hintText={that.props.label}>
+              {that.props.fields.map((field, key) =>
+              
+                <MenuItem key={key} value={key} primaryText={field}/>
+              )}
+            </SelectField>
           </div>
         );
         case 'date': return (
@@ -826,12 +762,13 @@ var FlatField = React.createClass({
             onChange={that._handleChange} />
         );
         case 'time': return (
-          <TimePicker
-            format="ampm"
-            style={{marginTop: '1em'}}
-            value={that.state.value}
-            onChange={that.changeTime}
-            hintText={that.props.label} />
+            <TimePicker
+              format="24hr"
+              pedantic={true}
+              style={{marginTop: '1em'}}
+              value={that.state.value}
+              onChange={that.changeTime}
+              hintText={that.props.label} />
         )
         case 'hidden': return null;
       }

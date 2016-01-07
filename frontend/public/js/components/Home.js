@@ -1,7 +1,7 @@
-
 import Header from './Header'
+import EntityEvent from './EntityEvent'
+import SearchResults from './SearchResults'
 /*var SessionList = require('./SessionList')
-var EntityEvent = require('./EntityEvent')
 var SearchAndLink = require('./SearchAndLink')
 var SearchResults = require('./SearchResults')
 var Login = require('./Login')
@@ -13,23 +13,21 @@ import RaisedButton from 'material-ui/lib/raised-button';
 
 export default class Home extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      edit: false
+    }
+  }
+
   render() {
-   /* return (
-      <div>
-        <div className="row">
-          <LoginHeader /> 
-        </div>
-        <div>
-          <SearchResults/>
-          <SessionList/>
-          <EntityEvent edit={this.state.edit}/>
-          <SearchAndLink/>
-        </div>
-      </div>
-    );*/
     return (
+      <div>
       <div className="row">
           <Header /> 
+          <EntityEvent edit={this.state.edit}/>
+      </div>
+        <SearchResults />
       </div>
     )
   }
