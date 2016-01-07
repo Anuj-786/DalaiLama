@@ -1,6 +1,7 @@
 var express = require('express');
 
 var app = express();
+var debug = require('debug')('app')
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var _ = require('lodash');
@@ -12,7 +13,7 @@ var consumers = {
   'r-entity': 'crud/read',
   'u-entity': 'crud/update',
 
-  // search Operation
+  // Search Operation
   'r-search': 'crud/search'
 }
 
@@ -27,9 +28,10 @@ io.on('connection', function(socket) {
       evc = './' + evc
       var consume = require(evc)
       socket.on(ev, function(data) {
-        consume(data, socket).catch(function(err) {
-          console.log(err)
-        }).done()
+        consume(data, socket)
+          .catch(function(err) {
+            debug("error", err)
+          }).done()
       })
     })
   })
