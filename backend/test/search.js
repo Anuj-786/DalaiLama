@@ -2,8 +2,8 @@ var client = require('./socket-client');
 
 // Testing Search 
 client.emit('r-search', {
-  q: "KalaChakra",
-  lang: "english"
+  q: "le",
+  lang: "french"
 })
 
 client.on('r-search.done', function(data) {

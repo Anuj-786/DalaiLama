@@ -44,8 +44,13 @@ module.exports = {
     event: {
       fields: ['name'],
       joins: {
-        session: {
-          fields: ['title']
+        speaker: {
+          fields: ['title'],
+          joins: {
+            person: {
+              fields: ['name']
+            }
+          }
         }
       }
     }
