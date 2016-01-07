@@ -2,6 +2,7 @@ var webpack = require('webpack');
 var path = require('path');
 
 module.exports = {
+  devtool: 'eval',
   entry: './public/js/app.js',
   output: {
     path: path.join(__dirname, 'public'),
@@ -10,8 +11,8 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
-      loaders: ['babel', 'jsx'],
-      include: path.join(__dirname, 'public')
+      loader: 'babel-loader',
+      include: path.join(__dirname, 'public'),
     }]
   }
 };

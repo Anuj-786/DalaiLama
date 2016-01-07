@@ -1,24 +1,19 @@
-var React = require('react');
-var RaisedButton = require('material-ui/lib/raised-button');
 
-var LoginHeader = require('./Header')
-var SessionList = require('./SessionList')
+import Header from './Header'
+/*var SessionList = require('./SessionList')
 var EntityEvent = require('./EntityEvent')
 var SearchAndLink = require('./SearchAndLink')
 var SearchResults = require('./SearchResults')
 var Login = require('./Login')
+*/
 
-var Home = React.createClass({
+import React from 'react';
+import ReactDOM from 'react-dom';
+import RaisedButton from 'material-ui/lib/raised-button';
 
-  getInitialState: function() {
-    
-    return {
-      edit: false 
-    }
+export default class Home extends React.Component {
 
-  },
-
-  render:function() {
+  render() {
    /* return (
       <div>
         <div className="row">
@@ -34,11 +29,9 @@ var Home = React.createClass({
     );*/
     return (
       <div className="row">
-        <h1>Hii I am Pankja</h1>
-        <RaisedButton label="Secondary" secondary={true} />
+          <Header /> 
       </div>
     )
-  },
-});
+  }
+}
 
-module.exports = Home;

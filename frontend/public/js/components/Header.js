@@ -1,18 +1,17 @@
-var React = require('react')
-//var RaisedButton = require('material-ui/lib/raised-button')
-var RaisedButton = require('material-ui/lib/raised-button')
-var TextField = require('material-ui/lib/text-field')
-var SelectField = require('material-ui/lib/SelectField')
-var MenuItem = require('material-ui/lib/menus/menu-item')
-var injectTapEventPlugin = require("react-tap-event-plugin")
+import React from 'react';
+import ReactDOM from 'react-dom';
+import RaisedButton from 'material-ui/lib/raised-button';
+import TextField from 'material-ui/lib/text-field';
+import SelectField from 'material-ui/lib/SelectField';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import Toolbar from 'material-ui/lib/toolbar/toolbar';
+import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
+import ToolbarSeparator from 'material-ui/lib/toolbar/toolbar-separator';
+import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 
-
-var Toolbar = require('material-ui/lib/toolbar/toolbar');
-var ToolbarGroup = require('material-ui/lib/toolbar/toolbar-group');
-var ToolbarSeparator = require('material-ui/lib/toolbar/toolbar-separator');
-var ToolbarTitle = require('material-ui/lib/toolbar/toolbar-title');
-var socket = require('../socket')
-var styles = require('../../css/styles')
+import socket from '../socket'
+import styles from '../../css/styles'
 injectTapEventPlugin();
 
 var entityOptions = [
@@ -31,48 +30,53 @@ var filterOptions = [
   'Chinese',
 ]
 
-var Header = React.createClass({
+export default class Header extends React.Component {
 
-  getInitialState: function() {
-    return {
+  constructor(props) {
+    super(props)
+    this.state = {
       value: '',
       lang: 1,
       entity: 1,
     }
-  },
+  }
 
-  changeSearchTxt: function(e) {
+  changeSearchTxt(e) {
     this.setState({value: e.target.value})
-  },
+  }
+ 
 
-  submitSearch: function() {
+  submitSearch() {
 
-    socket.emit('r-search', {q: this.state.value, lang: (filterOptions[this.state.lang].text).toLowerCase()})
+    var s = 'Pankaj'
+    
+    socket.emit('r-search', {q: this.state.value, lang: (filterOptions[this.state.lang]).toLowerCase()})
 
-  },
+  }
 
-  changeLang: function(e, index) {
-    this.setState({lang: e.target.value})
-  },
+  changeLang(e, index, value) {
+    this.setState({lang: value})
+  }
 
-  changeEntity: function(e, index) {
-    this.setState({entity: e.target.value})
-  },
+  changeEntity(e, index, value) {
+    this.setState({entity: value})
+  }
+  
 
-  render: function() {
-   /* return (
+  render() {
+    return (
       <Toolbar style={styles.header} className='pageHeader'>
         <ToolbarGroup key={0} float="left">
-          <TextField hintText="Search....." style={styles.search} onChange={this.changeSearchTxt} value={this.state.value} onEnterKeyDown={this.submitSearch}/>
+          <TextField hintText="Search....." style={styles.search} onChange={this.changeSearchTxt.bind(this)} value={this.state.value} onEnterKeyDown={this.submitSearch.bind(this)}/>
         </ToolbarGroup>
         <ToolbarGroup key={1} float="left">
           <div className='dropdownDiv'>
-            <SelectField style={styles.searchDropDown} value={this.state.lang} onChange={this.changeLang} floatingLabelText="Language">
+            <SelectField style={styles.searchDropDown} value={this.state.lang} onChange={this.changeLang.bind(this)} label="Language">
               {filterOptions.map(function(field, key) {
                 return <MenuItem key={key} value={key} primaryText={field}/>
               })}
             </SelectField>
-            <SelectField style={styles.searchDropDown} value={this.state.entity} onChange={this.changeEntity} floatingLabelText="Entity">
+            <SelectField style={styles.searchDropDown} value={this.state.entity} onChange={this.changeEntity.bind(this)} label="Entity">
               {entityOptions.map(function(field, key) {
                 return <MenuItem key={key} value={key} primaryText={field}/>
               })}
@@ -81,13 +85,12 @@ var Header = React.createClass({
           </div>
         </ToolbarGroup>
       </Toolbar>
-    );*/
-   return (
+    )
+   /*return (
     <div>
       <RaisedButton label="Activities" style={styles.activities}/>
     </div>
-   )
-  },
-});
+   )*/
+  }
+}
 
-module.exports = Header;
