@@ -40,6 +40,7 @@ export default class Home extends React.Component {
       entity: 1,
       openSnacker: false,
       snackerMessage: "",
+      searchResults: [],
     }
   }
 
@@ -70,9 +71,9 @@ export default class Home extends React.Component {
       <div className="row">
           <Header entityOptions={this.state.entityOptions} filterOptions={this.state.filterOptions} lang={this.state.lang} entity={this.state.entity} changeEntity={this.changeEntity}/> 
           {this.state.entityOptions[this.state.entity] === 'Event' && <EntityEvent edit={this.state.edit}/>}
-          <Speaker />
+          {this.state.entityOptions[this.state.entity] === 'Speaker' && <Speaker />}
       </div>
-        <SearchResults />
+      {!_.isEmpty(this.state.searchResults) && <SearchResults />}
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}
