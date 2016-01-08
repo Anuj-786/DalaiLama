@@ -5,16 +5,21 @@ client.emit('c-entity', {
   index: 'events',
   type: 'event',
   body: {
-    title_english: "KalaChakra 2014",
-    title_tibetan: "དས་ཀ་འཁར་ལ།",
-    speakers: [{
-      person: "AVGlWN-6hZb3Opo_wyZk",
-      type: "speaker"
-    }, {
-      speaker: "AVGlXJZbhZb3Opo_wyZo",
-      type: "speaker"
-    }],
-    session: ["AVGlWtJEhZb3Opo_wyZl"]
+    french: {
+      title: 'KalaChakra 2014',
+      classification: 'Teachings',
+      startingDate: '1454889600000',
+      endingDate: '1455062400000',
+      startingTime: '1455105600000',
+      city: 'Ladakh',
+      state: 'J&K',
+      country: 'India',
+      languages: 'english',
+      keywords: ['ladakh', 'KalaChakra', '2014'],
+      description: 'KalaChakra',
+      translation: 'french',
+      venue: 'Ladakh'
+    }
   }
 });
 
