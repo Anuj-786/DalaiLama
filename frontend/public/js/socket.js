@@ -1,2 +1,4 @@
-var io = require('socket.io-client/socket.io');
-module.exports = io.connect('http://localhost:3000');
+import io from 'socket.io-client'
+var socket = io.connect('http://0.0.0.0:3000')
+
+export default socket

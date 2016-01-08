@@ -1,31 +1,39 @@
-var React = require('react')
-var FormGenerator = require('../utils/form-generator')
-var FontIcon = require('material-ui/lib/font-icon')
-var FlatButton = require('material-ui/lib/flat-button');
-var TextField = require('material-ui/lib/text-field')
-var Paper = require('material-ui/lib/paper')
-var DropDownMenu = require('material-ui/lib/drop-down-menu')
-var WindowHeader = require('./WindowHeader')
-var eventConfig = require('../formSchema/event.json')
-var generateSchema = require('./generateSchema')
-var Dialog = require('material-ui/lib/dialog')
-var Snackbar = require('material-ui/lib/snackbar')
-var moment = require('moment')
-var socket = require('../socket')
+import React from 'react';
+import FormGenerator from '../utils/form-generator'
+import FlatButton from 'material-ui/lib/flat-button'
+import TextField from 'material-ui/lib/text-field'
+import DropDownMenu from 'material-ui/lib/DropDownMenu'
+import MenuItem from 'material-ui/lib/menus/menu-item'
+import WindowHeader from './WindowHeader'
+import eventConfig from '../formSchema/event.json'
+import generateSchema from './generateSchema'
+import Dialog from 'material-ui/lib/dialog'
+import Snackbar from 'material-ui/lib/snackbar'
+import moment from 'moment'
+import socket from '../socket'
 
-var styles = require('../../css/styles.js')
+import styles from '../../css/styles.js'
 
-var filterOptions = [
-  { payload: '1', text: 'English' },
-  { payload: '2', text: 'French' },
+var languageOptions = [
+  'English',
+  'French',
 ]
 
 var classifications = ['Teaching', 'Talk', 'Address', 'Message', 'Interaction', 'Longlife']
 
 
-var EntityEvent = React.createClass({
-  getInitialState: function() {
-    return {
+export default class EntityEvent extends React.Component {
+
+
+  constructor(props) {
+    super(props)
+    this.changeLanguage = this.changeLanguage.bind(this);
+    this.onDiscard = this.onDiscard.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.closeMessage = this.closeMessage.bind(this);
+    this.onCancel = this.onCancel.bind(this);
+    this.state = {
       title: 'Add Event',
       columns: 5,
       bgcolor: 'bgorange',
@@ -38,12 +46,11 @@ var EntityEvent = React.createClass({
       discardChanges: false,
       index: 0,
       changeLang: 0,
+      data: {},
     }
-  },
+  }
 
-  language: {},
-
-  componentDidMount: function() {
+  componentDidMount() {
     
     if(this.props.edit) {
       socket.emit('r-entity', {
@@ -59,31 +66,32 @@ var EntityEvent = React.createClass({
       }) 
 
     }.bind(this))
-  },
+  }
 
-  schema: function() {
+  schema() {
+    return generateSchema(eventConfig, this.state.defaultValues, (languageOptions[this.state.index]).toLowerCase() , {classification: classifications})
 
-    return generateSchema(eventConfig, this.state.defaultValues, this.state.index === 1 && 'french' || this.state.index === 0 && 'english' , {classification: classifications})
+  }
 
-  },
+  onSubmit(data) {
 
-  onSubmit: function(data) {
+    this.setState({index: this.state.index})
+    this.refs.myFormRef.reset()
 
     data.classification  = classifications[data.classification]  
     data.startingDate = +moment(data.startingDate)
     data.endingDate = +moment(data.endingDate)
 
-    this.language['english'] = data
-    console.log('Parsed form data', this.language);
+    this.state.data[(languageOptions[this.state.index]).toLowerCase()] = data
+    console.log('Parsed form data', this.state.data);
 
     if(this.props.edit) {
-      socket.emit('u-entity', {type: 'event', _id: 'AVIRisUFFs21aZysquQ0', update: {set: this.language.english}})
+      socket.emit('u-entity', {type: 'event', _id: 'AVIRisUFFs21aZysquQ0', update: {set: this.language}})
     } 
     else {
-      socket.emit('c-entity', {index: 'events', type: 'event', body: this.language.english})
+      socket.emit('c-entity', {index: 'events', type: 'event', body: this.language})
     }
 
-    this.refs.myFormRef.reset()
 
     _.forEach(['c-entity.done', 'c-entity.error', 'u-entity.done', 'u-entity.error'], function(entity) {
 
@@ -92,19 +100,22 @@ var EntityEvent = React.createClass({
           resultMessage: data.message,
           openSnacker: true,
         })
+
       }.bind(this))
 
     }.bind(this))
 
-  },
 
-  onCancel: function() {
+    this.refs.myFormRef.reset()
+  }
+
+  onCancel() {
 
     this.refs.myFormRef.reset()
 
-  },
+  }
 
-  changeLanguage: function(event, index, menuItem) {
+  changeLanguage(event, index, menuItem) {
 
     if(!this.props.edit) {
       var result = _.remove(_.compact(_.values(this.refs.myFormRef.getValue())), function(field) {
@@ -123,7 +134,6 @@ var EntityEvent = React.createClass({
         })
       } 
     }
-
     else {
       var currentValues = this.refs.myFormRef.getValue()
       currentValues['classification'] = classifications[currentValues['classification']]
@@ -139,19 +149,19 @@ var EntityEvent = React.createClass({
 
     }
 
-  },
+  }
 
-  closeMessage: function() {
+  closeMessage() {
     this.setState({openSnacker: false})
-  },
+  }
   
-  handleClose: function() {
+  handleClose() {
     this.setState({
       discardChanges: false
     }) 
-  },
+  }
 
-  onDiscard: function() { 
+  onDiscard() { 
 
     this.setState({
       discardChanges: false,
@@ -159,9 +169,9 @@ var EntityEvent = React.createClass({
     })
 
     this.refs.myFormRef.reset()
-  },
+  }
 
-  render: function() {
+  render() {
     var actions = [
       <FlatButton
         label="No"
@@ -179,13 +189,18 @@ var EntityEvent = React.createClass({
       var ref = 'myFormRef';
       var onSubmit = this.onSubmit;
       var onCancel = this.onCancel
-      var formElement = FormGenerator.create(schema, ref, onSubmit,onCancel, true);
+      var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true);
     }
+
     return (
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor}>
         <div className="createEntityContainer">
           <div>
-            <DropDownMenu menuItems={filterOptions} onChange={this.changeLanguage} selectedIndex={this.state.index} disabled={this.state.dropdownDisable}/>
+            <DropDownMenu onChange={this.changeLanguage} value={this.state.index} disabled={this.state.dropdownDisable} label="Language">
+              {languageOptions.map((field, key) => 
+                <MenuItem key={key} value={key} primaryText={field}/>
+              )}
+            </DropDownMenu>
           </div>
           <div>
             {formElement}
@@ -195,10 +210,9 @@ var EntityEvent = React.createClass({
           open={this.state.openSnacker}
           message={this.state.resultMessage}
           action="ok"
-          onActionTouchTap={this.closeMessage}
-          autoHideDuration='5000'
+          onRequestClose={this.closeMessage}
+          autoHideDuration={3000}
         />
-
         <Dialog
           title="Discard Changes"
           actions={actions}
@@ -211,6 +225,5 @@ var EntityEvent = React.createClass({
       </WindowHeader>
     )
   }
-})
+}
 
-module.exports = EntityEvent
