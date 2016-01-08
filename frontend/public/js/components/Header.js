@@ -35,8 +35,8 @@ export default class Header extends React.Component {
     super(props)
     this.state = {
       value: '',
-      lang: 1,
-      entity: 1,
+      lang: this.props.lang,
+      entity: this.props.entity,
     }
   }
 
@@ -71,12 +71,12 @@ export default class Header extends React.Component {
         <ToolbarGroup key={1} float="left">
           <div className='dropdownDiv'>
             <SelectField style={styles.searchDropDown} value={this.state.lang} onChange={this.changeLang.bind(this)} label="Language">
-              {filterOptions.map(function(field, key) {
+              {this.props.filterOptions.map(function(field, key) {
                 return <MenuItem key={key} value={key} primaryText={field}/>
               })}
             </SelectField>
-            <SelectField style={styles.searchDropDown} value={this.state.entity} onChange={this.changeEntity.bind(this)} label="Entity">
-              {entityOptions.map(function(field, key) {
+            <SelectField style={styles.searchDropDown} value={this.props.entity} onChange={this.props.changeEntity} label="Entity">
+              {this.props.entityOptions.map(function(field, key) {
                 return <MenuItem key={key} value={key} primaryText={field}/>
               })}
             </SelectField>

@@ -9,6 +9,7 @@ import TimePicker from 'material-ui/lib/time-picker'
 import moment from 'moment'
 import styles from '../../css/styles'
 import DatePicker from 'material-ui/lib/date-picker/date-picker'
+import IconButton from 'material-ui/lib/icon-button';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
@@ -368,7 +369,15 @@ var ObjectField = React.createClass({
   },
 
   getInitialState: function() {
-    return {};
+    return {
+      speakerName: '',
+      speakerType: 0,
+      speakerLanguage: 1,
+      type: ['Translator'],
+      language: ['Tibetan', 'English', 'Hindi', 'French'],
+      speakers: [],
+      speaker: false,
+    };
   },
 
   getValue: function() {
@@ -403,12 +412,37 @@ var ObjectField = React.createClass({
     return valid;
   },
 
+  changeLanguage: function(event, index, value) {
+     this.setState({speakerLanguage: value}) 
+  },
+
+  changeType: function(event, index, value) {
+     this.setState({speakerType: value}) 
+  },
+
+  changeName: function(event) {
+    this.setState({speakerName: event.target.value}) 
+  },
+
   showErrorMessages: function() {
     for (var field in this.props.schema) {
       this.refs[field].showErrorMessages();
     }
   },
 
+  addSpeaker: function(e) {
+
+    if(this.state.speakerName) {
+      this.setState({speakers: this.state.speakers.concat({name: this.state.speakerName, type: this.state.type[this.state.speakerType], language: this.state.language[this.state.speakerLanguage]}), speakerName: ''})
+    } 
+
+  },
+
+  deleteSpeaker: function(e) {
+
+    this.setState({speaker: this.state.speakers.splice(e.target.dataset.val, 1)})
+
+  },
   render: function() {
     var subFields = FormGenerator.generate(
       this.props.schema,
@@ -419,6 +453,55 @@ var ObjectField = React.createClass({
     return (
       <div>
         {subFields}
+        {this.state.speaker && <div className="speakerContainer"> 
+          <div className="speakerFields">
+          {!_.isEmpty(this.state.speakers) && <div className="speakerList">
+              {this.state.speakers.map(function(field, key) {
+              
+                return (
+                  <div className="speaker">
+                    <p className="speakerName">{field.name}</p>
+                    <IconButton
+                      data-val={key}
+                      iconClassName="material-icons"
+                      onFocus={this.deleteSpeaker}
+                      tooltip="Delete">
+                     close
+                    </IconButton>
+                    <IconButton
+                      data-val={key}
+                      iconClassName="material-icons"
+                      onFocus={this.editSpeaker}
+                      tooltip="Edit">
+                     edit
+                    </IconButton>
+                  </div>
+                )
+              }.bind(this))}
+            </div>}
+            <TextField
+              hintText="Name"
+              value={this.state.speakerName}
+              onChange={this.changeName} />
+              <br/>
+            <SelectField value={this.state.speakerType} onChange={this.changeType}>
+              {this.state.type.map((field, key) => 
+               
+                <MenuItem value={key} key={key} primaryText={field}/>
+              )} 
+            </SelectField>
+            <br/>
+            <SelectField value={this.state.speakerLanguage} onChange={this.changeLanguage}>
+
+              {this.state.language.map((field, key) => 
+               
+                <MenuItem value={key} key={key} primaryText={field}/>
+
+              )} 
+            </SelectField><br/>
+            <RaisedButton label="Add" onTouchTap={this.addSpeaker}/>
+          </div>
+        </div>}
       </div>
     );
   }

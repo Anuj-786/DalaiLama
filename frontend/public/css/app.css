@@ -1,3 +1,19 @@
+.speakerContainer {
+  padding: 20px 0px 20px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.speaker {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 5px;
+}
+.speakerList {
+  border: 1px solid #f0f0f0;
+}
 .contentContainer {
   margin-bottom: 2em;
   margin-top: 1em;
@@ -9,6 +25,9 @@
 .dropdownDiv {
   display: flex;
   align-items: center;
+}
+.speakerName {
+  flex: 1
 }
 .row {
   max-width: 100%
