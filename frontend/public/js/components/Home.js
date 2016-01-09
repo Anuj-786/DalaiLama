@@ -1,44 +1,87 @@
-var React = require('react');
-var RaisedButton = require('material-ui/lib/raised-button');
-
-var LoginHeader = require('./Header')
-var SessionList = require('./SessionList')
-var EntityEvent = require('./EntityEvent')
+import Header from './Header'
+import EntityEvent from './EntityEvent'
+import SearchResults from './SearchResults'
+import Snackbar from 'material-ui/lib/snackbar';
+import Speaker from './Speakers'
+/*var SessionList = require('./SessionList')
 var SearchAndLink = require('./SearchAndLink')
 var SearchResults = require('./SearchResults')
 var Login = require('./Login')
+*/
+import socket from '../socket'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import RaisedButton from 'material-ui/lib/raised-button';
 
-var Home = React.createClass({
+export default class Home extends React.Component {
 
-  getInitialState: function() {
-    
-    return {
-      edit: false 
+  constructor(props) {
+    super(props)
+    this.changeEntity = this.changeEntity.bind(this)
+    this.componentDidMount = this.componentDidMount.bind(this)
+    this.state = {
+      edit: false,
+      filterOptions: [
+        'English',
+        'Hindi',
+        'Tibtitan',
+        'Chinese',
+      ],
+      entityOptions: [
+        'Event' ,
+        'Session',
+        'Raw Video',
+        'Raw Audio',
+        'Edited Video',
+        'Edited Audio',
+        'Speaker',
+      ],
+      lang: 1,
+      entity: 1,
+      openSnacker: false,
+      snackerMessage: "",
     }
+  }
 
-  },
+  componentDidMount() {
+    socket.on('r-search.done', function(result) {
+      console.log(result)
+      this.setState({snackerMessage: result.message, openSnacker: true}) 
+    }.bind(this))
 
-  render:function() {
-   /* return (
-      <div>
-        <div className="row">
-          <LoginHeader /> 
-        </div>
-        <div>
-          <SearchResults/>
-          <SessionList/>
-          <EntityEvent edit={this.state.edit}/>
-          <SearchAndLink/>
-        </div>
-      </div>
-    );*/
+    socket.on('r-search.error', function(result) {
+      console.log(result)
+      this.setState({snackerMessage: result.message, openSnacker: true}) 
+    }.bind(this))
+
+  }
+
+  changeEntity(e, index, value) {
+    this.setState({entity: value})
+  }
+
+  closeSnacker() {
+    this.setState({openSnacker: false})
+  }
+
+  render() {
     return (
+      <div>
       <div className="row">
-        <h1>Hii I am Pankja</h1>
-        <RaisedButton label="Secondary" secondary={true} />
+          <Header entityOptions={this.state.entityOptions} filterOptions={this.state.filterOptions} lang={this.state.lang} entity={this.state.entity} changeEntity={this.changeEntity}/> 
+          {this.state.entityOptions[this.state.entity] === 'Event' && <EntityEvent edit={this.state.edit}/>}
+          <Speaker />
+      </div>
+        <SearchResults />
+        <Snackbar
+          open={this.state.openSnacker}
+          message={this.state.snackerMessage}
+          action="ok"
+          onRequestClose={this.closeSnacker.bind(this)}
+          autoHideDuration={5000}
+        />
       </div>
     )
-  },
-});
+  }
+}
 
-module.exports = Home;

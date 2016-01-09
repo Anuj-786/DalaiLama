@@ -1,21 +1,25 @@
-var React = require('react')
-var IconButton = require('material-ui/lib/icon-button')
-var styles = require('../../css/styles')
-var FlatButton = require('material-ui/lib/flat-button');
-var DropDownMenu = require('material-ui/lib/drop-down-menu')
+import React from 'react'
+import IconButton from 'material-ui/lib/icon-button'
+import styles from '../../css/styles'
+import FlatButton from 'material-ui/lib/flat-button'
+import DropDownMenu from 'material-ui/lib/DropDownMenu'
+import MenuItem from 'material-ui/lib/menus/menu-item'
 
 var menuItems = [
-   { payload: '1', text: 'English' },
-   { payload: '2', text: 'Hindi' },
-   { payload: '3', text: 'Tibetan' },
+  'English',
+  'Hindi',
+  'Tibetan',
 ]
-var WindowHeader = React.createClass({
+export default class WindowHeader extends React.Component {
 
-  getInitialState: function() {
-    return {}  
-  },
+  constructor(props) {
+    super(props)
+    this.state = {
+      value: 1
+    }
+  }
 
-  render: function() {
+  render() {
     var columns = "large-" + this.props.columns + " columns contentContainer"
     var header = "entityHeader " + this.props.bgcolor
     var entryDiv = 'viewEntry ' + this.props.bcolor
@@ -29,9 +33,17 @@ var WindowHeader = React.createClass({
           {this.props.subHeader && <div className="headerTitleDiv">
             <p className="headerTitle">{this.props.subHeader}</p>
             <div>
-            {this.props.searchBar && <DropDownMenu menuItems={menuItems} style={styles.searchBarWidth}/> }
-            {this.props.button && this.props.button.map(function(value, i){
-              return <FlatButton key={i} label={value}/>
+            {this.props.searchBar && 
+              <DropDownMenu style={styles.searchBarWidth} value={this.state.value}>
+                {menuItems.map((field, key) => {
+                
+                  <MenuItem value={key} primaryText={field}/>
+
+                })}
+              </DropDownMenu>
+            }
+            {this.props.button && this.props.button.map((value, i) => {
+              <FlatButton key={i} label={value}/>
             })}
             </div>
           </div>}
@@ -40,6 +52,4 @@ var WindowHeader = React.createClass({
       </div>
     )
   }
-})
-
-module.exports = WindowHeader
+}
