@@ -9,6 +9,9 @@ import ToolbarGroup from 'material-ui/lib/toolbar/toolbar-group';
 import ToolbarSeparator from 'material-ui/lib/toolbar/toolbar-separator';
 import ToolbarTitle from 'material-ui/lib/toolbar/toolbar-title';
 import WindowHeader from './WindowHeader'
+import speakerConfig from '../formSchema/speaker.json'
+import generateSchema from './generateSchema'
+import FormGenerator from '../utils/form-generator'
 
 import socket from '../socket'
 import styles from '../../css/styles'
@@ -17,6 +20,8 @@ injectTapEventPlugin();
 export default class Speaker extends React.Component {
   constructor(props) {
     super(props)
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onCancel = this.onCancel.bind(this);
     this.state = {
       title: 'Add Speaker',
       columns: 5,
@@ -27,40 +32,34 @@ export default class Speaker extends React.Component {
       speakerLanguages: ['Hindi', 'English', 'Tibetan', 'French'],
       type: 0,
       lang: 1,
+      speaker: {}
     }
   }
 
-  changeLang = (event, index, value) => this.setState({lang: value});
+  schema() {
+    return generateSchema(speakerConfig, this.state.speaker, 'english', {type: this.state.speakerTypes, language: this.state.speakerLanguages} )
+  }
 
-  changeName = (event) => this.setState({speakerName: event.target.value});
+  onSubmit(data) {
+    console.log(data)
 
-  changeType = (event, index, value) => this.setState({type: value});
+    this.refs.myFormRef.reset()
+  }
 
-  addSpeaker = (e) => console.log(this.state.speakerName);
+  onCancel() {
+    this.refs.myFormRef.reset()
+  }
 
   render() {
+      var schema = this.schema();
+      var ref = 'myFormRef';
+      var onSubmit = this.onSubmit;
+      var onCancel = this.onCancel
+      var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true);
     return (
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor}>
         <div className="speakerContainer">
-          <TextField
-            hintText="Speaker Name"
-            onChange={this.changeName}
-            value={this.state.speakerName} /><br/>
-          <SelectField value={this.state.type} onChange={this.changeType}>
-            {this.state.speakerTypes.map((field, key) => 
-              
-              <MenuItem value={key} key={key} primaryText={field}/>
-
-            )}
-          </SelectField><br/>
-          <SelectField value={this.state.lang} onChange={this.changeLang}>
-            {this.state.speakerLanguages.map((field, key) => 
-              
-              <MenuItem value={key} key={key} primaryText={field}/>
-
-            )}
-          </SelectField><br/>
-          <RaisedButton label="Add Speaker" primary={true} onTouchTap={this.addSpeaker}/>
+          {formElement}
         </div>
       </WindowHeader>
     )

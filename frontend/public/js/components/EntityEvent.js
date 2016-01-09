@@ -72,12 +72,13 @@ export default class EntityEvent extends React.Component {
   }
 
   schema() {
-    return generateSchema(eventConfig, !this.state.edit && this.state.defaultValues.english || this.state.defaultValues, (languageOptions[this.state.index]).toLowerCase(), {classification: classifications})
+    return generateSchema(eventConfig, this.state.defaultValues.english || this.state.defaultValues, (languageOptions[this.state.index]).toLowerCase(), {classification: classifications})
 
   }
 
   onSubmit(data) {
 
+    this.setState({defaultValues: {}})
     data.classification  = classifications[data.classification]  
     data.startingDate = +moment(data.startingDate)
     data.endingDate = +moment(data.endingDate)
@@ -105,12 +106,12 @@ export default class EntityEvent extends React.Component {
 
     }.bind(this))
 
-
     this.refs.myFormRef.reset()
   }
 
   onCancel() {
 
+    console.log(this.refs.myFormRef)
     this.refs.myFormRef.reset()
 
   }
@@ -121,7 +122,7 @@ export default class EntityEvent extends React.Component {
       var result = _.remove(_.compact(_.values(this.refs.myFormRef.getValue())), function(field) {
         return !_.isArray(field) || field.length > 0
       })
-
+      console.log(result)
       if(!result.length) {
         this.setState({
           index: index
@@ -189,7 +190,7 @@ export default class EntityEvent extends React.Component {
       var ref = 'myFormRef';
       var onSubmit = this.onSubmit;
       var onCancel = this.onCancel
-      var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true);
+      var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true, this.props.edit);
     }
 
     return (

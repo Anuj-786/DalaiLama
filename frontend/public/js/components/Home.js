@@ -16,7 +16,7 @@ export default class Home extends React.Component {
     this.changeEntity = this.changeEntity.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
-      edit: false,
+      edit: true,
       filterOptions: [
         'English',
         'Hindi',
