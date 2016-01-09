@@ -1,7 +1,7 @@
+var debug = require('debug')('update')
 var _ = require('lodash')
 var updater = require('js-object-updater')
 var es = require('../es')
-
 
 module.exports = function(params, socket) {
   var missingArgumentMessage
@@ -23,12 +23,13 @@ module.exports = function(params, socket) {
       id: params._id
     })
     .then(function(res) {
-      console.log("1", res._source)
+      debug('res', res)
       updater({
         doc: res._source,
         update: params.update,
         force: true
       })
+      
       return es.index({
         index: params.type + "s",
         type: params.type,
@@ -37,7 +38,7 @@ module.exports = function(params, socket) {
       })
     })
     .then(function(res) {
-      console.log(res)
+
       socket.emit("u-entity.done", {
         message: "Successfully updated " + params.type,
         code: res.status || 204,
@@ -45,7 +46,7 @@ module.exports = function(params, socket) {
       })
     })
     .catch(function(err) {
-      console.log(err)
+
       socket.emit("u-entity.error", {
         message: "Error in updating " + params.type,
         code: err.status || 500,

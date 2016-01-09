@@ -2,10 +2,28 @@ var client = require('./socket-client');
 
 // Testing Creating Entity
 client.emit('c-entity', {
-  index: 'events',
-  type: 'event',
+  index: 'speakers',
+  type: 'speaker',
   body: {
-    french: {
+    english: {
+      type: 'Translator',
+      languages: 'French',
+      name: ['AVIhXxJIPPf_7Ds87q0Q']
+    }
+  }
+});
+
+client.on('c-entity.done', function(data) {
+  console.log(data);
+})
+
+client.on('c-entity.error', function(data) {
+  console.log(data);
+})
+
+/*
+
+    english: {
       title: 'KalaChakra 2014',
       classification: 'Teachings',
       startingDate: '1454889600000',
@@ -20,13 +38,20 @@ client.emit('c-entity', {
       translation: 'french',
       venue: 'Ladakh'
     }
+
+*/
+
+
+/*
+
+ {
+    number: "#1",
+    title: "Session #1",
+    venue: "Ladakh",
+    classification: "Teachings",
+    startingDate: '1454889600000',
+    languages: 'english',
+    translation: 'french'
   }
-});
 
-client.on('c-entity.done', function(data) {
-  console.log(data);
-})
-
-client.on('c-entity.error', function(data) {
-  console.log(data);
-})
+*/

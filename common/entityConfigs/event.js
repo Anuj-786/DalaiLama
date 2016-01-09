@@ -11,6 +11,12 @@ module.exports = {
       defaultValue: '*title'
     } 
   },
+  sessions: {
+    type: ['session'] 
+  },
+  speakers: {
+    type: ['speaker'] 
+  },
   classification: {
     isRequired: true,
     type: String,
@@ -165,16 +171,6 @@ module.exports = {
       label: 'Publication',
       defaultValue: '*publication'
     }
-  },
-  /*speaker: {
-    type : {
-      name : {
-        type: String,
-        label: 'Name',
-        defaultValue: ''
-      }
-    },
-    label: 'Speaker'
-  }*/
+  }
 }
 

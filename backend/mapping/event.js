@@ -2,12 +2,6 @@
   "mappings": {
     "event": {
       "properties": {
-        "session": {
-          "type": "long"
-        },
-        "speaker": {
-          "type": "long"
-        },
         "english": {
           "properties": {
             "city": {

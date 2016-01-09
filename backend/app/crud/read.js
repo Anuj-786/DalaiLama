@@ -1,20 +1,16 @@
+var debug = require('debug')('read')
 var _ = require('lodash')
+var async = require('async-q')
+var Q = require('q')
 var es = require('../es')
+var fs = require('fs')
 
-/**
-{
-    type: "entitytype",
-     _id: "id",
-    fields: [
-        'fieldname'
-    ],
-    joins: {
-        "entityType": [
-            "fieldname"
-        ]
-    }
-}
-**/
+var configsPath = '../../../common/entityConfigs/'
+var entities = ['person', 'event', 'speaker', 'session']
+var entityConfigs = {}
+_.each(entities, function(entityType) {
+  entityConfigs[entityType] = require(configsPath + entityType)
+})
 
 module.exports = function(params, socket) {
   var missingArgumentMessage
@@ -30,24 +26,7 @@ module.exports = function(params, socket) {
     })
   }
 
-  var toFetchFields = params.fields
-  if (toFetchFields && !toFetchFields.length) {
-    toFetchFields = toFetchFields.concat(_.keys(params.joins))
-  }
-
-  return es.get({
-      index: params.type + "s",
-      type: params.type,
-      id: params._id,
-      fields: toFetchFields
-    })
-    .then(function(response) {
-      if (params.joins) {
-        return resolveJoins(response._source || response.fields, params.joins)
-      } else {
-        return response._source || response.fields
-      }
-    })
+  return read(params)
     .then(function(res) {
       socket.emit("r-entity.done", {
         message: "Successfully read " + params.type,
@@ -63,40 +42,127 @@ module.exports = function(params, socket) {
         err: err,
         params: params
       })
+      return err
     })
 }
 
-function resolveJoins(doc, joins) {
-  var mgetInstructions = []
-  var joinFields = _.keys(joins)
+function read(params) {
+  var toFetchFields = params.fields
+  if (toFetchFields && params.joins) {
+    var toJoinFields = _.pluck(params.joins, 'fieldName')
+    toFetchFields = toFetchFields.concat(toJoinFields)
+  }
 
-  _.each(joinFields, function(joinField) {
-
-    var toJoinValues = (_.isArray(doc[joinField]) && doc[joinField]) || [doc[joinField]]
-
-    _.each(toJoinValues, function(id) {
-
-      mgetInstructions.push({
-        _index: joinField + 's',
-        _type: joinField,
-        _id: id,
-        fields: joins[joinField].fields
-      })
-
+  return es.get.agg({
+      index: params.type + "s",
+      type: params.type,
+      id: params._id,
+      fields: toFetchFields
     })
+    .then(function(response) {
+      if (response.fields) {
+        _.keys(response.fields).forEach(function(field) {
+          if (!_.isArray(entityConfigs[params.type].type)) {
+            response.fields[field] = response.fields[field][0]
+          }
+        })
+        unflatten(response.fields)
+      }
 
-    doc[joinField] = []
-  })
-
-  return es.mget({
-      body: {
-        docs: mgetInstructions
+      if (params.joins) {
+        return resolveJoins(response._source || response.fields, params.joins, entityConfigs[params.type])
+      } else {
+        return response.fields || response._source
       }
     })
-    .then(function(res) {
-      _.each(res.docs, function(toJoinDoc) {
-        doc[toJoinDoc._type].push(toJoinDoc._source || toJoinDoc.fields)
+}
+
+function unflatten(doc) {
+  _.keys(doc).forEach(function(key) {
+    var path = key.split('\.')
+    var innerDoc = doc
+    if(path.length > 1) {
+      path.forEach(function(field, index) {
+        if (!innerDoc[field]) {
+          if(index < path.length -1) {
+            innerDoc[field] = {}  
+          } else {
+            innerDoc[field] = doc[key]
+            delete doc[key]
+          }
+        }
+        innerDoc = innerDoc[field]
       })
+    }
+  })
+}
+
+function resolveJoins(doc, joins, entityConfig) {
+  return async.each(joins, function(joinField) {
+
+      var toJoinFieldName = joinField.fieldName
+      var fieldTypeInfo = entityConfig[toJoinFieldName].type
+      var fieldType = _.isArray(fieldTypeInfo) && fieldTypeInfo[0] || fieldTypeInfo
+
+      var toJoinIds = doc[toJoinFieldName]
+      if (!toJoinIds) {
+        return Q()
+      }
+      toJoinIds = (_.isArray(toJoinIds) && toJoinIds) || [toJoinIds]
+
+      //Resetting the joinField value doc
+      if (_.isArray(fieldTypeInfo)) {
+        doc[toJoinFieldName] = []
+      } //Else let it be. It will be replaced with joined Doc
+
+      //we will replace array of ids with their respective documents
+      return async.each(toJoinIds, function(id) {
+          return read({
+            type: fieldType,
+            _id: id,
+            fields: joinField.fields,
+            joins: joinField.joins
+          })
+        })
+        .then(function(toJoinDocs) {
+
+          if (_.isArray(fieldTypeInfo)) {
+            _.each(toJoinDocs, function(toJoinDoc) {
+              doc[toJoinFieldName].push(toJoinDoc)
+            })
+          } else {
+            doc[toJoinFieldName] = toJoinDocs[0]
+          }
+        })
+    })
+    .then(function() {
       return doc
     })
+}
+
+if (require.main === module) {
+  read({
+      type: "event",
+      _id: "AVIhUbKyPPf_7Ds87q0K",
+      lang: 'english',
+      fields: ['english.title', 'english.description', 'english.startingDate', 'english.endingDate', 'english.keywords'],
+      primaryField: 'english.title',
+      joins: [{
+        fieldName: 'sessions',
+        fields: ["english.title"],
+        primaryField: 'title'
+      }, {
+        fieldName: 'speakers',
+        fields: ['english.type', 'english.languages'],
+        primaryField: 'person',
+        joins: [{
+          fieldName: 'person',
+          fields: ["english.name"]
+        }]
+      }]
+    })
+    .then(function(res) {
+      debug(JSON.stringify(res))
+    })
+    .catch(debug)
 }
