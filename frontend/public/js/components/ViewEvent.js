@@ -46,7 +46,7 @@ export default class ViewEvent extends React.Component {
   
   render() {
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} entityType="viewEvent" closeWindow={this.props.closeWindow}>
       <div className="eventContent">
         <p>Teaching</p>
         <p className="VEDate">03/06/2014 to 13/06/2014</p>

@@ -67,7 +67,6 @@ export default class EntityEvent extends React.Component {
         edit: false,
         index: languageOptions.indexOf(_.capitalize(_.keys(data.body)[0]))
       }) 
-      console.log(this.state.defaultValues)
     }.bind(this))
   }
 
@@ -84,7 +83,6 @@ export default class EntityEvent extends React.Component {
     data.endingDate = +moment(data.endingDate)
 
     this.state.data[(languageOptions[this.state.index]).toLowerCase()] = data
-    console.log('Parsed form data', this.state.data);
 
     if(this.props.edit) {
       socket.emit('u-entity', {type: 'event', _id: 'AVIRisUFFs21aZysquQ0', update: {set: this.state.data}})
@@ -111,7 +109,6 @@ export default class EntityEvent extends React.Component {
 
   onCancel() {
 
-    console.log(this.refs.myFormRef)
     this.refs.myFormRef.reset()
 
   }
@@ -122,7 +119,6 @@ export default class EntityEvent extends React.Component {
       var result = _.remove(_.compact(_.values(this.refs.myFormRef.getValue())), function(field) {
         return !_.isArray(field) || field.length > 0
       })
-      console.log(result)
       if(!result.length) {
         this.setState({
           index: index
@@ -194,7 +190,7 @@ export default class EntityEvent extends React.Component {
     }
 
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} entityType="createEvent">
         <div className="createEntityContainer">
           <div>
             <DropDownMenu onChange={this.changeLanguage} value={this.state.index} disabled={this.state.dropdownDisable} label="Language">

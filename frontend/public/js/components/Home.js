@@ -14,9 +14,10 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props)
     this.changeEntity = this.changeEntity.bind(this)
+    this.closeWindow = this.closeWindow.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
-      edit: true,
+      edit: false,
       filterOptions: [
         'English',
         'Hindi',
@@ -37,23 +38,28 @@ export default class Home extends React.Component {
       openSnacker: false,
       snackerMessage: "",
       searchResults: [],
+      createEvent: false,
+      viewEvent: true,
+      searchResults: true,
     }
   }
 
   componentDidMount() {
     socket.on('r-search.done', function(result) {
-      console.log(result)
       this.setState({snackerMessage: result.message, openSnacker: true}) 
     }.bind(this))
 
     socket.on('r-search.error', function(result) {
-      console.log(result)
       this.setState({snackerMessage: result.message, openSnacker: true}) 
     }.bind(this))
 
   }
 
   changeEntity(e, index, value) {
+    console.log(value, index, e)
+    if(this.state.entityOptions[value] === 'Event') {
+      this.setState({createEvent: true})
+    }
     this.setState({entity: value})
   }
 
@@ -61,16 +67,20 @@ export default class Home extends React.Component {
     this.setState({openSnacker: false})
   }
 
+  closeWindow(entityType) {
+    this.setState({[entityType]: false})  
+  }
+
   render() {
     return (
       <div>
       <div className="row">
           <Header entityOptions={this.state.entityOptions} filterOptions={this.state.filterOptions} lang={this.state.lang} entity={this.state.entity} changeEntity={this.changeEntity}/> 
-          {this.state.entityOptions[this.state.entity] === 'Event' && <EntityEvent edit={this.state.edit}/>}
+          {this.state.createEvent && <EntityEvent edit={this.state.edit} closeWindow={this.closeWindow}/>}
           {this.state.entityOptions[this.state.entity] === 'Speaker' && <Speaker />}
       </div>
-      <ViewEvent />
-      <SearchResults />
+      {this.state.viewEvent && <ViewEvent closeWindow={this.closeWindow}/>}
+      {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}

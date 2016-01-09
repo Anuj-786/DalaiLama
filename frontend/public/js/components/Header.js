@@ -47,8 +47,6 @@ export default class Header extends React.Component {
 
   submitSearch() {
 
-    var s = 'Pankaj'
-    
     socket.emit('r-search', {q: this.state.value, lang: (filterOptions[this.state.lang]).toLowerCase()})
 
   }
