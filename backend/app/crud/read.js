@@ -153,7 +153,7 @@ if (require.main === module) {
         primaryField: 'title'
       }, {
         fieldName: 'speakers',
-        fields: ['english.type', 'english.languages'],
+        fields: ['english.type', 'english.language'],
         primaryField: 'person',
         joins: [{
           fieldName: 'person',
