@@ -13,13 +13,13 @@ var Home = React.createClass({
   getInitialState: function() {
     
     return {
-      edit: true 
+      edit: false 
     }
 
   },
 
   render:function() {
-    return (
+   /* return (
       <div>
         <div className="row">
           <LoginHeader /> 
@@ -31,7 +31,13 @@ var Home = React.createClass({
           <SearchAndLink/>
         </div>
       </div>
-    );
+    );*/
+    return (
+      <div className="row">
+        <h1>Hii I am Pankja</h1>
+        <RaisedButton label="Secondary" secondary={true} />
+      </div>
+    )
   },
 });
 
