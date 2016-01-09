@@ -26,14 +26,6 @@ module.exports = {
   },
   person: {
     isRequired: true,
-    type: 'person',
-    english: {
-      label: 'Title',
-      defaultValue: '*title'
-    },
-    french: {
-      label: 'Titre',
-      defaultValue: '*title'
-    }
+    type: 'person'
   }
 }

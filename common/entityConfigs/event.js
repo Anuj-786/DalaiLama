@@ -1,4 +1,4 @@
-module.exports = { 
+module.exports = {
   title: {
     isRequired: true,
     type: String,
@@ -9,13 +9,13 @@ module.exports = {
     french: {
       label: 'Titre',
       defaultValue: '*title'
-    } 
+    }
   },
   sessions: {
-    type: ['session'] 
+    type: ['session']
   },
   speakers: {
-    type: ['speaker'] 
+    type: ['speaker']
   },
   classification: {
     isRequired: true,
@@ -33,24 +33,12 @@ module.exports = {
   startingDate: {
     defaultValue: '*startingDate',
     type: Date,
-    isRequired: true,
-    english: {
-      label: 'Starting Date'
-    },
-    french: {
-      label: 'Date de début'
-    }
+    isRequired: true
   },
   endingDate: {
     type: Date,
     defaultValue: '*endingDate',
-    isRequired: true,
-    english : {
-      label: 'Ending Date'
-    },
-    french: {
-      label: 'date de fin'
-    }
+    isRequired: true
   },
   venue: {
     isRequired: true,
@@ -127,25 +115,19 @@ module.exports = {
   },
   startingTime: {
     isRequired: true,
-    type: 'Time',
-    defaultValue: '*startingTime',
-    english: {
-      label: 'Starting Time'
-    },
-    french: {
-      label: 'Heure de départ'
-    }
+    type: Date,
+    defaultValue: '*startingTime'
   },
   translation: {
     isRequired: true,
     type: String,
     english: {
       label: 'Translation',
-      defaultValue: '*translation' 
+      defaultValue: '*translation'
     },
     french: {
       label: 'Traduction',
-      defaultValue: '*translation' 
+      defaultValue: '*translation'
     }
   },
   keywords: {
@@ -159,18 +141,5 @@ module.exports = {
       label: 'Mots clés',
       defaultValue: '*keywords'
     }
-  },
-  publication: {
-    isRequired: true,
-    type: String,
-    english: {
-      label: 'Publication',
-      defaultValue: '*publication'
-    },
-    french: {
-      label: 'Publication',
-      defaultValue: '*publication'
-    }
   }
 }
-

@@ -49,10 +49,29 @@ module.exports = function(params, socket) {
 function read(params) {
   var toFetchFields = params.fields
   if (toFetchFields && params.joins) {
+
+    //DO union of joins and fields
     var toJoinFields = _.pluck(params.joins, 'fieldName')
     toFetchFields = toFetchFields.concat(toJoinFields)
-  }
 
+  }
+  //Add language prefix to fields
+  var entityConfig = entityConfigs[params.type]
+
+  toFetchFields = toFetchFields.map(function(field) {
+    if (entityConfig[field][params.lang]) {
+
+      return params.lang + '.' + field
+
+    } else {
+
+      return field
+
+    }
+
+  })
+
+  debug(toFetchFields, params.type)
   return es.get.agg({
       index: params.type + "s",
       type: params.type,
@@ -68,9 +87,13 @@ function read(params) {
         })
         unflatten(response.fields)
       }
-
       if (params.joins) {
-        return resolveJoins(response._source || response.fields, params.joins, entityConfigs[params.type])
+        return resolveJoins(
+          response._source || response.fields,
+          params.joins,
+          entityConfigs[params.type],
+          params.lang
+        )
       } else {
         return response.fields || response._source
       }
@@ -81,11 +104,11 @@ function unflatten(doc) {
   _.keys(doc).forEach(function(key) {
     var path = key.split('\.')
     var innerDoc = doc
-    if(path.length > 1) {
+    if (path.length > 1) {
       path.forEach(function(field, index) {
         if (!innerDoc[field]) {
-          if(index < path.length -1) {
-            innerDoc[field] = {}  
+          if (index < path.length - 1) {
+            innerDoc[field] = {}
           } else {
             innerDoc[field] = doc[key]
             delete doc[key]
@@ -97,7 +120,7 @@ function unflatten(doc) {
   })
 }
 
-function resolveJoins(doc, joins, entityConfig) {
+function resolveJoins(doc, joins, entityConfig, lang) {
   return async.each(joins, function(joinField) {
 
       var toJoinFieldName = joinField.fieldName
@@ -121,7 +144,8 @@ function resolveJoins(doc, joins, entityConfig) {
             type: fieldType,
             _id: id,
             fields: joinField.fields,
-            joins: joinField.joins
+            joins: joinField.joins,
+            lang: lang
           })
         })
         .then(function(toJoinDocs) {
@@ -145,19 +169,19 @@ if (require.main === module) {
       type: "event",
       _id: "AVIhUbKyPPf_7Ds87q0K",
       lang: 'english',
-      fields: ['english.title', 'english.description', 'english.startingDate', 'english.endingDate', 'english.keywords'],
-      primaryField: 'english.title',
+      fields: ['title', 'description', 'startingDate', 'endingDate', 'keywords'],
+      primaryField: 'title',
       joins: [{
         fieldName: 'sessions',
-        fields: ["english.title"],
+        fields: ["title"],
         primaryField: 'title'
       }, {
         fieldName: 'speakers',
-        fields: ['english.type', 'english.language'],
+        fields: ['type', 'language'],
         primaryField: 'person',
         joins: [{
           fieldName: 'person',
-          fields: ["english.name"]
+          fields: ["name"]
         }]
       }]
     })
