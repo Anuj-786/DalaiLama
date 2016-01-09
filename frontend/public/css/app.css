@@ -5,6 +5,13 @@
   align-items: center;
   justify-content: center;
 }
+.speakersHeader {
+  display: flex;
+  align-items: center;
+}
+.speakerCount {
+  flex: 1;
+}
 .speaker {
   display: flex;
   align-items: center;

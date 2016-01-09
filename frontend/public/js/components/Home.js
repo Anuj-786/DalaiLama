@@ -3,11 +3,7 @@ import EntityEvent from './EntityEvent'
 import SearchResults from './SearchResults'
 import Snackbar from 'material-ui/lib/snackbar';
 import Speaker from './Speakers'
-/*var SessionList = require('./SessionList')
-var SearchAndLink = require('./SearchAndLink')
-var SearchResults = require('./SearchResults')
-var Login = require('./Login')
-*/
+import ViewEvent from './ViewEvent'
 import socket from '../socket'
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -73,7 +69,8 @@ export default class Home extends React.Component {
           {this.state.entityOptions[this.state.entity] === 'Event' && <EntityEvent edit={this.state.edit}/>}
           {this.state.entityOptions[this.state.entity] === 'Speaker' && <Speaker />}
       </div>
-      {!_.isEmpty(this.state.searchResults) && <SearchResults />}
+      <ViewEvent />
+      <SearchResults />
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}

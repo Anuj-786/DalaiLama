@@ -796,7 +796,6 @@ var FlatField = React.createClass({
 
   changeTime: function(e, time) {
     this.setValue(moment(time).format('hh:mm a'))
-   //this.setState({time: time})
   },
 
   render: function() {

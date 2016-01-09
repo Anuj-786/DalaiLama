@@ -11,6 +11,7 @@ import Dialog from 'material-ui/lib/dialog'
 import Snackbar from 'material-ui/lib/snackbar'
 import moment from 'moment'
 import socket from '../socket'
+import _ from 'lodash'
 
 import styles from '../../css/styles.js'
 
@@ -33,6 +34,7 @@ export default class EntityEvent extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.closeMessage = this.closeMessage.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
     this.state = {
       title: 'Add Event',
       columns: 5,
@@ -55,7 +57,7 @@ export default class EntityEvent extends React.Component {
     if(this.props.edit) {
       socket.emit('r-entity', {
         type: 'event',
-        _id: 'AVIRisUFFs21aZysquQ0',
+        _id: 'AVIhWIcqFs21aZysquSm',
       })
     }
     socket.on('r-entity.done', function(data) {
@@ -63,20 +65,18 @@ export default class EntityEvent extends React.Component {
       this.setState({
         defaultValues: data.body,
         edit: false,
+        index: languageOptions.indexOf(_.capitalize(_.keys(data.body)[0]))
       }) 
-
+      console.log(this.state.defaultValues)
     }.bind(this))
   }
 
   schema() {
-    return generateSchema(eventConfig, this.state.defaultValues, (languageOptions[this.state.index]).toLowerCase() , {classification: classifications})
+    return generateSchema(eventConfig, !this.state.edit && this.state.defaultValues.english || this.state.defaultValues, (languageOptions[this.state.index]).toLowerCase(), {classification: classifications})
 
   }
 
   onSubmit(data) {
-
-    this.setState({index: this.state.index})
-    this.refs.myFormRef.reset()
 
     data.classification  = classifications[data.classification]  
     data.startingDate = +moment(data.startingDate)
@@ -86,10 +86,10 @@ export default class EntityEvent extends React.Component {
     console.log('Parsed form data', this.state.data);
 
     if(this.props.edit) {
-      socket.emit('u-entity', {type: 'event', _id: 'AVIRisUFFs21aZysquQ0', update: {set: this.language}})
+      socket.emit('u-entity', {type: 'event', _id: 'AVIRisUFFs21aZysquQ0', update: {set: this.state.data}})
     } 
     else {
-      socket.emit('c-entity', {index: 'events', type: 'event', body: this.language})
+      socket.emit('c-entity', {index: 'events', type: 'event', body: this.state.data})
     }
 
 

@@ -154,7 +154,7 @@ module.exports = {
       defaultValue: '*keywords'
     }
   },
-  publication: {
+  /*publication: {
     isRequired: true,
     type: String,
     english: {

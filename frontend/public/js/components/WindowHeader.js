@@ -5,6 +5,8 @@ import FlatButton from 'material-ui/lib/flat-button'
 import DropDownMenu from 'material-ui/lib/DropDownMenu'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 
+import _ from 'lodash'
+
 var menuItems = [
   'English',
   'Hindi',
@@ -23,6 +25,7 @@ export default class WindowHeader extends React.Component {
     var columns = "large-" + this.props.columns + " columns contentContainer"
     var header = "entityHeader " + this.props.bgcolor
     var entryDiv = 'viewEntry ' + this.props.bcolor
+    console.log(this.props.subHeader, !_.isEmpty(this.props.button) )
     return (
       <div className={columns}>
         <div className={entryDiv}>
@@ -35,15 +38,15 @@ export default class WindowHeader extends React.Component {
             <div>
             {this.props.searchBar && 
               <DropDownMenu style={styles.searchBarWidth} value={this.state.value}>
-                {menuItems.map((field, key) => {
+                {menuItems.map((field, key) => 
                 
                   <MenuItem value={key} primaryText={field}/>
 
-                })}
+                )}
               </DropDownMenu>
             }
-            {this.props.button && this.props.button.map((value, i) => {
-              <FlatButton key={i} label={value}/>
+            {!_.isEmpty(this.props.buttons) && this.props.buttons.map(function(value, i) {
+             return <IconButton key={i} iconClassName="material-icons" tooltip={value}>{value}</IconButton>
             })}
             </div>
           </div>}

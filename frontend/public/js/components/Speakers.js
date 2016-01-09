@@ -60,7 +60,7 @@ export default class Speaker extends React.Component {
 
             )}
           </SelectField><br/>
-          <RaisedButton label="Primary" primary={true} onTouchTap={this.addSpeaker}/>
+          <RaisedButton label="Add Speaker" primary={true} onTouchTap={this.addSpeaker}/>
         </div>
       </WindowHeader>
     )
