@@ -1,6 +1,7 @@
-var debug = require('debug')('update')
+var debug = require('debug')('crudUpdate')
 var _ = require('lodash')
 var updater = require('js-object-updater')
+
 var es = require('../es')
 
 module.exports = function(params, socket) {

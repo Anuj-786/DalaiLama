@@ -4,7 +4,6 @@ var async = require('async-q')
 var Q = require('q')
 
 var es = require('../es')
-
 var configs = require('../../../configs')
 
 module.exports = function(esDoc, lang, context) {
@@ -14,44 +13,46 @@ module.exports = function(esDoc, lang, context) {
   var schema = configs['schema'][esDoc._type]
 
   return joins && async.each(joins, function(joinField) {
-    var config = _.get(configs, context)
-    var toJoinFieldName = joinField.fieldName
-    var fieldSchema = schema[toJoinFieldName].type
-    var fieldType = _.isArray(fieldSchema) && fieldSchema[0] || fieldSchema
+      var config = _.get(configs, context)
+      var toJoinFieldName = joinField.fieldName
+      var fieldSchema = schema[toJoinFieldName].type
+      var fieldType = _.isArray(fieldSchema) && fieldSchema[0] || fieldSchema
 
-    var toJoinIds = data[toJoinFieldName]
-    if (!toJoinIds) {
-      return Q()
-    }
-    toJoinIds = (_.isArray(toJoinIds) && toJoinIds) || [toJoinIds]
+      var toJoinIds = data[toJoinFieldName]
+      if (!toJoinIds) {
+        return Q()
+      }
+      toJoinIds = (_.isArray(toJoinIds) && toJoinIds) || [toJoinIds]
 
-    //Resetting the joinField value doc
-    if (_.isArray(fieldSchema)) {
-      data[toJoinFieldName] = []
-    } //Else let it be. It will be replaced with joined Doc
+      //Resetting the joinField value doc
+      if (_.isArray(fieldSchema)) {
+        data[toJoinFieldName] = []
+      } //Else let it be. It will be replaced with joined Doc
 
-    //we will replace array of ids with their respective documents
-    return async.each(toJoinIds, function(id) {
-        return require('./read')({
-          type: fieldType,
-          _id: id,
-          context: context,
-          fields: joinField.fields,
-          joins: joinField.joins,
-          lang: lang
-        })
-      })
-      .then(function(toJoinDocs) {
-        if (_.isArray(fieldSchema)) {
-          _.each(toJoinDocs, function(toJoinDoc) {
-            data[toJoinFieldName].push(toJoinDoc)
+      //we will replace array of ids with their respective documents
+      return async.each(toJoinIds, function(id) {
+          return require('./read')({
+            type: fieldType,
+            _id: id,
+            context: context,
+            fields: joinField.fields,
+            joins: joinField.joins,
+            lang: lang
           })
-        } else {
-          data[toJoinFieldName] = toJoinDocs[0]
-        }
-      })
-  })
-  .then(function() {
-    return esDoc
-  }) || Q(esDoc)
+        })
+        .then(function(toJoinDocs) {
+          data[toJoinFieldName] = toJoinDocs
+            /**debug(_.isArray(fieldSchema.type), fieldSchema)
+            if (_.isArray(fieldSchema.type)) {
+              _.each(toJoinDocs, function(toJoinDoc) {
+                data[toJoinFieldName].push(toJoinDoc)
+              })
+            } else {
+              data[toJoinFieldName] = toJoinDocs[0]
+            }**/
+        })
+    })
+    .then(function() {
+      return esDoc
+    }) || Q(esDoc)
 }

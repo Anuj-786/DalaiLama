@@ -1,11 +1,12 @@
-var _ = require('lodash')
 var debug = require('debug')('fieldsToFetch')
+var _ = require('lodash')
+
 var configs = require('../../../configs')
 
 function forEntities(entityTypes, context, lang) {
   return _.chain(entityTypes)
     .reduce(function(soFar, entityType) {
-      soFar.push(fieldsForEntity(entityType, context, lang))
+      soFar.push(forEntity(entityType, context, lang))
       return soFar
     }, [])
     .flatten()

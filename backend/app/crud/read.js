@@ -1,18 +1,20 @@
-// var debug = require('debug')('read')
-// var _ = require('lodash')
+var debug = require('debug')('crudRead')
 
-// var es = require('../es')
-// var resolveJoins = require('../utils/resolveJoins')
-// var read = require('../utils/read')
-// var entityConfigs = require('../../../common/index')
+var read = require('../utils/read')
 
 module.exports = function(params, socket) {
+  
   var missingArgumentMessage
   if (!params._id) {
     missingArgumentMessage = "_id missing"
   } else if (!params.type) {
     missingArgumentMessage = "type missing"
+  } else if (!params.lang) {
+    missingArgumentMessage = "lang missing"
+  } else if (!params.context) {
+    missingArgumentMessage = "context missing"
   }
+
   if (missingArgumentMessage) {
     socket.emit('r-entity.error', {
       message: "Illegal Argument Exception: " + missingArgumentMessage,
@@ -22,6 +24,7 @@ module.exports = function(params, socket) {
 
   return read(params)
     .then(function(res) {
+      debug(res)
       socket.emit("r-entity.done", {
         message: "Successfully read " + params.type,
         code: 200,
@@ -30,6 +33,7 @@ module.exports = function(params, socket) {
       })
     })
     .catch(function(err) {
+
       socket.emit("r-entity.error", {
         message: "Error in reading " + params.type,
         code: 500,
@@ -39,4 +43,3 @@ module.exports = function(params, socket) {
       return err
     })
 }
-

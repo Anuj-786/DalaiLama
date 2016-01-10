@@ -15,3 +15,4 @@ configsToLoad.forEach(function(config) {
 })
 
 module.exports = entityConfigs
+module.exports.entityTypes = entities

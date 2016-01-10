@@ -3,12 +3,20 @@ module.exports = {
     isRequired: true,
     type: String,
     english: {
-      label: 'Title',
-      defaultValue: '*title'
+      label: 'Title'
     },
     french: {
-      label: 'Titre',
-      defaultValue: '*title'
+      label: 'Titre'
+    }
+  },
+  description: {
+    isRequired: true,
+    type: String,
+    english: {
+      label: 'description'
+    },
+    french: {
+      label: 'la description'
     }
   }
 }
