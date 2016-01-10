@@ -1,13 +1,18 @@
+var debug = require('debug')('crudCreate')
+
 var es = require('../es')
 
 module.exports = function(params, socket) {
-  console.log('params', params);
+
   var missingArgumentMessage
   if (!params._id) {
     missingArgumentMessage = "_id missing"
   } else if (!params.type) {
     missingArgumentMessage = "type missing"
+  } else if (!params.body) {
+    missingArgumentMessage = "body missing"
   }
+  
   if (missingArgumentMessage) {
     socket.emit('r-entity.error', {
       message: "Illegal Argument Exception: " + missingArgumentMessage,
@@ -33,11 +38,5 @@ module.exports = function(params, socket) {
       code: 500,
       error: err
     })
-  })
-}
-
-if (require.main === module) {
-  module.exports({
-    foo: 'bar'
   })
 }

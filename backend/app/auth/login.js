@@ -1,3 +1,5 @@
+var debug = require('debug')('login')
+
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -6,7 +8,6 @@ var socketioJwt = require('socketio-jwt');
 var bodyParser = require('body-parser');
 var _ = require('lodash')
 var jwt = require('jsonwebtoken')
-var debug = require('debug')('login')
 
 var config = require('./../../config.js')
 

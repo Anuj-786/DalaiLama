@@ -39,20 +39,5 @@ module.exports = {
   },
   socket: {
     port: 3000
-  },
-  searchEntities: {
-    event: {
-      fields: ['name'],
-      joins: {
-        speaker: {
-          fields: ['title'],
-          joins: {
-            person: {
-              fields: ['name']
-            }
-          }
-        }
-      }
-    }
   }
 }
