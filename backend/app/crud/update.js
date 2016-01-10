@@ -10,7 +10,10 @@ module.exports = function(params, socket) {
     missingArgumentMessage = "_id missing"
   } else if (!params.type) {
     missingArgumentMessage = "type missing"
+  } else if (!params.update) {
+    missingArgumentMessage = "update missing"
   }
+
   if (missingArgumentMessage) {
     socket.emit('u-entity.error', {
       message: "Illegal Argument Exception: " + missingArgumentMessage,
@@ -24,7 +27,7 @@ module.exports = function(params, socket) {
       id: params._id
     })
     .then(function(res) {
-      debug('res', res)
+
       updater({
         doc: res._source,
         update: params.update,
@@ -42,17 +45,22 @@ module.exports = function(params, socket) {
 
       socket.emit("u-entity.done", {
         message: "Successfully updated " + params.type,
-        code: res.status || 204,
+        status: res.status || 204,
+        response: res,
         params: params
       })
+
+      return res
     })
     .catch(function(err) {
 
       socket.emit("u-entity.error", {
         message: "Error in updating " + params.type,
-        code: err.status || 500,
+        status: err.status || 500,
         error: err,
         params: params
       })
+
+      return err
     })
 }

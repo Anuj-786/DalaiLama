@@ -24,22 +24,25 @@ module.exports = function(params, socket) {
 
   return read(params)
     .then(function(res) {
-      debug(res)
+
       socket.emit("r-entity.done", {
         message: "Successfully read " + params.type,
-        code: 200,
-        body: res,
+        status: res.status || 200,
+        response: res,
         params: params
       })
+
+      return res
     })
     .catch(function(err) {
 
       socket.emit("r-entity.error", {
         message: "Error in reading " + params.type,
-        code: 500,
-        err: err,
+        status: err.status || 500,
+        error: err,
         params: params
       })
+      
       return err
     })
 }
