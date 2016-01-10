@@ -2,7 +2,6 @@ var client = require('./socket-client');
 
 // Testing Creating Entity
 client.emit('c-entity', {
-  index: 'speakers',
   type: 'speaker',
   body: {
     english: {
