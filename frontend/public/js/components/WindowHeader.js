@@ -25,7 +25,6 @@ export default class WindowHeader extends React.Component {
     var columns = "large-" + this.props.columns + " columns contentContainer"
     var header = "entityHeader " + this.props.bgcolor
     var entryDiv = 'viewEntry ' + this.props.bcolor
-    console.log(this.props.subHeader, !_.isEmpty(this.props.button) )
     return (
       <div className={columns}>
         <div className={entryDiv}>
@@ -36,15 +35,6 @@ export default class WindowHeader extends React.Component {
           {this.props.subHeader && <div className="headerTitleDiv">
             <p className="headerTitle">{this.props.subHeader}</p>
             <div>
-            {this.props.searchBar && 
-              <DropDownMenu style={styles.searchBarWidth} value={this.state.value}>
-                {menuItems.map((field, key) => 
-                
-                  <MenuItem value={key} primaryText={field}/>
-
-                )}
-              </DropDownMenu>
-            }
             {!_.isEmpty(this.props.buttons) && this.props.buttons.map(function(value, i) {
              return <IconButton key={i} iconClassName="material-icons" tooltip={value}>{value}</IconButton>
             })}

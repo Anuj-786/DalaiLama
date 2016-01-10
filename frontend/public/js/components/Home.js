@@ -9,20 +9,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import RaisedButton from 'material-ui/lib/raised-button';
 
+import _ from 'lodash';
+
 export default class Home extends React.Component {
 
   constructor(props) {
     super(props)
     this.changeEntity = this.changeEntity.bind(this)
+    this.changeLanguage = this.changeLanguage.bind(this)
     this.closeWindow = this.closeWindow.bind(this)
+    this.onDiscard = this.onDiscard.bind(this)
+    this.onCloseDialog = this.onCloseDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
       edit: false,
       filterOptions: [
         'English',
-        'Hindi',
-        'Tibtitan',
-        'Chinese',
+        'French',
       ],
       entityOptions: [
         'Event' ,
@@ -41,6 +44,9 @@ export default class Home extends React.Component {
       createEvent: false,
       viewEvent: true,
       searchResults: true,
+      discardChanges: false,
+      changeLang: 0, 
+      closeEventWindow: false,
     }
   }
 
@@ -56,10 +62,12 @@ export default class Home extends React.Component {
   }
 
   changeEntity(e, index, value) {
-    console.log(value, index, e)
+
     if(this.state.entityOptions[value] === 'Event') {
       this.setState({createEvent: true})
+      console.log(this.state.createEvent)
     }
+    
     this.setState({entity: value})
   }
 
@@ -68,15 +76,97 @@ export default class Home extends React.Component {
   }
 
   closeWindow(entityType) {
-    this.setState({[entityType]: false})  
+    if(this.state.createEvent) {
+      var result = _.remove(_.compact(_.values(this.refs.createEvent.getFormValue())), function(field) {
+        return !_.isArray(field) || field.length > 0
+      })
+
+      if(_.isEmpty(result)) {
+        
+        this.setState({createEvent: false})
+
+      }
+
+      else {
+        
+        this.setState({discardChanges: true, closeEventWindow: true})
+
+      }
+
+    }
+    else {
+      this.setState({[entityType]: false})
+    }
+  }
+
+  onDiscard() { 
+
+    this.setState({
+      discardChanges: false,
+      lang: this.state.changeLang,
+    })
+
+    if(this.state.closeEventWindow) {
+      
+      this.setState({createEvent: false})
+
+    } 
+
+    this.refs.createEvent.onCancel()
+  }
+
+  onCloseDialog() {
+    this.setState({
+      discardChanges: false
+    }) 
+  }
+
+  changeLanguage(event, index, menuItem) {
+    
+    if(this.state.createEvent) {
+      if(!this.state.edit) {
+        var result = _.remove(_.compact(_.values(this.refs.createEvent.getFormValue())), function(field) {
+          return !_.isArray(field) || field.length > 0
+        })
+        console.log(result.length)
+        if(!result.length) {
+          this.setState({
+            lang: index
+          })
+        } 
+        else {
+          this.setState({
+            discardChanges: true,
+            changeLang: index,
+          })
+        } 
+      }
+      else {
+        var currentValues = this.refs.createEvent.getFormValue()
+        currentValues['classification'] = classifications[currentValues['classification']]
+        currentValues['startingDate'] = +moment(currentValues['startingDate'])
+        currentValues['endingDate'] = +moment(currentValues['endingDate'])
+        
+        if(_.isMatch(this.refs.createEvent.getDefaultValues(), currentValues)) {
+          this.setState({lang: index})
+        }
+        else {
+          this.setState({discardChanges: true})
+        }
+
+      }
+    }
+
+    this.setState({lang: index})
+
   }
 
   render() {
     return (
       <div>
       <div className="row">
-          <Header entityOptions={this.state.entityOptions} filterOptions={this.state.filterOptions} lang={this.state.lang} entity={this.state.entity} changeEntity={this.changeEntity}/> 
-          {this.state.createEvent && <EntityEvent edit={this.state.edit} closeWindow={this.closeWindow}/>}
+          <Header entityOptions={this.state.entityOptions} filterOptions={this.state.filterOptions} lang={this.state.lang} entity={this.state.entity} changeEntity={this.changeEntity} changeLang={this.changeLanguage}/> 
+          {this.state.createEvent && <EntityEvent ref="createEvent" edit={this.state.edit} closeWindow={this.closeWindow} lang={this.state.filterOptions[this.state.lang]} discardChanges={this.state.discardChanges} onDiscard={this.onDiscard} onCloseDialog={this.onCloseDialog}/>}
           {this.state.entityOptions[this.state.entity] === 'Speaker' && <Speaker />}
       </div>
       {this.state.viewEvent && <ViewEvent closeWindow={this.closeWindow}/>}

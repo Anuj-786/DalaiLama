@@ -35,8 +35,6 @@ export default class Header extends React.Component {
     super(props)
     this.state = {
       value: '',
-      lang: this.props.lang,
-      entity: this.props.entity,
     }
   }
 
@@ -47,18 +45,9 @@ export default class Header extends React.Component {
 
   submitSearch() {
 
-    socket.emit('r-search', {q: this.state.value, lang: (filterOptions[this.state.lang]).toLowerCase()})
+    socket.emit('r-search', {q: this.state.value, lang: (this.props.filterOptions[this.state.lang]).toLowerCase()})
 
   }
-
-  changeLang(e, index, value) {
-    this.setState({lang: value})
-  }
-
-  changeEntity(e, index, value) {
-    this.setState({entity: value})
-  }
-  
 
   render() {
     return (
@@ -66,19 +55,23 @@ export default class Header extends React.Component {
         <ToolbarGroup key={0} float="left">
           <TextField hintText="Search....." style={styles.search} onChange={this.changeSearchTxt.bind(this)} value={this.state.value} onEnterKeyDown={this.submitSearch.bind(this)}/>
         </ToolbarGroup>
-        <ToolbarGroup key={1} float="left">
+        <ToolbarGroup key={1} float="left" style={{flex: 1}}>
           <div className='dropdownDiv'>
-            <SelectField style={styles.searchDropDown} value={this.state.lang} onChange={this.changeLang.bind(this)} label="Language">
-              {this.props.filterOptions.map(function(field, key) {
-                return <MenuItem key={key} value={key} primaryText={field}/>
-              })}
-            </SelectField>
-            <SelectField style={styles.searchDropDown} value={this.props.entity} onChange={this.props.changeEntity} label="Entity">
+             <SelectField style={styles.searchDropDown} value={this.props.entity} onChange={this.props.changeEntity} label="Entity">
               {this.props.entityOptions.map(function(field, key) {
                 return <MenuItem key={key} value={key} primaryText={field}/>
               })}
             </SelectField>
             <RaisedButton label="Activities" style={styles.activities}/>
+          </div>
+        </ToolbarGroup>
+        <ToolbarGroup key={2} float="right" lastChild={true}>
+          <div>
+          <SelectField style={styles.searchDropDown} value={this.props.lang} onChange={this.props.changeLang} label="Language">
+              {this.props.filterOptions.map(function(field, key) {
+                return <MenuItem key={key} value={key} primaryText={field}/>
+              })}
+          </SelectField>
           </div>
         </ToolbarGroup>
       </Toolbar>

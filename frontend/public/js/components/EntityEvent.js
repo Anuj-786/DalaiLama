@@ -28,9 +28,6 @@ export default class EntityEvent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.changeLanguage = this.changeLanguage.bind(this);
-    this.onDiscard = this.onDiscard.bind(this);
-    this.handleClose = this.handleClose.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.closeMessage = this.closeMessage.bind(this);
     this.onCancel = this.onCancel.bind(this);
@@ -40,14 +37,11 @@ export default class EntityEvent extends React.Component {
       columns: 5,
       bgcolor: 'bgorange',
       bcolor: 'borange',
-      language: eventConfig,
       defaultValues: {},
       edit: this.props.edit,
       openSnacker: false,
       resultMessage: '', 
       discardChanges: false,
-      index: 0,
-      changeLang: 0,
       data: {},
     }
   }
@@ -65,14 +59,21 @@ export default class EntityEvent extends React.Component {
       this.setState({
         defaultValues: data.body,
         edit: false,
-        index: languageOptions.indexOf(_.capitalize(_.keys(data.body)[0]))
       }) 
     }.bind(this))
   }
 
   schema() {
-    return generateSchema(eventConfig, this.state.defaultValues.english || this.state.defaultValues, (languageOptions[this.state.index]).toLowerCase(), {classification: classifications})
+    return generateSchema(eventConfig, this.state.defaultValues.english || this.state.defaultValues, this.props.lang.toLowerCase(), {classification: classifications})
 
+  }
+
+  getFormValue() {
+    return this.refs.myFormRef.getValue()
+  }
+
+  getDefaultValues() {
+    return this.state.defaultValues  
   }
 
   onSubmit(data) {
@@ -82,7 +83,7 @@ export default class EntityEvent extends React.Component {
     data.startingDate = +moment(data.startingDate)
     data.endingDate = +moment(data.endingDate)
 
-    this.state.data[(languageOptions[this.state.index]).toLowerCase()] = data
+    this.state.data[this.props.lang.toLowerCase()] = data
 
     if(this.props.edit) {
       socket.emit('u-entity', {type: 'event', _id: 'AVIRisUFFs21aZysquQ0', update: {set: this.state.data}})
@@ -113,72 +114,21 @@ export default class EntityEvent extends React.Component {
 
   }
 
-  changeLanguage(event, index, menuItem) {
-
-    if(!this.props.edit) {
-      var result = _.remove(_.compact(_.values(this.refs.myFormRef.getValue())), function(field) {
-        return !_.isArray(field) || field.length > 0
-      })
-      if(!result.length) {
-        this.setState({
-          index: index
-        })
-      } 
-      else {
-        this.setState({
-          discardChanges: true,
-          changeLang: index,
-        })
-      } 
-    }
-    else {
-      var currentValues = this.refs.myFormRef.getValue()
-      currentValues['classification'] = classifications[currentValues['classification']]
-      currentValues['startingDate'] = +moment(currentValues['startingDate'])
-      currentValues['endingDate'] = +moment(currentValues['endingDate'])
-      
-      if(_.isMatch(this.state.defaultValues, currentValues)) {
-        this.setState({index: index})
-      }
-      else {
-        this.setState({discardChanges: true})
-      }
-
-    }
-
-  }
-
   closeMessage() {
     this.setState({openSnacker: false})
   }
   
-  handleClose() {
-    this.setState({
-      discardChanges: false
-    }) 
-  }
-
-  onDiscard() { 
-
-    this.setState({
-      discardChanges: false,
-      index: this.state.changeLang,
-    })
-
-    this.refs.myFormRef.reset()
-  }
-
   render() {
     var actions = [
       <FlatButton
         label="No"
         secondary={true}
-        onTouchTap={this.handleClose} />,
+        onTouchTap={this.props.onCloseDialog} />,
       <FlatButton
         label="Yes"
         primary={true}
         keyboardFocused={true}
-        onTouchTap={this.onDiscard} />,
+        onTouchTap={this.props.onDiscard} />,
     ]
 
     if(!this.state.edit) {
@@ -192,16 +142,7 @@ export default class EntityEvent extends React.Component {
     return (
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} entityType="createEvent">
         <div className="createEntityContainer">
-          <div>
-            <DropDownMenu onChange={this.changeLanguage} value={this.state.index} disabled={this.state.dropdownDisable} label="Language">
-              {languageOptions.map((field, key) => 
-                <MenuItem key={key} value={key} primaryText={field}/>
-              )}
-            </DropDownMenu>
-          </div>
-          <div>
-            {formElement}
-          </div>
+          {formElement}
         </div>
         <Snackbar
           open={this.state.openSnacker}
@@ -214,7 +155,7 @@ export default class EntityEvent extends React.Component {
           title="Discard Changes"
           actions={actions}
           modal={false}
-          open={this.state.discardChanges}
+          open={this.props.discardChanges}
           onRequestClose={this.handleClose}>
             Do you want to discard all changes
         </Dialog>
