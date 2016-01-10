@@ -19,7 +19,8 @@ export default class Home extends React.Component {
     this.changeLanguage = this.changeLanguage.bind(this)
     this.closeWindow = this.closeWindow.bind(this)
     this.onDiscard = this.onDiscard.bind(this)
-    this.checkEditedFieldsValue = this.checkEditedFieldsValue.bind(this)
+    this.checkFieldsOnAddEvent = this.checkFieldsOnAddEvent.bind(this)
+    this.checkFieldsOnEditEvent = this.checkFieldsOnEditEvent.bind(this)
     this.onCloseDialog = this.onCloseDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
@@ -116,17 +117,21 @@ export default class Home extends React.Component {
 
   onCloseDialog() {
     this.setState({
-      discardChanges: false
+      discardChanges: false,
+      closeEventWindow: false,
     }) 
   }
 
   getEditedFields(refValue) {
+
     return _.remove(_.compact(_.values(this.refs[refValue].getFormValue())), function(field) {
       return !_.isArray(field) || field.length > 0
     })
+
   }
 
-  checkEditedFieldsValue(refValue, index) {
+  checkFieldsOnAddEvent(refValue, index) {
+
     var result = this.getEditedFields(refValue) 
 
     if(!result.length) {
@@ -142,7 +147,7 @@ export default class Home extends React.Component {
     } 
   }
 
-  checkFieldsValue(refValue, index) {
+  checkFieldsOnEditEvent(refValue, index) {
 
     var currentValues = this.refs[refValue].getFormValue()
 
@@ -163,10 +168,10 @@ export default class Home extends React.Component {
     
     if(this.state.event) {
       if(!this.state.edit) {
-        this.checkEditedFieldsValue('createEvent', index) 
+        this.checkFieldsOnAddEvent('createEvent', index) 
       }
       else {
-        this.checkFieldsValue('createEvent', index)
+        this.checkFieldsOnEditEvent('createEvent', index)
       }
     }
 

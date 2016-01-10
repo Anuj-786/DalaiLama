@@ -156,7 +156,7 @@ export default class EntityEvent extends React.Component {
           actions={actions}
           modal={false}
           open={this.props.discardChanges}
-          onRequestClose={this.handleClose}>
+        >
             Do you want to discard all changes
         </Dialog>
 
