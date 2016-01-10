@@ -85,85 +85,42 @@ module.exports = function(params, socket) {
     }).then(function(response) {
 
       debug("response:", JSON.stringify(response))
-      return async.each(response.hits.hits, function(value) {
+      return async.each(response.hits.hits, function(doc) {
 
-        debug("values:", value)
-        return resolveJoins(value, config.searchEntities[value._type].joins, params.lang)
+        return require('../utils/resolveJoins')(doc, params.lang, require('../../common'))
       })
     })
     .then(function(res) {
-
-      socket.emit("r-search.done", {
-        message: "Successfully seached " + params.q,
-        code: res.status || 204,
-        params: params,
-        res: res
-      })
+      /**
+            socket.emit("r-search.done", {
+              message: "Successfully seached " + params.q,
+              code: res.status || 204,
+              params: params,
+              res: res
+            })
+      **/
+      debug(res, 'fff')
     }).catch(function(err) {
+      debug(err, 'err')
 
-      socket.emit("r-search.error", {
-        message: "Error in searching " + params.q,
-        code: err.status || 500,
-        error: err,
-        params: params
-      })
+      /**   socket.emit("r-search.error", {
+           message: "Error in searching " + params.q,
+           code: err.status || 500,
+           error: err,
+           params: params
+         })
+       })**/
     })
 }
 
-
-function resolveJoins(doc, joins, lang) {
-  debug("joins", joins)
-
-  var mgetInstructions = []
-  var joinFields = _.keys(joins).map(function(value) {
-    return lang + "." + value
-  })
-
-  _.each(joinFields, function(joinField) {
-
-    debug("joinField:", joinField)
-
-    var toJoinValues = (_.isArray(doc.fields[joinField])) && doc.fields[joinField] || [doc.fields[joinField]]
-    var toJoinFieldFields = joins[_.last(joinField.split('.'))].fields
-
-    if (toJoinFieldFields) {
-      toJoinFieldFields = toJoinFieldFields.map(function(toJoinFieldField) {
-        return lang + "." + toJoinFieldField
-      })
-    }
-
-    debug("toJoinValues:", toJoinValues)
-    debug("joinField:", joinField)
-
-    _.each(toJoinValues, function(id) {
-
-      mgetInstructions.push({
-        _index: _.last(joinField.split('.')) + 's',
-        _type: _.last(joinField.split('.')),
-        _id: id,
-        fields: toJoinFieldFields
-      })
-
-    })
-
-    doc.fields[joinField] = []
-  })
-
-  debug("mgetInstructions2:", mgetInstructions)
-
-  return es.mget.agg({
-      body: {
-        docs: mgetInstructions
-      }
+if (require.main === module) {
+  module.exports({
+      q: "kalchakra",
+      lang: 'english',
+      context: 'web.search'
     })
     .then(function(res) {
-      debug("res", JSON.stringify(res))
-
-      _.each(res.docs, function(toJoinDoc) {
-        debug("doc:", doc.fields, "toJoinDoc", JSON.stringify(toJoinDoc.fields))
-        doc.fields[lang + "." + toJoinDoc._type].push(toJoinDoc._source || toJoinDoc.fields)
-      })
-
-      return doc
+      debug(JSON.stringify(res))
     })
+    .catch(debug)
 }

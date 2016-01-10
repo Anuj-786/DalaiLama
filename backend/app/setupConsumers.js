@@ -10,7 +10,7 @@ var config = require('../config.js');
 var consumers = {
   // CRUD Operation
   'c-entity': 'crud/create',
-  'r-entity': 'crud/crudRead',
+  'r-entity': 'crud/read',
   'u-entity': 'crud/update',
 
   // Search Operation
