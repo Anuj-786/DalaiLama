@@ -57,7 +57,7 @@ export default class Speaker extends React.Component {
       var onCancel = this.onCancel
       var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true);
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} entityType="speaker">
         <div className="speakerContainer">
           {formElement}
         </div>

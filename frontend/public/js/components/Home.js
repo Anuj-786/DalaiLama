@@ -19,6 +19,7 @@ export default class Home extends React.Component {
     this.changeLanguage = this.changeLanguage.bind(this)
     this.closeWindow = this.closeWindow.bind(this)
     this.onDiscard = this.onDiscard.bind(this)
+    this.checkEditedFieldsValue = this.checkEditedFieldsValue.bind(this)
     this.onCloseDialog = this.onCloseDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
@@ -30,10 +31,6 @@ export default class Home extends React.Component {
       entityOptions: [
         'Event' ,
         'Session',
-        'Raw Video',
-        'Raw Audio',
-        'Edited Video',
-        'Edited Audio',
         'Speaker',
       ],
       lang: 1,
@@ -41,12 +38,14 @@ export default class Home extends React.Component {
       openSnacker: false,
       snackerMessage: "",
       searchResults: [],
-      createEvent: false,
+      event: false,
+      speaker: false,
       viewEvent: true,
       searchResults: true,
       discardChanges: false,
       changeLang: 0, 
       closeEventWindow: false,
+      closeSpeakerWindow: false,
     }
   }
 
@@ -63,9 +62,9 @@ export default class Home extends React.Component {
 
   changeEntity(e, index, value) {
 
-    if(this.state.entityOptions[value] === 'Event') {
-      this.setState({createEvent: true})
-      console.log(this.state.createEvent)
+    if(this.state.entityOptions[value]) {
+      this.setState({[(this.state.entityOptions[value]).toLowerCase()]: true})
+      console.log(this.state.event)
     }
     
     this.setState({entity: value})
@@ -76,14 +75,14 @@ export default class Home extends React.Component {
   }
 
   closeWindow(entityType) {
-    if(this.state.createEvent) {
+    if(this.state.event) {
       var result = _.remove(_.compact(_.values(this.refs.createEvent.getFormValue())), function(field) {
         return !_.isArray(field) || field.length > 0
       })
 
       if(_.isEmpty(result)) {
         
-        this.setState({createEvent: false})
+        this.setState({event: false})
 
       }
 
@@ -107,8 +106,8 @@ export default class Home extends React.Component {
     })
 
     if(this.state.closeEventWindow) {
-      
-      this.setState({createEvent: false})
+
+      this.setState({event: false, closeEventWindow: false})
 
     } 
 
@@ -121,39 +120,53 @@ export default class Home extends React.Component {
     }) 
   }
 
+  getEditedFields(refValue) {
+    return _.remove(_.compact(_.values(this.refs[refValue].getFormValue())), function(field) {
+      return !_.isArray(field) || field.length > 0
+    })
+  }
+
+  checkEditedFieldsValue(refValue, index) {
+    var result = this.getEditedFields(refValue) 
+
+    if(!result.length) {
+      this.setState({
+        lang: index
+      })
+    } 
+    else {
+      this.setState({
+        discardChanges: true,
+        changeLang: index,
+      })
+    } 
+  }
+
+  checkFieldsValue(refValue, index) {
+
+    var currentValues = this.refs[refValue].getFormValue()
+
+    currentValues['classification'] = classifications[currentValues['classification']]
+    currentValues['startingDate'] = +moment(currentValues['startingDate'])
+    currentValues['endingDate'] = +moment(currentValues['endingDate'])
+    
+    if(_.isMatch(this.refs[refValue].getDefaultValues(), currentValues)) {
+      this.setState({lang: index})
+    }
+    else {
+      this.setState({discardChanges: true})
+    }
+
+  }
+
   changeLanguage(event, index, menuItem) {
     
-    if(this.state.createEvent) {
+    if(this.state.event) {
       if(!this.state.edit) {
-        var result = _.remove(_.compact(_.values(this.refs.createEvent.getFormValue())), function(field) {
-          return !_.isArray(field) || field.length > 0
-        })
-        console.log(result.length)
-        if(!result.length) {
-          this.setState({
-            lang: index
-          })
-        } 
-        else {
-          this.setState({
-            discardChanges: true,
-            changeLang: index,
-          })
-        } 
+        this.checkEditedFieldsValue('createEvent', index) 
       }
       else {
-        var currentValues = this.refs.createEvent.getFormValue()
-        currentValues['classification'] = classifications[currentValues['classification']]
-        currentValues['startingDate'] = +moment(currentValues['startingDate'])
-        currentValues['endingDate'] = +moment(currentValues['endingDate'])
-        
-        if(_.isMatch(this.refs.createEvent.getDefaultValues(), currentValues)) {
-          this.setState({lang: index})
-        }
-        else {
-          this.setState({discardChanges: true})
-        }
-
+        this.checkFieldsValue('createEvent', index)
       }
     }
 
@@ -166,8 +179,8 @@ export default class Home extends React.Component {
       <div>
       <div className="row">
           <Header entityOptions={this.state.entityOptions} filterOptions={this.state.filterOptions} lang={this.state.lang} entity={this.state.entity} changeEntity={this.changeEntity} changeLang={this.changeLanguage}/> 
-          {this.state.createEvent && <EntityEvent ref="createEvent" edit={this.state.edit} closeWindow={this.closeWindow} lang={this.state.filterOptions[this.state.lang]} discardChanges={this.state.discardChanges} onDiscard={this.onDiscard} onCloseDialog={this.onCloseDialog}/>}
-          {this.state.entityOptions[this.state.entity] === 'Speaker' && <Speaker />}
+          {this.state.event && <EntityEvent ref="createEvent" edit={this.state.edit} closeWindow={this.closeWindow} lang={this.state.filterOptions[this.state.lang]} discardChanges={this.state.discardChanges} onDiscard={this.onDiscard} onCloseDialog={this.onCloseDialog}/>}
+          {this.state.speaker && <Speaker closeWindow={this.closeWindow} lang={this.state.filterOptions[this.state.lang]}/>}
       </div>
       {this.state.viewEvent && <ViewEvent closeWindow={this.closeWindow}/>}
       {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}

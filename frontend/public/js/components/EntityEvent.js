@@ -140,7 +140,7 @@ export default class EntityEvent extends React.Component {
     }
 
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} entityType="createEvent">
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} entityType="event">
         <div className="createEntityContainer">
           {formElement}
         </div>
