@@ -22,14 +22,17 @@ var FormGenerator = {
    * @param  {Function} onSubmit What do do on submission
    * @param  {Boolean} validateOnSubmit Wait until submit to validate
    * @return {JSX} The FormGeneratorForm for this schema
+   * @param {Boolean} reset empty all field
    */
-  create(schema, ref, onSubmit, onCancel, validateOnSubmit) {
+  create(schema, ref, onSubmit, onCancel, validateOnSubmit, reset) {
+    console.log(schema)
     return (
       <FormGeneratorForm
         schema={schema}
         ref={ref}
         onSubmit={onSubmit}
         onCancel={onCancel}
+        reset={reset}
         validateOnSubmit={validateOnSubmit}/>
     )
   },
@@ -42,7 +45,7 @@ var FormGenerator = {
    * @param  {Boolean} validateOnSubmit Wait until submit to validate
    * @return {Array} An array of JSX Input fields representing the schema
    */
-  generate(schema, defaultValue, onChange, validateOnSubmit) {
+  generate(schema, defaultValue, onChange, validateOnSubmit, reset) {
     // Special case for array schemas
     if (_.isArray(schema)) {
       return [
@@ -70,6 +73,7 @@ var FormGenerator = {
               label={field.label}
               schema={field.type[0]}
               onChange={onChange}
+              reset={reset}
               defaultValue={field.defaultValue || []}
               validateOnSubmit={validateOnSubmit}/>
           );
@@ -90,7 +94,7 @@ var FormGenerator = {
         // Flat field
         fields.push(
           this.generateFlatField(
-            key, field, defaultVal, onChange, validateOnSubmit
+            key, field, defaultVal, onChange, validateOnSubmit, reset
           )
         );
       }
@@ -107,7 +111,7 @@ var FormGenerator = {
    * @param  {Boolean} validateOnSubmit Wait until submit to validate
    * @return {JSX}      A JSX representation of the field
    */
-  generateFlatField(name, field, defaultValue, onChange, validateOnSubmit) {
+  generateFlatField(name, field, defaultValue, onChange, validateOnSubmit, reset) {
     var validators =
       field.validators || (field.validate && [field.validate]) || [];
 
@@ -132,6 +136,7 @@ var FormGenerator = {
             fields={field.enum}
             validators={validators}
             onChange={onChange}
+            reset={reset}
             isRequired={field.isRequired}
             validateOnSubmit={validateOnSubmit}/>
         );
@@ -161,6 +166,7 @@ var FormGenerator = {
             defaultValue={defaultValue}
             validators={validators}
             onChange={onChange}
+            reset={reset}
             isRequired={field.isRequired}
             multiline={field.multiline || false}
             isNumerical={field.type === Number}
@@ -187,6 +193,7 @@ var FormGenerator = {
           type='date'
           label={field.label}
           ref={name}
+          reset={reset}
           defaultValue={defaultValue || ''}
           validators={validators}
           onChange={onChange}
@@ -199,6 +206,7 @@ var FormGenerator = {
           type='time'
           label={field.label}
           ref={name}
+          reset={reset}
           defaultValue={defaultValue || ''}
           validators={validators}
           onChange={onChange}
@@ -247,7 +255,7 @@ var FormGenerator = {
 
     nonEmpty() {
       return function(val) {
-        return !val
+        return val === ''
           ? 'Error: field is required'
           : null;
       };
@@ -270,6 +278,7 @@ export class FormGeneratorForm extends React.Component {
     defaultValue: React.PropTypes.object,
     label: React.PropTypes.string,
     validateOnSubmit: React.PropTypes.bool,
+    reset: React.PropTypes.bool,
   };
 
   static defaultProps = {
@@ -335,6 +344,7 @@ export class FormGeneratorForm extends React.Component {
       <form>
         <ObjectField ref='toplevelForm'
           schema={this.props.schema}
+          reset={this.props.reset}
           defaultValue={this.props.defaultValue}
           label={this.props.label}
           onChange={this.onChange}
@@ -358,6 +368,7 @@ var ObjectField = React.createClass({
     schema: React.PropTypes.object.isRequired,
     onChange: React.PropTypes.func.isRequired,
     label: React.PropTypes.string,
+    reset: React.PropTypes.bool,
     defaultValue: React.PropTypes.object,
     validateOnSubmit: React.PropTypes.bool
   },
@@ -448,7 +459,8 @@ var ObjectField = React.createClass({
       this.props.schema,
       this.props.defaultValue,
       this.props.onChange,
-      this.props.validateOnSubmit
+      this.props.validateOnSubmit,
+      this.props.reset,
     );
     return (
       <div>
@@ -516,7 +528,8 @@ var ArrayField = React.createClass({
     onChange: React.PropTypes.func.isRequired,
     label: React.PropTypes.string,
     initialLength: React.PropTypes.number,
-    validateOnSubmit: React.PropTypes.bool
+    validateOnSubmit: React.PropTypes.bool,
+    reset: React.PropTypes.bool,
   },
 
   getDefaultProps: function() {
@@ -567,6 +580,9 @@ var ArrayField = React.createClass({
   reset: function() {
     console.log('reset array', this.props.defaultValue)
     this.setState({tags: this.props.defaultValue, value: ''})
+    if(this.props.reset) {
+      this.setState({tags: [], value: ''})
+    }
   },
 
   isValid: function() {
@@ -774,6 +790,9 @@ var FlatField = React.createClass({
   reset: function() {
     this.setValue(this.props.defaultValue);
     this.setState({value: this.props.defaultValue})
+    if(this.props.reset) {
+      this.setValue('')
+    }
   },
 
   onChange: function(e) {
@@ -796,7 +815,6 @@ var FlatField = React.createClass({
 
   changeTime: function(e, time) {
     this.setValue(moment(time).format('hh:mm a'))
-   //this.setState({time: time})
   },
 
   render: function() {
@@ -829,7 +847,7 @@ var FlatField = React.createClass({
         );
         case 'select': return (
           <div>
-            <SelectField value={that.state.value} onChange={that.onChangeSelect} hintText={that.props.label}>
+            <SelectField value={that.state.value} onChange={that.onChangeSelect} hintText={that.props.label} errorText={that.state.errorMessages[0]}>
               {that.props.fields.map((field, key) =>
               
                 <MenuItem key={key} value={key} primaryText={field}/>

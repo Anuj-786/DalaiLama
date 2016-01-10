@@ -1,13 +1,30 @@
-var React = require('react')
-var FlatButton = require('material-ui/lib/flat-button');
-var FontIcon = require('material-ui/lib/font-icon')
-var WindowHeader = require('./WindowHeader')
+import React from 'react'
+import FlatButton from 'material-ui/lib/flat-button';
+import List from 'material-ui/lib/lists/list';
+import Divider from 'material-ui/lib/divider';
+import ListItem from 'material-ui/lib/lists/list-item';
+import FontIcon from 'material-ui/lib/font-icon'
+import IconButton from 'material-ui/lib/icon-button';
+import WindowHeader from './WindowHeader'
 
-var styles = require('../../css/styles')
+import styles from '../../css/styles'
 
-var ViewEvent = React.createClass({
+export default class ViewEvent extends React.Component {
 
- speakers: [
+ constructor(props) {
+    super(props)
+    this.state = {
+      title: 'View Event',
+      columns: 8,
+      bgcolor: 'bggreen',
+      bcolor: 'bgreen',
+      subHeader: 'The 3rd Kalachakra-Ladakh',
+      buttons: ['edit', 'archive'],
+      searchBar: true
+    }
+ }
+
+ speakers = [
     {
       speakerName: 'Dalai Lama',
       speakerType: 'Tibetan Speaker'
@@ -24,53 +41,36 @@ var ViewEvent = React.createClass({
       speakerName: 'Don Eisenberg',
       speakerType: 'Tibetan Translator'
     }
-  ],
+  ];
 
-  getInitialState: function() {
-    return {
-      title: 'View Event',
-      columns: 8,
-      bgcolor: 'bggreen',
-      bcolor: 'bgreen',
-      subHeader: 'The 3rd Kalachakra-Ladakh',
-      button: ['Edit', 'Archive'],
-      searchBar: true
-    }
-  },
-
-  render: function() {
+  
+  render() {
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} button={this.state.button} searchBar={this.state.searchBar}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} entityType="viewEvent" closeWindow={this.props.closeWindow}>
       <div className="eventContent">
-        <p className="tag">Teaching</p>
+        <p>Teaching</p>
         <p className="VEDate">03/06/2014 to 13/06/2014</p>
         <p>Leh (Ladakh) Jammu & Kashmir, India</p>
         <p className="VEdescription">His Holiness will be giving the Kalachakra at the request of the two main organizers, the Ladakh Buddhist Association and the Ladakh Gonpa Association. The Tibetan Kongpo Association and the Tibetan Jonang Association are co-sponsors. During the first three days of the Kalachakra, from July 3 to 5, His Holiness the Dalai Lama, along with the monks of Namgyal Monastery and senior lamas, will conduct rituals which prepare and consecrate the venue. These include chanting of prayers, creation of the sand mandala and other rituals. From July 6 to 8, His Holiness will give preliminary teachings on Nagarjuna's Precious Garland of the Middle Way (uma rinchen trengwa) & Letter to a Friend (shetring). On July 9, the Kalachakra Ritual Dance will be performed by the monks of Namgyal Monastery. His Holiness will confer the Kalachakra Initiation from July 10 to 12. On July 13, a long life empowerment (tsewang) and a ceremony offering prayers for the long life of His Holiness the Dalai Lama will be performed.</p> 
         <p className="tags">Kala Chakra, Ladakh, Teaching</p>
-        <div className="VEspeaker">
-          <div className="VESheader">
-            <p className="speakerCount">4 Speaker</p>
-            <FlatButton label="link" secondary={true}/>
-          </div>
-          <div className="speakerList">
-            {this.speakers.map(function(speaker, i){
-             return (
-               <div key={i} className="speakerDescription"> 
-                <div className="speakerInfo">
-                  <p className="speakerName">{speaker.speakerName}</p>
-                  <p className="speakerType">{speaker.speakerType}</p>
-                </div>
-                <div>
-                  <FlatButton label="Edit" secondary={true}/>
-                  <FlatButton label="Unlink" secondary={true}/>
-                </div>
-              </div>
-             )
-            })} 
-          </div>
+        <div className="speakersList">
+          <List subheader={<div className="speakersHeader"><p className="speakerCount">4 Speaker</p><IconButton iconClassName="material-icons" tooltip="Add">add</IconButton></div>}>
+            {this.speakers.map((speaker, i) =>
+            <ListItem key={i} primaryText={speaker.speakerName} rightIconButton={
+              <IconButton
+                key={i}
+                iconClassName="material-icons"
+                tooltip="delete">
+                  close
+              </IconButton>}
+              secondaryText={
+                <p>{speaker.speakerType}</p>
+              }   
+            />)}
+          </List>
           <div className='linkedEntity'>
             <div className="entityCount">
-              <p className="entityName">4 Session</p>
+              <p>4 Session</p>
               <FlatButton label="Link" secondary={true}/>
             </div>
             <div className="entityCount">
@@ -99,6 +99,5 @@ var ViewEvent = React.createClass({
       </WindowHeader>
     )
   }
-})  
+} 
 
-module.exports = ViewEvent

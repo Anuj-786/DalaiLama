@@ -5,6 +5,13 @@
   align-items: center;
   justify-content: center;
 }
+.speakersHeader {
+  display: flex;
+  align-items: center;
+}
+.speakerCount {
+  flex: 1;
+}
 .speaker {
   display: flex;
   align-items: center;
@@ -21,6 +28,7 @@
 .pageHeader {
   display: flex;
   align-items: center;
+  padding-right: 3em !important;
 }
 .dropdownDiv {
   display: flex;
