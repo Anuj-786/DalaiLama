@@ -2,12 +2,25 @@ var client = require('./socket-client');
 
 // Testing Creating Entity
 client.emit('c-entity', {
-  type: 'speaker',
+  type: 'session',
   body: {
     english: {
-      type: 'Translator',
-      languages: 'French',
-      name: ['AVIhXxJIPPf_7Ds87q0Q']
+      number: "#1",
+      title: "Session #1",
+      venue: "Ladakh",
+      classification: "Teachings",
+      startingDate: '1454889600000',
+      languages: 'english',
+      translation: 'french'
+    },
+    french: {
+      number: "#1",
+      title: "Session #1",
+      venue: "Ladakh",
+      classification: "Teachings",
+      startingDate: '1454889600000',
+      languages: 'english',
+      translation: 'french'
     }
   }
 });

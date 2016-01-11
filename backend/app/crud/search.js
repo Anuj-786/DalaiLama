@@ -4,7 +4,6 @@ var search = require('../utils/search')
 
 module.exports = function(params, socket) {
 
-  debug(params, socket)
   var missingArgumentMessage
 
   if (!params.q) {
@@ -18,7 +17,7 @@ module.exports = function(params, socket) {
   if (missingArgumentMessage) {
     socket.emit('r-entity.error', {
       message: "Illegal Argument Exception: " + missingArgumentMessage,
-      code: 400
+      status: 400
     })
   }
 

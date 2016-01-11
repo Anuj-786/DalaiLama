@@ -1,18 +1,74 @@
 var debug = require('debug')('crudLink')
+var _ = require('lodash')
+
+var update = require('../utils/update')
+var configs = require('../../../configs')
+
+
 
 module.exports = function(params) {
 
+  var missingArgumentMessage
+  if (!params.body) {
+    missingArgumentMessage = "body missing"
+  }
+
+  if (missingArgumentMessage) {
+    socket.emit('r-entity.error', {
+      message: "Illegal Argument Exception: " + missingArgumentMessage,
+      status: 400
+    })
+  }
+
+  // check if body keys is there in schema
+  var paramKeys = _.keys(params.body)
+  var entityKeys = resolveEntityKeys(_.keys(params.body))
+
+  var pushUpdate = {}
+  pushUpdate[entityKeys[1]] = params.body[_.keys(params.body)[1]]
+
+  return update({
+      type: paramKeys[0],
+      _id: params.body[_.keys(params.body)[0]],
+      update: {
+        push: pushUpdate
+      }
+    })
+    .then(function(res) {
+
+      var entityKeysReverse = resolveEntityKeys(_.keys(params.body).reverse())
+      var pushUpdate = {}
+      pushUpdate[entityKeysReverse[1]] = params.body[_.keys(params.body)[0]]
+
+      return update({
+        type: paramKeys[1],
+        _id: params.body[_.keys(params.body)[1]],
+        update: {
+          push: pushUpdate
+        }
+      })
+
+    })
+
+}
+
+function resolveEntityKeys(entityKeys) {
+  var schemaKeys = _.keys(_.get(configs, 'schema')[entityKeys[0]])
+
+  if (!_.includes(schemaKeys, entityKeys[1])) {
+    entityKeys[1] = entityKeys[1] + 's'
+  }
+
+  return entityKeys
 }
 
 if (require.main === module) {
   module.exports({
       body: {
-      	event: ,
-      	session: 'AVIhUMEBPPf_7Ds87q0J'
+        event: 'AVIhUbKyPPf_7Ds87q0K',
+        session: 'AVIv437NAuidQZrWJNty'
       }
-      context: 'web.read'
-    })
-    .then(function(res) {
+    }).then(function(res) {
       debug(JSON.stringify(res))
     })
     .catch(debug)

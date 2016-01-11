@@ -34,6 +34,9 @@
             }
           }
         },
+        "event": {
+          "type": "string"
+        },
         "french": {
           "properties": {
             "number": {
