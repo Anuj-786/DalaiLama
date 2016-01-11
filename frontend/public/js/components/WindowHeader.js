@@ -30,7 +30,7 @@ export default class WindowHeader extends React.Component {
         <div className={entryDiv}>
           <div className={header}>
             <p className="createEntityHeader">{this.props.type} {this.props.title}</p>
-            <IconButton iconClassName="material-icons icon" onFocus={this.props.closeWindow.bind(this, this.props.entityType)}>close</IconButton>
+            <IconButton iconClassName="material-icons icon" onFocus={this.props.closeWindow.bind(this, this.props.windowRef)}>close</IconButton>
           </div>
           {this.props.subHeader && <div className="headerTitleDiv">
             <p className="headerTitle">{this.props.subHeader}</p>

@@ -1,5 +1,5 @@
 import Header from './Header'
-import EntityEvent from './EntityEvent'
+import EditCreateEntity from './EditCreateEntity'
 import SearchResults from './SearchResults'
 import Snackbar from 'material-ui/lib/snackbar';
 import Speaker from './Speakers'
@@ -8,45 +8,35 @@ import socket from '../socket'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import RaisedButton from 'material-ui/lib/raised-button';
-
 import _ from 'lodash';
+import configs from '../../../../configs' 
 
 export default class Home extends React.Component {
 
   constructor(props) {
     super(props)
-    this.changeEntity = this.changeEntity.bind(this)
+    this.selectEntityToCreate = this.selectEntityToCreate.bind(this)
     this.changeLanguage = this.changeLanguage.bind(this)
     this.closeWindow = this.closeWindow.bind(this)
-    this.onDiscard = this.onDiscard.bind(this)
-    this.checkFieldsOnAddEvent = this.checkFieldsOnAddEvent.bind(this)
-    this.checkFieldsOnEditEvent = this.checkFieldsOnEditEvent.bind(this)
+    this.onDiscardPartialCreateEdit = this.onDiscardPartialCreateEdit.bind(this)
     this.onCloseDialog = this.onCloseDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
-      edit: false,
-      filterOptions: [
+      langaugeOptions: [
         'English',
         'French',
       ],
-      entityOptions: [
-        'Event' ,
-        'Session',
-        'Speaker',
-      ],
-      lang: 1,
-      entity: 1,
+      selectedLangIndex: 1,
+      toChangeLangIndex: null, 
+      entityOptions: _.keys(configs.schema),
+      selectedEntityIndex: 1,
+      currentlyEditingRef: null, //which edit or create component is open right now
+      toCloseRef: null,
       openSnacker: false,
       snackerMessage: "",
       searchResults: [],
-      event: false,
-      speaker: false,
-      viewEvent: true,
       searchResults: true,
-      discardChanges: false,
-      changeLang: 0, 
-      closeEventWindow: false,
-      closeSpeakerWindow: false,
+      showDiscardDialogue: false,
     }
   }
 
@@ -61,134 +51,99 @@ export default class Home extends React.Component {
 
   }
 
-  changeEntity(e, index, value) {
-
-    if(this.state.entityOptions[value]) {
-      this.setState({[(this.state.entityOptions[value]).toLowerCase()]: true})
-      console.log(this.state.event)
+  selectEntityToCreate(event, newlySelectedEntityIndex) {
+    if (this.state.currentlyEditingRef && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+      this.setState({
+        showDiscardDialogue: true,
+        toCreateEntityIndex: newlySelectedEntityIndex
+      })  
+    } else {
+      this.setState({
+        currentlyEditingRef: 'create-' + this.state.entityOptions[newlySelectedEntityIndex],
+        selectedEntityIndex: newlySelectedEntityIndex,
+        toCreateEntityIndex: null
+      })
     }
-    
-    this.setState({entity: value})
+  }
+
+  changeLanguage(event, index) {
+
+    if (this.state.refs[this.state.currentlyEditingRef] && this.state.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+      this.setState({
+        showDiscardDialogue: true,
+        toChangeLangIndex: index
+      })  
+    } else {
+      this.setState({
+        currentlySelectedLangIndex: index,
+        toChangeLangIndex: null
+      })
+    }
   }
 
   closeSnacker() {
     this.setState({openSnacker: false})
   }
 
-  closeWindow(entityType) {
-    if(this.state.event) {
-      var result = _.remove(_.compact(_.values(this.refs.createEvent.getFormValue())), function(field) {
-        return !_.isArray(field) || field.length > 0
-      })
-
-      if(_.isEmpty(result)) {
-        
-        this.setState({event: false})
-
+  closeWindow(windowRef) {
+    if(this.state.currentlyEditingRef === windowRef) {
+      if (this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+        this.setState({
+          showDiscardDialogue: true,
+          toCloseRef: windowRef
+        })  
+      } else {
+        this.refs[windowRef] = null
+        this.setState({
+          toCloseRef: null
+        })  
       }
-
-      else {
-        
-        this.setState({discardChanges: true, closeEventWindow: true})
-
-      }
-
-    }
-    else {
-      this.setState({[entityType]: false})
     }
   }
 
-  onDiscard() { 
+  onDiscardPartialCreateEdit() { 
+
+    this.refs[this.state.currentlyEditingRef].onCancel()
 
     this.setState({
-      discardChanges: false,
-      lang: this.state.changeLang,
+      showDiscardDialogue: false,
+      currentlyEditingRef: null
     })
 
-    if(this.state.closeEventWindow) {
-
-      this.setState({event: false, closeEventWindow: false})
-
+    if(this.state.toCloseRef) {
+      this.closeWindow(this.state.toCloseRef)
     } 
+    
+    if (this.state.toCreateEntityIndex) {
+      this.selectEntityToCreate(null, this.state.toCreateEntityIndex)
+    }
+    
+    if (this.state.toChangeLangIndex) {
+      this.changeLanguage(null, this.state.toChangeLangIndex)
+    }
 
-    this.refs.createEvent.onCancel()
   }
 
   onCloseDialog() {
     this.setState({
-      discardChanges: false,
-      closeEventWindow: false,
+      showDiscardDialogue: false,
+      toCreateEntityIndex: null,
+      toChangeLangIndex: null,
+      toCloseRef: null
     }) 
   }
 
-  getEditedFields(refValue) {
 
-    return _.remove(_.compact(_.values(this.refs[refValue].getFormValue())), function(field) {
-      return !_.isArray(field) || field.length > 0
-    })
-
-  }
-
-  checkFieldsOnAddEvent(refValue, index) {
-
-    var result = this.getEditedFields(refValue) 
-
-    if(!result.length) {
-      this.setState({
-        lang: index
-      })
-    } 
-    else {
-      this.setState({
-        discardChanges: true,
-        changeLang: index,
-      })
-    } 
-  }
-
-  checkFieldsOnEditEvent(refValue, index) {
-
-    var currentValues = this.refs[refValue].getFormValue()
-
-    currentValues['classification'] = classifications[currentValues['classification']]
-    currentValues['startingDate'] = +moment(currentValues['startingDate'])
-    currentValues['endingDate'] = +moment(currentValues['endingDate'])
-    
-    if(_.isMatch(this.refs[refValue].getDefaultValues(), currentValues)) {
-      this.setState({lang: index})
-    }
-    else {
-      this.setState({discardChanges: true})
-    }
-
-  }
-
-  changeLanguage(event, index, menuItem) {
-    
-    if(this.state.event) {
-      if(!this.state.edit) {
-        this.checkFieldsOnAddEvent('createEvent', index) 
-      }
-      else {
-        this.checkFieldsOnEditEvent('createEvent', index)
-      }
-    }
-
-    this.setState({lang: index})
-
-  }
-
-  render() {
-    return (
-      <div>
-      <div className="row">
-          <Header entityOptions={this.state.entityOptions} filterOptions={this.state.filterOptions} lang={this.state.lang} entity={this.state.entity} changeEntity={this.changeEntity} changeLang={this.changeLanguage}/> 
-          {this.state.event && <EntityEvent ref="createEvent" edit={this.state.edit} closeWindow={this.closeWindow} lang={this.state.filterOptions[this.state.lang]} discardChanges={this.state.discardChanges} onDiscard={this.onDiscard} onCloseDialog={this.onCloseDialog}/>}
-          {this.state.speaker && <Speaker closeWindow={this.closeWindow} lang={this.state.filterOptions[this.state.lang]}/>}
-      </div>
+        /**  {this.state.speaker && <Speaker closeWindow={this.closeWindow} lang={this.state.langaugeOptions[this.state.selectedLangIndex]}/>}
       {this.state.viewEvent && <ViewEvent closeWindow={this.closeWindow}/>}
       {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}
+      **/
+  render() {
+    return (
+      <div className="row">
+          <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
+          {this.state.currentlyEditingRef && <EditCreateEntity windowRef={this.state.currentlyEditingRef} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/>}
+
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}

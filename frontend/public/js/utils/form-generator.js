@@ -25,7 +25,6 @@ var FormGenerator = {
    * @param {Boolean} reset empty all field
    */
   create(schema, ref, onSubmit, onCancel, validateOnSubmit, reset) {
-    console.log(schema)
     return (
       <FormGeneratorForm
         schema={schema}
@@ -336,9 +335,6 @@ export class FormGeneratorForm extends React.Component {
   }
 
   render() {
-    var buttonDisabled = this.state.validateOnSubmit
-      ? false
-      : !this.state.isValid;
   
     return (
       <form>
@@ -353,7 +349,7 @@ export class FormGeneratorForm extends React.Component {
           style={styles.fileSubmitButton}
           label="Submit"
           onClick={this.onSubmit}
-          disabled={buttonDisabled}/>
+        />
         <RaisedButton
           label="Cancel"
           onClick={this.props.onCancel}

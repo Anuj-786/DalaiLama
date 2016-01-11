@@ -37,7 +37,7 @@ export default class Speaker extends React.Component {
   }
 
   schema() {
-    return generateSchema(speakerConfig, this.state.speaker, 'english', {type: this.state.speakerTypes, language: this.state.speakerLanguages} )
+    return generateSchema(speakerConfig, this.state.speaker, this.props.lang, {type: this.state.speakerTypes, language: this.state.speakerLanguages} )
   }
 
   onSubmit(data) {

@@ -13,22 +13,6 @@ import socket from '../socket'
 import styles from '../../css/styles'
 injectTapEventPlugin();
 
-var entityOptions = [
-  'Event' ,
-  'Session',
-  'Raw Video',
-  'Raw Audio',
-  'Edited Video',
-  'Edited Audio',
-]
-
-var filterOptions = [
-  'English',
-  'Hindi',
-  'Tibtitan',
-  'Chinese',
-]
-
 export default class Header extends React.Component {
 
   constructor(props) {
@@ -45,7 +29,7 @@ export default class Header extends React.Component {
 
   submitSearch() {
 
-    socket.emit('r-search', {q: this.state.value, lang: (this.props.filterOptions[this.state.lang]).toLowerCase()})
+    socket.emit('r-search', {q: this.state.value, lang: (this.props.langaugeOptions[this.state.currentlySelectedLangIndex]).toLowerCase()})
 
   }
 
@@ -57,7 +41,7 @@ export default class Header extends React.Component {
         </ToolbarGroup>
         <ToolbarGroup key={1} float="left" style={{flex: 1}}>
           <div className='dropdownDiv'>
-             <SelectField style={styles.searchDropDown} value={this.props.entity} onChange={this.props.changeEntity} label="Entity">
+             <SelectField style={styles.searchDropDown} value={this.props.selectedEntityIndex} onChange={this.props.selectEntityToCreate} label="Entity">
               {this.props.entityOptions.map(function(field, key) {
                 return <MenuItem key={key} value={key} primaryText={field}/>
               })}
@@ -67,8 +51,8 @@ export default class Header extends React.Component {
         </ToolbarGroup>
         <ToolbarGroup key={2} float="right" lastChild={true}>
           <div>
-          <SelectField style={styles.searchDropDown} value={this.props.lang} onChange={this.props.changeLang} label="Language">
-              {this.props.filterOptions.map(function(field, key) {
+          <SelectField style={styles.searchDropDown} value={this.props.selectedLangIndex} onChange={this.props.changeLang} label="Language">
+              {this.props.langaugeOptions.map(function(field, key) {
                 return <MenuItem key={key} value={key} primaryText={field}/>
               })}
           </SelectField>
