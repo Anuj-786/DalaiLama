@@ -71,47 +71,43 @@ export default class EditCreateEntity extends React.Component {
   }
   
   sanitizeFormData(data, lang) {
-
+    lang = lang.toLowerCase()
     var entitySchema = configs.schema[this.state.entityType]
     var result = {[lang] : {}}
     
     //Sanitize date and enum fields in data
-    _.keys(data, function(key) {
+    _.keys(data).forEach(function(key) {
       var fieldData = data[key]
       if (!fieldData) {
         return
       }
       if (_.isDate(fieldData)) {
         data[key] = +fieldData
-      } else {
-        var fieldSchema = entitySchema[key]
-        
-        var enums = fieldSchema[lang] && fieldSchema[lang].enum || fieldSchema.enum
-        if (fieldSchema[lang]) {
-          data[lang][key] = fieldSchema[lang].enum[fieldData]
-        } else {
-          data[key] = fieldSchema.enum[fieldData]
-        }
+      } 
+
+      var fieldSchema = entitySchema[key]
+      
+      var enums = fieldSchema[lang] && fieldSchema[lang].enum || fieldSchema.enum
+      if (enums) {
+        data[key] = enums[fieldData]
       }
+      
     })
 
     //Copy data to final result within language
-    _.keys(data, function(key) {
+    _.keys(data).forEach(function(key) {
       
       var fieldSchema = entitySchema[key]
-      
-      if (data[key] === '') {
-        data[key] = null
+      if (data[key] === '' || _.isArray(data[key]) && !data[key].length) {
         return
       }
 
-      if (fieldSchema[lang]) {
+      if (fieldSchema[lang] && fieldSchema.type !== Date) {
         result[lang][key] = data[key]
       } else {
         result[key] = data[key]
       }
     })
-
     return result
   }
   

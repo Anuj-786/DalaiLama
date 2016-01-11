@@ -1,4 +1,4 @@
-{
+module.exports = {
   "mappings": {
     "speakers": {
       "properties": {
