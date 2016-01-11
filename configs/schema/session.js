@@ -1,4 +1,7 @@
 module.exports = {
+  event: {
+    type: ['event']
+  },
   title: {
     isRequired: true,
     type: String,

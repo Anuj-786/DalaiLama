@@ -38,8 +38,8 @@ module.exports = function(params) {
           }
         }
       }
-    }).then(function(response) {
-      return async.each(response.hits.hits, function(doc) {
+    }).then(function(res) {
+      return async.each(res.hits.hits, function(doc) {
         sanitize(doc, params.lang)
         return require('../utils/resolveJoins')(doc, params.lang, params.context)
       })

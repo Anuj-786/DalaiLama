@@ -4,7 +4,6 @@ var search = require('../utils/search')
 
 module.exports = function(params, socket) {
 
-  debug(params, socket)
   var missingArgumentMessage
 
   if (!params.q) {
@@ -18,7 +17,7 @@ module.exports = function(params, socket) {
   if (missingArgumentMessage) {
     socket.emit('r-entity.error', {
       message: "Illegal Argument Exception: " + missingArgumentMessage,
-      code: 400
+      status: 400
     })
   }
 
@@ -27,17 +26,21 @@ module.exports = function(params, socket) {
 
       socket.emit("r-search.done", {
         message: "Successfully seached " + params.q,
-        code: res.status || 204,
+        status: res.status || 204,
+        response: res,
         params: params,
-        res: res
       })
+
+      return res
     }).catch(function(err) {
 
       socket.emit("r-search.error", {
         message: "Error in searching " + params.q,
-        code: err.status || 500,
+        status: err.status || 500,
         error: err,
         params: params
       })
+
+      return err
     })
 }
