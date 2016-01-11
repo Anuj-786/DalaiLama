@@ -5,9 +5,7 @@ var es = require('../es')
 module.exports = function(params, socket) {
 
   var missingArgumentMessage
-  if (!params._id) {
-    missingArgumentMessage = "_id missing"
-  } else if (!params.type) {
+  if (!params.type) {
     missingArgumentMessage = "type missing"
   } else if (!params.body) {
     missingArgumentMessage = "body missing"
