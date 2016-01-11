@@ -6,7 +6,7 @@ var configs = require('../../../configs')
 
 
 
-module.exports = function(params) {
+module.exports = function(params, socket) {
 
   var missingArgumentMessage
   if (!params.body) {
@@ -48,6 +48,27 @@ module.exports = function(params) {
         }
       })
 
+    }).then(function(res) {
+
+      socket.emit("u-entity.done", {
+        message: "Successfully updated " + params.type,
+        status: res.status || 204,
+        response: res,
+        params: params
+      })
+
+      return res
+    })
+    .catch(function(err) {
+
+      socket.emit("u-entity.error", {
+        message: "Error in updating " + params.type,
+        status: err.status || 500,
+        error: err,
+        params: params
+      })
+
+      return err
     })
 
 }
