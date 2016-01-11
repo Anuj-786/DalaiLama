@@ -10,10 +10,9 @@ var consumers = {
   // CRUD Operation
   'c-entity': 'crud/create',
   'r-entity': 'crud/read',
+  'r-search': 'crud/search',
   'u-entity': 'crud/update',
-
-  // Search Operation
-  'r-search': 'crud/search'
+  'u-entity': 'crud/link'
 }
 
 io.on('connection', function(socket) {
