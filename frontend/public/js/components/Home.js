@@ -67,16 +67,13 @@ export default class Home extends React.Component {
   }
 
   changeLanguage(event, index, forceClose) {
-      console.log(this.refs[this.state.currentlyEditingRef].hasUncommittedChanges())
 
     if (!forceClose && this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
-      console.log('In first if statment')
       this.setState({
         showDiscardDialogue: true,
         toChangeLangIndex: index
       })  
     } else {
-      console.log(index, 'last')
       this.setState({
         selectedLangIndex: index,
         toChangeLangIndex: null
