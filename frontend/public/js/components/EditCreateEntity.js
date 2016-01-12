@@ -28,14 +28,14 @@ export default class EditCreateEntity extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.closeMessage = this.closeMessage.bind(this);
     this.onCancel = this.onCancel.bind(this);
-    console.log(this.props.windowRef)
     var refSplit = this.props.windowRef.split('-')//create-entityType OR edit-entityType-entityId
     this.state = {
       title: _.capitalize(refSplit[0]) + ' ' + refSplit[1],
-      initialData: this.props.data,
+      initialData: this.props.data || {},
       entityType: refSplit[1],
       formType: refSplit[0],
       _id: refSplit[2],
+      windowRef: null,
       columns: 5,
       bgcolor: 'bgorange',
       bcolor: 'borange',
@@ -43,6 +43,17 @@ export default class EditCreateEntity extends React.Component {
       resultMessage: '', 
       discardChanges: false
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    
+    var refSplit = nextProps.windowRef.split('-')//create-entityType OR edit-entityType-entityId
+    this.setState({
+      title: _.capitalize(refSplit[0]) + ' ' + refSplit[1],
+      entityType: refSplit[1],
+      formType: refSplit[0],
+      windowRef: nextProps.windowRef 
+    })
   }
 
   onSubmit(formData) {
@@ -63,19 +74,19 @@ export default class EditCreateEntity extends React.Component {
           resultMessage: data.message,
           openSnacker: true,
         })
-
+        console.log(event)
       }.bind(this))
 
     }.bind(this))
 
     this.refs.myFormRef.reset()
+    this.refs.myFormRef.reset()
   }
   
   sanitizeFormData(data, lang) {
-    if (!data || !_.chain(data).values().without(undefined, null).value().length) {
-      return
+    if (!data || !_.chain(data).values().without(undefined, null).flatten().value().length) {
+      return {}
     }
-
     lang = lang.toLowerCase()
     var entitySchema = configs.schema[this.state.entityType]
     var result = {[lang] : {}}
@@ -119,13 +130,14 @@ export default class EditCreateEntity extends React.Component {
   hasUncommittedChanges() {
    
     var sanitizedFormData = this.sanitizeFormData(this.refs.myFormRef.getValue(), this.props.selectedLang)
+
     return !_.isEqual(this.state.initialData, sanitizedFormData)
   }
 
   onCancel() {
 
     this.refs.myFormRef.reset()
-
+    this.refs.myFormRef.reset()
   }
 
   closeMessage() {
@@ -159,7 +171,7 @@ export default class EditCreateEntity extends React.Component {
     }
 
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} windowRef={this.state.windowRef || this.props.windowRef}>
         <div className="createEntityContainer">
           {formElement}
         </div>

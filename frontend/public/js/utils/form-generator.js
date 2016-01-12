@@ -336,6 +336,9 @@ export class FormGeneratorForm extends React.Component {
 
   render() {
   
+    var buttonDisabled = this.state.validateOnSubmit
+      ? false
+      : !this.state.isValid;
     return (
       <form>
         <ObjectField ref='toplevelForm'
@@ -349,6 +352,7 @@ export class FormGeneratorForm extends React.Component {
           style={styles.fileSubmitButton}
           label="Submit"
           onClick={this.onSubmit}
+          disable={buttonDisabled}
         />
         <RaisedButton
           label="Cancel"

@@ -52,7 +52,6 @@ export default class Home extends React.Component {
   }
 
   selectEntityToCreate(event, newlySelectedEntityIndex) {
-
     if (this.state.currentlyEditingRef && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
       this.setState({
         showDiscardDialogue: true,
@@ -67,16 +66,19 @@ export default class Home extends React.Component {
     }
   }
 
-  changeLanguage(event, index) {
+  changeLanguage(event, index, forceClose) {
+      console.log(this.refs[this.state.currentlyEditingRef].hasUncommittedChanges())
 
-    if (this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+    if (!forceClose && this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+      console.log('In first if statment')
       this.setState({
         showDiscardDialogue: true,
         toChangeLangIndex: index
       })  
     } else {
+      console.log(index, 'last')
       this.setState({
-        currentlySelectedLangIndex: index,
+        selectedLangIndex: index,
         toChangeLangIndex: null
       })
     }
@@ -86,8 +88,7 @@ export default class Home extends React.Component {
     this.setState({openSnacker: false})
   }
 
-  closeWindow(windowRef,event, forceClose) {
-      console.log(event, forceClose, windowRef)
+  closeWindow(windowRef, event , forceClose) {
     if(this.state.currentlyEditingRef === windowRef) {
       if (!forceClose && this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
         this.setState({
@@ -106,7 +107,6 @@ export default class Home extends React.Component {
 
   onDiscardPartialCreateEdit() { 
 
-    console.log(this.state.currentlyEditingRef, 'ooo')
     this.refs[this.state.currentlyEditingRef].onCancel()
 
     this.setState({
@@ -114,15 +114,16 @@ export default class Home extends React.Component {
     })
 
     if(this.state.toCloseRef) {
-      this.closeWindow(null, this.state.toCloseRef, true)
+      this.closeWindow(this.state.toCloseRef, null, true)
     } 
     
     if (this.state.toCreateEntityIndex) {
       this.selectEntityToCreate(null, this.state.toCreateEntityIndex)
     }
     
-    if (this.state.toChangeLangIndex) {
-      this.changeLanguage(null, this.state.toChangeLangIndex)
+    if (_.isNumber(this.state.toChangeLangIndex)) {
+
+      this.changeLanguage(null, this.state.toChangeLangIndex, true)
     }
 
   }
