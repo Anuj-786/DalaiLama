@@ -59,7 +59,7 @@ var FormGenerator = {
       var field = schema[key];
       // Lower level default values take precedence
       defaultValue = defaultValue || {};
-      var defaultVal = field.defaultValue || defaultValue[key];
+      var defaultVal = field.defaultValue || defaultValue[key] || '';
       if (typeof field.type === 'object') {
         // Validate that it's an array
         if (field.type.length && field.type.length === 1) {
@@ -224,7 +224,7 @@ var FormGenerator = {
       return function(val) {
         return (val || '').length !== len
           ? 'Error: must be of length ' + len
-          : undefined;
+          : null;
       };
     },
 
@@ -232,7 +232,7 @@ var FormGenerator = {
       return function(val) {
         return (val || '').length < min
           ? 'Error: must be at least ' + min + ' characters'
-          : undefined;
+          : null;
       };
     },
 
@@ -240,7 +240,7 @@ var FormGenerator = {
       return function(val) {
         return (val || '').length > max
           ? 'Error: must be less than ' + (max + 1) + ' characters'
-          : undefined;
+          : null;
       };
     },
 
@@ -248,7 +248,7 @@ var FormGenerator = {
       return function(val) {
         return !(val || '').match(regex)
           ? 'Error: invalid input'
-          : undefined;
+          : null;
       };
     },
 
@@ -256,7 +256,7 @@ var FormGenerator = {
       return function(val) {
         return val === ''
           ? 'Error: field is required'
-          : undefined;
+          : null;
       };
     },
 
@@ -264,7 +264,7 @@ var FormGenerator = {
       return function(val) {
         return isNaN(val)
           ? 'Error: value must be numerical'
-          : undefined;
+          : null;
       };
     }
   }
@@ -352,7 +352,7 @@ export class FormGeneratorForm extends React.Component {
           style={styles.fileSubmitButton}
           label="Submit"
           onClick={this.onSubmit}
-          disable={buttonDisabled}
+          disabled={buttonDisabled}
         />
         <RaisedButton
           label="Cancel"
@@ -578,7 +578,6 @@ var ArrayField = React.createClass({
   },
 
   reset: function() {
-    console.log('reset array', this.props.defaultValue)
     this.setState({tags: this.props.defaultValue, value: ''})
     if(this.props.reset) {
       this.setState({tags: [], value: ''})
@@ -621,7 +620,6 @@ var ArrayField = React.createClass({
     
     if(e.keyCode == 13 || e.keyCode === 9) {
       if(!_.includes(this.state.tags, this.state.value) && this.state.value.length && !this.state.value.trim() == '') {
-    console.log(this.state.value.length)
         this.setState({tags: this.state.tags.concat(this.state.value)})
         this.setState({value: ''})
 
@@ -633,7 +631,6 @@ var ArrayField = React.createClass({
 
     if(e.keyCode == 8) {
       if(this.state.tags.length && !this.state.value.length) {
-        console.log(e.keyCode)
         this.state.tags.pop() 
         this.forceUpdate()
       }
@@ -718,7 +715,7 @@ var FlatField = React.createClass({
       children: [],
       validators: [],
       onChange: function() {},
-      defaultValue: undefined,
+      defaultValue: null,
       isRequired: false,
       isNumerical: false,
     };
@@ -871,7 +868,7 @@ var FlatField = React.createClass({
               onChange={that.changeTime}
               hintText={that.props.label} />
         )
-        case 'hidden': return undefined;
+        case 'hidden': return null;
       }
     })(this);
   }

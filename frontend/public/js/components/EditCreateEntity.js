@@ -74,7 +74,6 @@ export default class EditCreateEntity extends React.Component {
           resultMessage: data.message,
           openSnacker: true,
         })
-        console.log(event)
       }.bind(this))
 
     }.bind(this))
@@ -84,7 +83,7 @@ export default class EditCreateEntity extends React.Component {
   }
   
   sanitizeFormData(data, lang) {
-    if (!data || !_.chain(data).values().without(undefined, null).flatten().value().length) {
+    if (!data || !_.chain(data).values().compact().without(undefined, null).flatten().value().length) {
       return {}
     }
     lang = lang.toLowerCase()
@@ -167,7 +166,7 @@ export default class EditCreateEntity extends React.Component {
       var ref = 'myFormRef';
       var onSubmit = this.onSubmit;
       var onCancel = this.onCancel
-      var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true, this.props.edit);
+      var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true, false);
     }
 
     return (

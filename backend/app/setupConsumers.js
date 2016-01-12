@@ -10,11 +10,7 @@ var consumers = {
   // CRUD Operation
   'c-entity': 'crud/create',
   'r-entity': 'crud/read',
-<<<<<<< HEAD
   'r-search': 'crud/search',
-=======
-  'r-search': 'crud/search'
->>>>>>> mutual-linking
   'u-entity': 'crud/update',
   'u-entity': 'crud/link'
 }

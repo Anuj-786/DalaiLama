@@ -37,7 +37,6 @@ module.exports = {
   },
   endingDate: {
     type: Date,
-    isRequired: true,
     english: {
       label: 'Ending Date'
     },
