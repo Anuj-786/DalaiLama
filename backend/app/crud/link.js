@@ -1,16 +1,15 @@
 var debug = require('debug')('crudLink')
 var _ = require('lodash')
+var Q = require('q')
 
 var update = require('../utils/update')
 var configs = require('../../../configs')
 
-
-
 module.exports = function(params, socket) {
 
   var missingArgumentMessage
-  if (!params.body) {
-    missingArgumentMessage = "body missing"
+  if (!params) {
+    missingArgumentMessage = "params missing"
   }
 
   if (missingArgumentMessage) {
@@ -20,61 +19,49 @@ module.exports = function(params, socket) {
     })
   }
 
-  // check if body keys is there in schema
-  var paramKeys = _.keys(params.body)
-  var entityKeys = resolveEntityKeys(_.keys(params.body))
+  var entityKeys = resolveEntityKeys(_.pluck(params, '_type'))
+  return Q.all(
+    makeLink(params[0], entityKeys[1], params[1]._id),
+    makeLink(params[1], entityKeys[0], params[0]._id)
+  ).then(function(res) {
 
-  var pushUpdate = {}
-  pushUpdate[entityKeys[1]] = params.body[_.keys(params.body)[1]]
-
-  return update({
-      type: paramKeys[0],
-      _id: params.body[_.keys(params.body)[0]],
-      update: {
-        push: pushUpdate
-      }
+    socket.emit('u-entity.done', {
+      message: 'linked successfully!',
+      status: res.status || 201,
+      response: res,
+      params: params
     })
-    .then(function(res) {
 
-      var entityKeysReverse = resolveEntityKeys(_.keys(params.body).reverse())
-      var pushUpdate = {}
-      pushUpdate[entityKeysReverse[1]] = params.body[_.keys(params.body)[0]]
+    return res
+  }).catch(function(err) {
 
-      return update({
-        type: paramKeys[1],
-        _id: params.body[_.keys(params.body)[1]],
-        update: {
-          push: pushUpdate
-        }
-      })
-
-    }).then(function(res) {
-
-      socket.emit("u-entity.done", {
-        message: "Successfully updated " + params.type,
-        status: res.status || 204,
-        response: res,
-        params: params
-      })
-
-      return res
+    socket.emit('c-entity.error', {
+      message: 'Error in linking to database',
+      status: err.status || 500,
+      error: err,
+      params: params
     })
-    .catch(function(err) {
 
-      socket.emit("u-entity.error", {
-        message: "Error in updating " + params.type,
-        status: err.status || 500,
-        error: err,
-        params: params
-      })
-
-      return err
-    })
+    return err
+  })
 
 }
 
+function makeLink(parentEntity, linkedField, linkedEntityId) {
+
+  return update({
+    type: parentEntity._type,
+    _id: parentEntity._id,
+    update: {
+      push: {
+        [linkedField]: linkedEntityId
+      }
+    }
+  })
+}
+
 function resolveEntityKeys(entityKeys) {
-  var schemaKeys = _.keys(_.get(configs, 'schema')[entityKeys[0]])
+  var schemaKeys = _.keys(configs.schema)[entityKeys[0]]
 
   if (!_.includes(schemaKeys, entityKeys[1])) {
     entityKeys[1] = entityKeys[1] + 's'
@@ -84,12 +71,15 @@ function resolveEntityKeys(entityKeys) {
 }
 
 if (require.main === module) {
-  module.exports({
-      body: {
-        event: 'AVIhUbKyPPf_7Ds87q0K',
-        session: 'AVIv437NAuidQZrWJNty'
-      }
-    }).then(function(res) {
+  module.exports(
+      [{
+        _type: 'event',
+        _id: 'AVIwnJguMLJOR0EfnMlt'
+      }, {
+        _type: 'session',
+        _id: 'AVIwcm0_MLJOR0EfnMlp'
+      }]
+    ).then(function(res) {
       debug(JSON.stringify(res))
     })
     .catch(debug)
