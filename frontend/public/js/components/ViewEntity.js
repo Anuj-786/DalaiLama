@@ -11,10 +11,14 @@ import styles from '../../css/styles'
 
 export default class ViewEvent extends React.Component {
 
- constructor(props) {
+  constructor(props) {
     super(props)
+    var refSplit= this.props.windowRef.split('-')
     this.state = {
-      title: 'View Event',
+      title: _.capitalize(refSplit[0]) + ' ' + _.capitalize(refSplit[1]),
+      data: this.props.data,
+      formType: refSplit[0],
+      entityType: refSplit[1],
       columns: 8,
       bgcolor: 'bggreen',
       bcolor: 'bgreen',
@@ -22,9 +26,9 @@ export default class ViewEvent extends React.Component {
       buttons: ['edit', 'archive'],
       searchBar: true
     }
- }
+  }
 
- speakers = [
+  speakers = [
     {
       speakerName: 'Dalai Lama',
       speakerType: 'Tibetan Speaker'
@@ -46,7 +50,7 @@ export default class ViewEvent extends React.Component {
   
   render() {
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} entityType="viewEvent" closeWindow={this.props.closeWindow}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.ref}>
       <div className="eventContent">
         <p>Teaching</p>
         <p className="VEDate">03/06/2014 to 13/06/2014</p>

@@ -3,7 +3,7 @@ import EditCreateEntity from './EditCreateEntity'
 import SearchResults from './SearchResults'
 import Snackbar from 'material-ui/lib/snackbar';
 import Speaker from './Speakers'
-import ViewEvent from './ViewEvent'
+import ViewEvent from './ViewEntity'
 import socket from '../socket'
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -52,6 +52,7 @@ export default class Home extends React.Component {
   }
 
   selectEntityToCreate(event, newlySelectedEntityIndex) {
+
     if (this.state.currentlyEditingRef && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
       this.setState({
         showDiscardDialogue: true,
@@ -68,7 +69,7 @@ export default class Home extends React.Component {
 
   changeLanguage(event, index) {
 
-    if (this.state.refs[this.state.currentlyEditingRef] && this.state.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+    if (this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
       this.setState({
         showDiscardDialogue: true,
         toChangeLangIndex: index
@@ -85,9 +86,10 @@ export default class Home extends React.Component {
     this.setState({openSnacker: false})
   }
 
-  closeWindow(windowRef) {
+  closeWindow(windowRef,event, forceClose) {
+      console.log(event, forceClose, windowRef)
     if(this.state.currentlyEditingRef === windowRef) {
-      if (this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+      if (!forceClose && this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
         this.setState({
           showDiscardDialogue: true,
           toCloseRef: windowRef
@@ -95,7 +97,8 @@ export default class Home extends React.Component {
       } else {
         this.refs[windowRef] = null
         this.setState({
-          toCloseRef: null
+          currentlyEditingRef: null,
+          toCloseRef: null          
         })  
       }
     }
@@ -103,15 +106,15 @@ export default class Home extends React.Component {
 
   onDiscardPartialCreateEdit() { 
 
+    console.log(this.state.currentlyEditingRef, 'ooo')
     this.refs[this.state.currentlyEditingRef].onCancel()
 
     this.setState({
       showDiscardDialogue: false,
-      currentlyEditingRef: null
     })
 
     if(this.state.toCloseRef) {
-      this.closeWindow(this.state.toCloseRef)
+      this.closeWindow(null, this.state.toCloseRef, true)
     } 
     
     if (this.state.toCreateEntityIndex) {
@@ -142,7 +145,7 @@ export default class Home extends React.Component {
     return (
       <div className="row">
           <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
-          {this.state.currentlyEditingRef && <EditCreateEntity windowRef={this.state.currentlyEditingRef} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/>}
+          {this.state.currentlyEditingRef && <EditCreateEntity ref={this.state.currentlyEditingRef} windowRef={this.state.currentlyEditingRef} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/>}
 
         <Snackbar
           open={this.state.openSnacker}

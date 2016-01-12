@@ -59,7 +59,7 @@ var FormGenerator = {
       var field = schema[key];
       // Lower level default values take precedence
       defaultValue = defaultValue || {};
-      var defaultVal = field.defaultValue || defaultValue[key] || '';
+      var defaultVal = field.defaultValue || defaultValue[key];
       if (typeof field.type === 'object') {
         // Validate that it's an array
         if (field.type.length && field.type.length === 1) {
@@ -130,8 +130,8 @@ var FormGenerator = {
             type='select'
             ref={name}
             label={field.label || ''}
-            placeholder={field.enum[0] || ''}
-            defaultValue={defaultValue || ''}
+            placeholder={field.enum[0]}
+            defaultValue={defaultValue}
             fields={field.enum}
             validators={validators}
             onChange={onChange}
@@ -193,7 +193,7 @@ var FormGenerator = {
           label={field.label}
           ref={name}
           reset={reset}
-          defaultValue={defaultValue || ''}
+          defaultValue={defaultValue}
           validators={validators}
           onChange={onChange}
           isRequired={field.isRequired}
@@ -206,7 +206,7 @@ var FormGenerator = {
           label={field.label}
           ref={name}
           reset={reset}
-          defaultValue={defaultValue || ''}
+          defaultValue={defaultValue}
           validators={validators}
           onChange={onChange}
           isRequired={field.isRequired}
@@ -224,7 +224,7 @@ var FormGenerator = {
       return function(val) {
         return (val || '').length !== len
           ? 'Error: must be of length ' + len
-          : null;
+          : undefined;
       };
     },
 
@@ -232,7 +232,7 @@ var FormGenerator = {
       return function(val) {
         return (val || '').length < min
           ? 'Error: must be at least ' + min + ' characters'
-          : null;
+          : undefined;
       };
     },
 
@@ -240,7 +240,7 @@ var FormGenerator = {
       return function(val) {
         return (val || '').length > max
           ? 'Error: must be less than ' + (max + 1) + ' characters'
-          : null;
+          : undefined;
       };
     },
 
@@ -248,7 +248,7 @@ var FormGenerator = {
       return function(val) {
         return !(val || '').match(regex)
           ? 'Error: invalid input'
-          : null;
+          : undefined;
       };
     },
 
@@ -256,7 +256,7 @@ var FormGenerator = {
       return function(val) {
         return val === ''
           ? 'Error: field is required'
-          : null;
+          : undefined;
       };
     },
 
@@ -264,7 +264,7 @@ var FormGenerator = {
       return function(val) {
         return isNaN(val)
           ? 'Error: value must be numerical'
-          : null;
+          : undefined;
       };
     }
   }
@@ -714,7 +714,7 @@ var FlatField = React.createClass({
       children: [],
       validators: [],
       onChange: function() {},
-      defaultValue: '',
+      defaultValue: undefined,
       isRequired: false,
       isNumerical: false,
     };
@@ -867,7 +867,7 @@ var FlatField = React.createClass({
               onChange={that.changeTime}
               hintText={that.props.label} />
         )
-        case 'hidden': return null;
+        case 'hidden': return undefined;
       }
     })(this);
   }

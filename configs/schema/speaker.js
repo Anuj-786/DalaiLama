@@ -2,26 +2,23 @@ module.exports = {
   type: {
     isRequired: true,
     type: String,
-    enum: '*type',
+    enum: ['Translator'],
     english: {
       label: 'Title',
-      defaultValue: '*title'
     },
     french: {
       label: 'Titre',
-      defaultValue: '*title'
     }
   },
   language: {
     isRequired: true,
     type: String,
+    enum: ['English', 'Tibetan', 'Hindi', 'French'],
     english: {
       label: 'Title',
-      defaultValue: '*title'
     },
     french: {
       label: 'Titre',
-      defaultValue: '*title'
     }
   },
   person: {

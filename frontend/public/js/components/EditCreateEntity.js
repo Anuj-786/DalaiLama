@@ -28,6 +28,7 @@ export default class EditCreateEntity extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.closeMessage = this.closeMessage.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    console.log(this.props.windowRef)
     var refSplit = this.props.windowRef.split('-')//create-entityType OR edit-entityType-entityId
     this.state = {
       title: _.capitalize(refSplit[0]) + ' ' + refSplit[1],
@@ -71,6 +72,10 @@ export default class EditCreateEntity extends React.Component {
   }
   
   sanitizeFormData(data, lang) {
+    if (!data || !_.chain(data).values().without(undefined, null).value().length) {
+      return
+    }
+
     lang = lang.toLowerCase()
     var entitySchema = configs.schema[this.state.entityType]
     var result = {[lang] : {}}
@@ -112,8 +117,9 @@ export default class EditCreateEntity extends React.Component {
   }
   
   hasUncommittedChanges() {
-    var sanitizedFormData = this.sanitize(this.refs.myFormRef.getValue(), this.prop.selectedLang)
-    return _.equal(this.state.initialData, sanitizedFormData)
+   
+    var sanitizedFormData = this.sanitizeFormData(this.refs.myFormRef.getValue(), this.props.selectedLang)
+    return !_.isEqual(this.state.initialData, sanitizedFormData)
   }
 
   onCancel() {
@@ -153,7 +159,7 @@ export default class EditCreateEntity extends React.Component {
     }
 
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} windowRef = {this.props.ref}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef}>
         <div className="createEntityContainer">
           {formElement}
         </div>
