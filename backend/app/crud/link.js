@@ -13,18 +13,37 @@ module.exports = function(params) {
   }
 
   if (missingArgumentMessage) {
-    socket.emit('r-entity.error', {
+    socket.emit('u-entity.error', {
       message: "Illegal Argument Exception: " + missingArgumentMessage,
       status: 400
     })
   }
 
-  // check if body keys is there in schema
   var entityKeys = resolveEntityKeys(_.pluck(params, '_type'))
   return Q.all(
     makeLink(params[0], entityKeys[1], params[1]._id),
     makeLink(params[1], entityKeys[0], params[0]._id)
-  )
+  ).then(function(res) {
+
+    socket.emit('u-entity.done', {
+      message: 'linked successfully!',
+      status: res.status || 201,
+      response: res,
+      params: params
+    })
+
+    return res
+  }).catch(function(err) {
+
+    socket.emit('c-entity.error', {
+      message: 'Error in linking to database',
+      status: err.status || 500,
+      error: err,
+      params: params
+    })
+
+    return err
+  })
 
 }
 
