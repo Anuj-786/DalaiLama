@@ -38,16 +38,25 @@ export default class Home extends React.Component {
       toCloseRef: null,
       openSnacker: false,
       snackerMessage: "",
-      searchResults: [],
+      searchResults: {},
       showDiscardDialogue: false,
       dialogWarning: false,
+      warningMessage: null,
     }
   }
 
   componentDidMount() {
-    socket.on('r-search.done', function(result) {
-      
-      this.setState({snackerMessage: result.message, openSnacker: true, searchResults: result.response, searchResultRef: 'search-' + result.params.q + results.params.lang}) 
+    socket.on('r-search.done', function(results) {
+      var ref = 'search-' + results.params.q + '-' + results.params.lang
+
+      if(!_.includes(this.state.currentlyEditingRefs, ref)) {
+
+        this.state.searchResults[results.params.q] = results.response
+        this.setState({snackerMessage: results.message, openSnacker: true, currentlyEditingRefs: this.state.currentlyEditingRefs.concat(ref)}) 
+
+      } else {
+        this.setState({dialogWarning: true, warningMessage: 'Search Results ' + results.params.q + ' are already opened.'})
+      }
     }.bind(this))
 
     socket.on('r-search.error', function(result) {
@@ -68,15 +77,8 @@ export default class Home extends React.Component {
         toCreateEntityIndex: null
       })
 
-    } /*else if (!_.isEmpty(this.refs) && this.checkFormValues()) {
-
-      this.setState({
-        showDiscardDialogue: true,
-        toCreateEntityIndex: newlySelectedEntityIndex
-      })  
-
-    } */else {
-      this.setState({dialogWarning: true})
+    } else {
+      this.setState({dialogWarning: true, warningMessage: 'The window you trying to Open is already opened.'})
     }
 
   }
@@ -111,20 +113,30 @@ export default class Home extends React.Component {
   }
 
   closeWindow(windowRef, event , forceClose) {
-    if(this.state.currentlyEditingRef === windowRef) {
-      if (!forceClose && this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+
+    if(_.includes(this.state.currentlyEditingRefs, windowRef)) {
+
+      if (!_.isEmpty(this.refs) && this.refs[windowRef].hasUncommittedChanges()) {
+
         this.setState({
           showDiscardDialogue: true,
           toCloseRef: windowRef
         })  
+
       } else {
+        var index = this.state.currentlyEditingRefs.indexOf(windowRef)
+        this.state.currentlyEditingRefs.splice(index , 1)
+        this.forceUpdate()
+       
         this.refs[windowRef] = null
-        this.setState({
+       /* this.setState({
           currentlyEditingRef: null,
           toCloseRef: null          
-        })  
+        })*/  
+
       }
     }
+
   }
 
   onDiscardPartialCreateEdit() { 
@@ -139,13 +151,11 @@ export default class Home extends React.Component {
       showDiscardDialogue: false,
     })
 
-    if(this.state.toCloseRef) {
-      this.closeWindow(this.state.toCloseRef, null, true)
+    if(_.isNumber(this.state.toCloseRef)) {
+      this.setState({
+        toCloseRef: null
+      })
     } 
-    
-    if (this.state.toCreateEntityIndex) {
-      this.selectEntityToCreate(null, this.state.toCreateEntityIndex)
-    }
     
     if (_.isNumber(this.state.toChangeLangIndex)) {
 
@@ -177,7 +187,6 @@ export default class Home extends React.Component {
       **/
   render() {
     
-    console.log(this.refs)
     var actions = [
       <RaisedButton
         label="OK"
@@ -189,10 +198,18 @@ export default class Home extends React.Component {
     return (
       <div className="row">
           <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
+
           {this.state.currentlyEditingRefs.map(function(ref, key) {
-            return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
+            if(_.includes(ref, 'create')) {
+              return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
+            } else if(_.includes(ref, 'search')) {
+
+              var path = ref.split('-')[1]
+
+              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]}/>
+            } 
           }.bind(this))}
-          {this.state.searchResultRef && <SearchResults windowRef={this.state.searchResultRef} closeWindow={this.closeWindow} searchResults={this.state.searchResults}/>}
+
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}
@@ -205,7 +222,7 @@ export default class Home extends React.Component {
           actions={actions}
           modal={false}
           open={this.state.dialogWarning}>
-          The window you trying to Open is already opened. 
+          {this.state.warningMessage}  
         </Dialog>
       </div>
     )
