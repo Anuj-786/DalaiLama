@@ -31,18 +31,19 @@ export default class Home extends React.Component {
       entityOptions: _.keys(configs.schema),
       selectedEntityIndex: 1,
       currentlyEditingRef: null, //which edit or create component is open right now
+      searchResultsRef: null,
       toCloseRef: null,
       openSnacker: false,
       snackerMessage: "",
       searchResults: [],
-      searchResults: true,
       showDiscardDialogue: false,
     }
   }
 
   componentDidMount() {
     socket.on('r-search.done', function(result) {
-      this.setState({snackerMessage: result.message, openSnacker: true}) 
+      
+      this.setState({snackerMessage: result.message, openSnacker: true, searchResults: result.response, searchResultRef: 'search-' + result.params.q + results.params.lang}) 
     }.bind(this))
 
     socket.on('r-search.error', function(result) {
@@ -140,11 +141,12 @@ export default class Home extends React.Component {
       {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}
       **/
   render() {
+    console.log(this.state.searchResults)
     return (
       <div className="row">
           <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
           {this.state.currentlyEditingRef && <EditCreateEntity ref={this.state.currentlyEditingRef} windowRef={this.state.currentlyEditingRef} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/>}
-
+          {this.state.searchResultRef && <SearchResults windowRef={this.state.searchResultRef} closeWindow={this.closeWindow} searchResults={this.state.searchResults}/>}
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}
@@ -156,4 +158,7 @@ export default class Home extends React.Component {
     )
   }
 }
-
+search-q-lang
+read-entityType-id
+edit-entityType-id
+create-entityType
