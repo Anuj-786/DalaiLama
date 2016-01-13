@@ -7,6 +7,7 @@ import ViewEvent from './ViewEntity'
 import socket from '../socket'
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Dialog from 'material-ui/lib/dialog';
 import RaisedButton from 'material-ui/lib/raised-button';
 import _ from 'lodash';
 import configs from '../../../../configs' 
@@ -20,12 +21,14 @@ export default class Home extends React.Component {
     this.closeWindow = this.closeWindow.bind(this)
     this.onDiscardPartialCreateEdit = this.onDiscardPartialCreateEdit.bind(this)
     this.onCloseDialog = this.onCloseDialog.bind(this)
+    this.onCloseWarningDialog = this.onCloseWarningDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
       langaugeOptions: [
         'English',
         'French',
       ],
+      currentlyEditingRefs: [],
       selectedLangIndex: 1,
       toChangeLangIndex: null, 
       entityOptions: _.keys(configs.schema),
@@ -37,6 +40,7 @@ export default class Home extends React.Component {
       snackerMessage: "",
       searchResults: [],
       showDiscardDialogue: false,
+      dialogWarning: false,
     }
   }
 
@@ -53,23 +57,43 @@ export default class Home extends React.Component {
   }
 
   selectEntityToCreate(event, newlySelectedEntityIndex) {
-    if (this.state.currentlyEditingRef && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+
+    var windowRef = 'create-' + this.state.entityOptions[newlySelectedEntityIndex] 
+
+    if (!_.includes(this.state.currentlyEditingRefs, windowRef)) {
+
+      this.setState({
+        currentlyEditingRefs: this.state.currentlyEditingRefs.concat(windowRef),
+        selectedEntityIndex: newlySelectedEntityIndex,
+        toCreateEntityIndex: null
+      })
+
+    } /*else if (!_.isEmpty(this.refs) && this.checkFormValues()) {
+
       this.setState({
         showDiscardDialogue: true,
         toCreateEntityIndex: newlySelectedEntityIndex
       })  
-    } else {
-      this.setState({
-        currentlyEditingRef: 'create-' + this.state.entityOptions[newlySelectedEntityIndex],
-        selectedEntityIndex: newlySelectedEntityIndex,
-        toCreateEntityIndex: null
-      })
+
+    } */else {
+      this.setState({dialogWarning: true})
     }
+
   }
 
-  changeLanguage(event, index, forceClose) {
+  checkFormValues() {
+ 
+    return _.filter(this.state.currentlyEditingRefs, function(field, i) {
 
-    if (!forceClose && this.refs[this.state.currentlyEditingRef] && this.refs[this.state.currentlyEditingRef].hasUncommittedChanges()) {
+      return this.refs[field].hasUncommittedChanges()
+
+    }.bind(this))
+
+  }
+
+  changeLanguage(event, index) {
+
+    if (!_.isEmpty(this.refs) && !_.isEmpty(this.checkFormValues())) {
       this.setState({
         showDiscardDialogue: true,
         toChangeLangIndex: index
@@ -105,7 +129,11 @@ export default class Home extends React.Component {
 
   onDiscardPartialCreateEdit() { 
 
-    this.refs[this.state.currentlyEditingRef].onCancel()
+    _.each(this.checkFormValues(), function(ref) {
+      
+      this.refs[ref].onCancel()
+
+    }.bind(this))
 
     this.setState({
       showDiscardDialogue: false,
@@ -121,7 +149,8 @@ export default class Home extends React.Component {
     
     if (_.isNumber(this.state.toChangeLangIndex)) {
 
-      this.changeLanguage(null, this.state.toChangeLangIndex, true)
+      this.setState({selectedLangIndex: this.state.toChangeLangIndex, toChangeLangIndex: null})
+
     }
 
   }
@@ -135,17 +164,34 @@ export default class Home extends React.Component {
     }) 
   }
 
+  onCloseWarningDialog() {
+    this.setState({
+      dialogWarning: false
+    })
+  }
+
 
         /**  {this.state.speaker && <Speaker closeWindow={this.closeWindow} lang={this.state.langaugeOptions[this.state.selectedLangIndex]}/>}
       {this.state.viewEvent && <ViewEvent closeWindow={this.closeWindow}/>}
       {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}
       **/
   render() {
-    console.log(this.state.searchResults)
+    
+    console.log(this.refs)
+    var actions = [
+      <RaisedButton
+        label="OK"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.onCloseWarningDialog} />
+    ]
+
     return (
       <div className="row">
           <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
-          {this.state.currentlyEditingRef && <EditCreateEntity ref={this.state.currentlyEditingRef} windowRef={this.state.currentlyEditingRef} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/>}
+          {this.state.currentlyEditingRefs.map(function(ref, key) {
+            return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
+          }.bind(this))}
           {this.state.searchResultRef && <SearchResults windowRef={this.state.searchResultRef} closeWindow={this.closeWindow} searchResults={this.state.searchResults}/>}
         <Snackbar
           open={this.state.openSnacker}
@@ -154,11 +200,20 @@ export default class Home extends React.Component {
           onRequestClose={this.closeSnacker.bind(this)}
           autoHideDuration={5000}
         />
+        <Dialog
+          title="Window opened"
+          actions={actions}
+          modal={false}
+          open={this.state.dialogWarning}>
+          The window you trying to Open is already opened. 
+        </Dialog>
       </div>
     )
   }
 }
+/*
 search-q-lang
 read-entityType-id
 edit-entityType-id
-create-entityType
+croeate-entityType
+*/
