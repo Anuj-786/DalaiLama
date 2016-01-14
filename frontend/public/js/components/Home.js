@@ -87,7 +87,7 @@ export default class Home extends React.Component {
  
     return _.filter(this.state.currentlyEditingRefs, function(field, i) {
 
-      return this.refs[field].hasUncommittedChanges()
+      return this.refs[field] && this.refs[field].hasUncommittedChanges()
 
     }.bind(this))
 
@@ -112,11 +112,11 @@ export default class Home extends React.Component {
     this.setState({openSnacker: false})
   }
 
-  closeWindow(windowRef, event , forceClose) {
+  closeWindow(windowRef) {
 
     if(_.includes(this.state.currentlyEditingRefs, windowRef)) {
 
-      if (!_.isEmpty(this.refs) && this.refs[windowRef].hasUncommittedChanges()) {
+      if (this.refs[windowRef] && !_.isEmpty(this.refs) && this.refs[windowRef].hasUncommittedChanges()) {
 
         this.setState({
           showDiscardDialogue: true,
@@ -128,7 +128,10 @@ export default class Home extends React.Component {
         this.state.currentlyEditingRefs.splice(index , 1)
         this.forceUpdate()
        
-        this.refs[windowRef] = null
+        if(this.refs[windowRef]) {
+
+          this.refs[windowRef] = null
+        }
        /* this.setState({
           currentlyEditingRef: null,
           toCloseRef: null          
@@ -151,7 +154,13 @@ export default class Home extends React.Component {
       showDiscardDialogue: false,
     })
 
-    if(_.isNumber(this.state.toCloseRef)) {
+    if(this.state.toCloseRef) {
+
+      var index = this.state.currentlyEditingRefs.indexOf(this.state.toCloseRef)
+      this.state.currentlyEditingRefs.splice(index , 1)
+
+      this.forceUpdate()
+
       this.setState({
         toCloseRef: null
       })

@@ -24,7 +24,7 @@ export default class SearchResults extends React.Component {
   render() {
 
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} button={this.state.button} searchBar={this.state.searchBar} entityType="searchResults" closeWindow={this.props.closeWindow}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} button={this.state.button} searchBar={this.state.searchBar} windowRef={this.props.windowRef} closeWindow={this.props.closeWindow}>
         <div className="searchResultsCon">
           <div className="searchResults">
             <List subheader={'Found ' + this.props.searchResults.length + ' Search Results'}> 
