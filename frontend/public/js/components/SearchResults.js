@@ -33,15 +33,17 @@ export default class SearchResults extends React.Component {
                   <ListItem
                     primaryText={field.fields.french.title}
                     key={i}
+                    onFocus={this.props.openReadWindow.bind(null, field, this.props.windowRef)}
                     secondaryText={
                       <div className="SReventInfo">
-                        <p className="eitem">{field.fields.french.startingDate}</p>
-                        <p className="eitem">{field.fields.french.city}</p>
+                        <p className="eitem">{field.fields.startingDate}</p>
+                        <p className="eitem">{field.fields.french.classification}</p>
+                        <p className="eitem">{field.fields.endingDate}</p>
                       </div>
                     }
                   secondaryTextLines={2} /> 
                 )
-              })}
+              }.bind(this))}
               {this.props.searchResults.sessions && this.searchResults.sessions.map(function(session, i) {
                 return (
                   <ListItem

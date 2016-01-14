@@ -15,14 +15,15 @@ export default class ViewEvent extends React.Component {
     super(props)
     var refSplit= this.props.windowRef.split('-')
     this.state = {
-      title: _.capitalize(refSplit[0]) + ' ' + _.capitalize(refSplit[1]),
+      title: _.capitalize(refSplit[0]) + ': ' + _.capitalize(refSplit[1]),
+      lang: refSplit[2],
       data: this.props.data,
       formType: refSplit[0],
       entityType: refSplit[1],
       columns: 8,
       bgcolor: 'bggreen',
       bcolor: 'bgreen',
-      subHeader: 'The 3rd Kalachakra-Ladakh',
+      subHeader: this.props.data.fields[refSplit[2]].title,
       buttons: ['edit', 'archive'],
       searchBar: true
     }
@@ -49,14 +50,18 @@ export default class ViewEvent extends React.Component {
 
   
   render() {
+
+    var data = this.props.data.fields[this.state.lang];
+
+
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.ref}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef}>
       <div className="eventContent">
-        <p>Teaching</p>
-        <p className="VEDate">03/06/2014 to 13/06/2014</p>
-        <p>Leh (Ladakh) Jammu & Kashmir, India</p>
-        <p className="VEdescription">His Holiness will be giving the Kalachakra at the request of the two main organizers, the Ladakh Buddhist Association and the Ladakh Gonpa Association. The Tibetan Kongpo Association and the Tibetan Jonang Association are co-sponsors. During the first three days of the Kalachakra, from July 3 to 5, His Holiness the Dalai Lama, along with the monks of Namgyal Monastery and senior lamas, will conduct rituals which prepare and consecrate the venue. These include chanting of prayers, creation of the sand mandala and other rituals. From July 6 to 8, His Holiness will give preliminary teachings on Nagarjuna's Precious Garland of the Middle Way (uma rinchen trengwa) & Letter to a Friend (shetring). On July 9, the Kalachakra Ritual Dance will be performed by the monks of Namgyal Monastery. His Holiness will confer the Kalachakra Initiation from July 10 to 12. On July 13, a long life empowerment (tsewang) and a ceremony offering prayers for the long life of His Holiness the Dalai Lama will be performed.</p> 
-        <p className="tags">Kala Chakra, Ladakh, Teaching</p>
+        <p>{data.classification}</p>
+        <p className="VEDate">{this.props.data.fields[this.state.lang].startingDate} to {this.props.data.fields[this.state.lang].endingDate}</p>
+        <p>{data.city} {data.state} & {data.country}</p>
+        <p className="VEdescription">{data.description}</p>
+        <p className="tags">{data.keywords.join(' ')}</p>
         <div className="speakersList">
           <List subheader={<div className="speakersHeader"><p className="speakerCount">4 Speaker</p><IconButton iconClassName="material-icons" tooltip="Add">add</IconButton></div>}>
             {this.speakers.map((speaker, i) =>

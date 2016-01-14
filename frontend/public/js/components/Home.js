@@ -21,6 +21,7 @@ export default class Home extends React.Component {
     this.closeWindow = this.closeWindow.bind(this)
     this.onDiscardPartialCreateEdit = this.onDiscardPartialCreateEdit.bind(this)
     this.onCloseDialog = this.onCloseDialog.bind(this)
+    this.openReadWindow = this.openReadWindow.bind(this)
     this.onCloseWarningDialog = this.onCloseWarningDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.state = {
@@ -42,6 +43,7 @@ export default class Home extends React.Component {
       showDiscardDialogue: false,
       dialogWarning: false,
       warningMessage: null,
+      readData: {},
     }
   }
 
@@ -52,8 +54,15 @@ export default class Home extends React.Component {
       if(!_.includes(this.state.currentlyEditingRefs, ref)) {
 
         this.state.searchResults[results.params.q] = results.response
-        this.setState({snackerMessage: results.message, openSnacker: true, currentlyEditingRefs: this.state.currentlyEditingRefs.concat(ref)}) 
 
+        this.state.currentlyEditingRefs.unshift(ref)
+
+        this.forceUpdate()
+
+        this.setState({
+          snackerMessage: results.message,
+          openSnacker: true,
+        }) 
       } else {
         this.setState({dialogWarning: true, warningMessage: 'Search Results ' + results.params.q + ' are already opened.'})
       }
@@ -71,14 +80,47 @@ export default class Home extends React.Component {
 
     if (!_.includes(this.state.currentlyEditingRefs, windowRef)) {
 
+      this.state.currentlyEditingRefs.unshift(windowRef)
+
+      this.forceUpdate()
       this.setState({
-        currentlyEditingRefs: this.state.currentlyEditingRefs.concat(windowRef),
         selectedEntityIndex: newlySelectedEntityIndex,
         toCreateEntityIndex: null
       })
 
     } else {
       this.setState({dialogWarning: true, warningMessage: 'The window you trying to Open is already opened.'})
+    }
+
+  }
+
+  openReadWindow(data, ref, event) {
+
+    var windowRef = ref.split('-')
+     
+    if(data) {
+
+      var ref = 'view-' + windowRef[1] + '-' + windowRef[2] + '-' + data._id
+
+      var refSplit = ref.split('-')
+
+
+      if(!_.includes(this.state.currentlyEditingRefs, ref)) {
+
+        this.state.readData[(refSplit[3])] = data
+
+        this.state.currentlyEditingRefs.unshift(ref)
+
+        this.forceUpdate()
+
+      } else {
+
+        this.setState({
+          dialogWarning: true,
+          warningMessage: refSplit[1] + ' event is already viewed'
+        })
+
+      }
     }
 
   }
@@ -195,7 +237,7 @@ export default class Home extends React.Component {
       {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}
       **/
   render() {
-    
+   console.log(this.state.readData, this.state.currentlyEditingRefs) 
     var actions = [
       <RaisedButton
         label="OK"
@@ -215,7 +257,12 @@ export default class Home extends React.Component {
 
               var path = ref.split('-')[1]
 
-              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]}/>
+              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} openReadWindow={this.openReadWindow}/>
+            } else if(_.includes(ref, 'view')) {
+              
+              var path = ref.split('-')[3]
+              console.log(ref, path)
+              return <ViewEvent key={key} windowRef={ref} data={this.state.readData[path]} closeWindow={this.closeWindow}/> 
             } 
           }.bind(this))}
 

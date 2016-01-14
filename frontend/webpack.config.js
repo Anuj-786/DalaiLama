@@ -3,7 +3,13 @@ var path = require('path');
 
 module.exports = {
   devtool: 'eval',
-  entry: './public/js/app.js',
+ // entry: './public/js/app.js',
+  entry: [
+    './public/js/app.js'
+  ],
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   output: {
     path: path.join(__dirname, 'public'),
     filename: 'bundle.js'
@@ -11,8 +17,8 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
-      loader: 'babel-loader',
+      loaders: ['react-hot-loader','babel-loader'],
       include: path.join(__dirname, 'public'),
     }]
   }
-};
+}
