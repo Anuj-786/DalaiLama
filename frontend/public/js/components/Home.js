@@ -46,6 +46,7 @@ export default class Home extends React.Component {
       warningMessage: null,
       readData: {},
       dataForEdit: {}, 
+      edit: null,
     }
   }
 
@@ -125,6 +126,16 @@ export default class Home extends React.Component {
 
   }
 
+  checkTextExistInState(text) {
+     return _.filter(this.state.currentlyEditingRefs, function(field, i) {
+
+      return _.includes(field, text)
+
+    }.bind(this))
+
+
+  }
+
   editEntity(data, ref, event) {
 
     var refSplit = ref.split('-')
@@ -132,19 +143,24 @@ export default class Home extends React.Component {
       
       var windowRef = 'edit-event-' + refSplit[1] + '-' + refSplit[2] + '-' + data._id
 
-      console.log(ref, windowRef)
-      if(!_.includes(this.state.currentlyEditingRefs, windowRef)) {
-        
+      var existFields = this.checkTextExistInState('edit')
+
+      if(!_.includes(this.state.currentlyEditingRefs, windowRef) && _.isEmpty(existFields)) {
+       
         this.state.dataForEdit[data._id] = data
 
-        this.state.currentlyEditingRefs.unshift(windowRef)
+        this.state.currentlyEditingRefs.push(windowRef)
 
         this.forceUpdate()
+
+        this.setState({
+          edit: true
+        })
       } else {
       
         this.setState({
           dialogWarning: true,
-          warningMessage: refSplit[1] + ' edit window are already opened.',
+          warningMessage: 'You can open one edit window at time.',
         })
 
       }
@@ -296,7 +312,7 @@ export default class Home extends React.Component {
               var path = ref.split('-')[4]
 
               console.log(ref, path)
-              return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.dataForEdit[path].fields}/> 
+              return <EditCreateEntity key={key} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.dataForEdit[path].fields}/> 
             } else {
             
               return

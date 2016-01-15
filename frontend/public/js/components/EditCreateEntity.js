@@ -35,7 +35,6 @@ export default class EditCreateEntity extends React.Component {
       initialData: this.props.data || {},
       entityType: refSplit[1],
       formType: refSplit[0],
-      _id: refSplit[2],
       windowRef: null,
       columns: 5,
       bgcolor: 'bgorange',
@@ -62,7 +61,11 @@ export default class EditCreateEntity extends React.Component {
     var finalData = this.sanitizeFormData(formData, this.props.selectedLang)
     
     if(this.props.edit) {
-      socket.emit('u-entity', {type: this.state.entityType, _id: this.state._id, update: {set: finalData}})
+
+      var refSplit = this.props.windowRef.split('-')
+
+
+      socket.emit('u-entity', {type: this.state.entityType, _id: refSplit[4], update: {set: finalData}})
     } 
     else {
       socket.emit('c-entity', {type: this.state.entityType, body: finalData})
