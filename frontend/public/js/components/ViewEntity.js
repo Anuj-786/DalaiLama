@@ -55,7 +55,7 @@ export default class ViewEvent extends React.Component {
 
 
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef}>
+      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data}>
       <div className="eventContent">
         <p>{data.classification}</p>
         <p className="VEDate">{this.props.data.fields[this.state.lang].startingDate} to {this.props.data.fields[this.state.lang].endingDate}</p>

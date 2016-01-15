@@ -21,6 +21,7 @@ export default class Home extends React.Component {
     this.closeWindow = this.closeWindow.bind(this)
     this.onDiscardPartialCreateEdit = this.onDiscardPartialCreateEdit.bind(this)
     this.onCloseDialog = this.onCloseDialog.bind(this)
+    this.editEntity = this.editEntity.bind(this)
     this.openReadWindow = this.openReadWindow.bind(this)
     this.onCloseWarningDialog = this.onCloseWarningDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
@@ -44,6 +45,7 @@ export default class Home extends React.Component {
       dialogWarning: false,
       warningMessage: null,
       readData: {},
+      dataForEdit: {}, 
     }
   }
 
@@ -83,6 +85,7 @@ export default class Home extends React.Component {
       this.state.currentlyEditingRefs.unshift(windowRef)
 
       this.forceUpdate()
+
       this.setState({
         selectedEntityIndex: newlySelectedEntityIndex,
         toCreateEntityIndex: null
@@ -102,12 +105,9 @@ export default class Home extends React.Component {
 
       var ref = 'view-' + windowRef[1] + '-' + windowRef[2] + '-' + data._id
 
-      var refSplit = ref.split('-')
-
-
       if(!_.includes(this.state.currentlyEditingRefs, ref)) {
 
-        this.state.readData[(refSplit[3])] = data
+        this.state.readData[data._id] = data
 
         this.state.currentlyEditingRefs.unshift(ref)
 
@@ -117,10 +117,38 @@ export default class Home extends React.Component {
 
         this.setState({
           dialogWarning: true,
-          warningMessage: refSplit[1] + ' event is already viewed'
+          warningMessage: windowRef[1] + ' event is already viewed'
         })
 
       }
+    }
+
+  }
+
+  editEntity(data, ref, event) {
+
+    var refSplit = ref.split('-')
+    if(data) {
+      
+      var windowRef = 'edit-event-' + refSplit[1] + '-' + refSplit[2] + '-' + data._id
+
+      console.log(ref, windowRef)
+      if(!_.includes(this.state.currentlyEditingRefs, windowRef)) {
+        
+        this.state.dataForEdit[data._id] = data
+
+        this.state.currentlyEditingRefs.unshift(windowRef)
+
+        this.forceUpdate()
+      } else {
+      
+        this.setState({
+          dialogWarning: true,
+          warningMessage: refSplit[1] + ' edit window are already opened.',
+        })
+
+      }
+
     }
 
   }
@@ -237,7 +265,6 @@ export default class Home extends React.Component {
       {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}
       **/
   render() {
-   console.log(this.state.readData, this.state.currentlyEditingRefs) 
     var actions = [
       <RaisedButton
         label="OK"
@@ -245,13 +272,14 @@ export default class Home extends React.Component {
         keyboardFocused={true}
         onTouchTap={this.onCloseWarningDialog} />
     ]
-
+    console.log(this.state.currentlyEditingRefs)
     return (
       <div className="row">
           <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
 
           {this.state.currentlyEditingRefs.map(function(ref, key) {
             if(_.includes(ref, 'create')) {
+
               return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
             } else if(_.includes(ref, 'search')) {
 
@@ -261,9 +289,18 @@ export default class Home extends React.Component {
             } else if(_.includes(ref, 'view')) {
               
               var path = ref.split('-')[3]
+
+              return <ViewEvent key={key} windowRef={ref} data={this.state.readData[path]} closeWindow={this.closeWindow} editEntity={this.editEntity}/> 
+            } else if(_.includes(ref, 'edit-')) {
+              
+              var path = ref.split('-')[4]
+
               console.log(ref, path)
-              return <ViewEvent key={key} windowRef={ref} data={this.state.readData[path]} closeWindow={this.closeWindow}/> 
-            } 
+              return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.dataForEdit[path].fields}/> 
+            } else {
+            
+              return
+            }
           }.bind(this))}
 
         <Snackbar

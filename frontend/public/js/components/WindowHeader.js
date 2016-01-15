@@ -35,9 +35,10 @@ export default class WindowHeader extends React.Component {
           {this.props.subHeader && <div className="headerTitleDiv">
             <p className="headerTitle">{this.props.subHeader}</p>
             <div>
-            {!_.isEmpty(this.props.buttons) && this.props.buttons.map(function(value, i) {
-             return <IconButton key={i} iconClassName="material-icons" tooltip={value}>{value}</IconButton>
-            })}
+            {!_.isEmpty(this.props.buttons) &&
+             <div><IconButton iconClassName="material-icons" tooltip={this.props.buttons[0]} onFocus={this.props.editEntity.bind(null, this.props.data, this.props.windowRef)}>{this.props.buttons[0]}</IconButton>
+             <IconButton iconClassName="material-icons" tooltip={this.props.buttons[1]}>{this.props.buttons[1]}</IconButton></div>
+            }
             </div>
           </div>}
           {this.props.children}

@@ -29,6 +29,7 @@ export default class EditCreateEntity extends React.Component {
     this.closeMessage = this.closeMessage.bind(this);
     this.onCancel = this.onCancel.bind(this);
     var refSplit = this.props.windowRef.split('-')//create-entityType OR edit-entityType-entityId
+    console.log(this.props.data)
     this.state = {
       title: _.capitalize(refSplit[0]) + ' ' + refSplit[1],
       initialData: this.props.data || {},
