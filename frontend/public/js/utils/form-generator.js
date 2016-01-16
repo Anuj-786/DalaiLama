@@ -465,55 +465,6 @@ var ObjectField = React.createClass({
     return (
       <div>
         {subFields}
-        {this.state.speaker && <div className="speakerContainer"> 
-          <div className="speakerFields">
-          {!_.isEmpty(this.state.speakers) && <div className="speakerList">
-              {this.state.speakers.map(function(field, key) {
-              
-                return (
-                  <div className="speaker">
-                    <p className="speakerName">{field.name}</p>
-                    <IconButton
-                      data-val={key}
-                      iconClassName="material-icons"
-                      onFocus={this.deleteSpeaker}
-                      tooltip="Delete">
-                     close
-                    </IconButton>
-                    <IconButton
-                      data-val={key}
-                      iconClassName="material-icons"
-                      onFocus={this.editSpeaker}
-                      tooltip="Edit">
-                     edit
-                    </IconButton>
-                  </div>
-                )
-              }.bind(this))}
-            </div>}
-            <TextField
-              hintText="Name"
-              value={this.state.speakerName}
-              onChange={this.changeName} />
-              <br/>
-            <SelectField value={this.state.speakerType} onChange={this.changeType}>
-              {this.state.type.map((field, key) => 
-               
-                <MenuItem value={key} key={key} primaryText={field}/>
-              )} 
-            </SelectField>
-            <br/>
-            <SelectField value={this.state.speakerLanguage} onChange={this.changeLanguage}>
-
-              {this.state.language.map((field, key) => 
-               
-                <MenuItem value={key} key={key} primaryText={field}/>
-
-              )} 
-            </SelectField><br/>
-            <RaisedButton label="Add" onTouchTap={this.addSpeaker}/>
-          </div>
-        </div>}
       </div>
     );
   }
@@ -680,7 +631,7 @@ var ArrayField = React.createClass({
             value={that.state.value} 
             onKeyDown={that.addTag} 
             onChange={that.onChangeTag} 
-            style={{width: '50px', marginLeft: '2px'}}
+            style={{width: '100%', marginLeft: '2px'}}
             underlineStyle={{display: 'none'}}
             onFocus={this.changeColor}
             onBlur={this.removeColor}

@@ -43,7 +43,7 @@ function getDefaultValue(field, fieldSchema, lang, data) {
     field = lang + '.' + field
   }
 
-  var defaultValueIndicator = fieldSchema[lang] && fieldSchema[lang].defaultValue || fieldSchema.defaultValue
+  var defaultValueIndicator = fieldSchema.multiLingual && fieldSchema[lang].defaultValue || fieldSchema.defaultValue
 
   var defaultValue
 
@@ -61,7 +61,7 @@ function getDefaultValue(field, fieldSchema, lang, data) {
   if (defaultValue && fieldSchema.type === Date) {
     defaultValue = moment(defaultValue).toDate()
   } else if (defaultValue && (fieldSchema.enum || fieldSchema[lang].enum)) {
-    var enumValues = fieldSchema.enum || fieldSchema[lang].enum
+    var enumValues = fieldSchema[lang].enum || fieldSchema.enum
     var fieldValue = _.get(data, field)
     defaultValue = enumValues.indexOf(fieldValue)
   }
