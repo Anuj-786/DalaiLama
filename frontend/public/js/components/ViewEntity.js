@@ -8,6 +8,7 @@ import IconButton from 'material-ui/lib/icon-button';
 import WindowHeader from './WindowHeader'
 import configs from '../../../../configs'
 import styles from '../../css/styles'
+import socket from '../socket'
 
 export default class ViewEvent extends React.Component {
 
@@ -32,7 +33,7 @@ export default class ViewEvent extends React.Component {
   }
   componentDidMount() {
     var refSplit = this.props.windowRef.split('-')
-    socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1]})
+    socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1], lang: this.props.selectedLang, context: 'web.read'})
     socket.on('r-entity.done', function(data) {
       this.setState({
         data: data.response
@@ -41,18 +42,16 @@ export default class ViewEvent extends React.Component {
   }
 
   render() {
-
-    var data = this.props.data.fields[this.state.lang];
-
+    var langData = this.state.data.fields[this.state.lang];
 
     return (
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data}>
         <div className="eventContent">
-          <p>{data.classification}</p>
-          <p className="VEDate">{this.props.data.fields[this.state.lang].startingDate} to {this.props.data.fields[this.state.lang].endingDate}</p>
-          <p>{data.city} {data.state} & {data.country}</p>
-          <p className="VEdescription">{data.description}</p>
-          <p className="tags">{data.keywords && data.keywords.join(' ')}</p>
+          <p>{langData.classification}</p>
+          <p className="VEDate">{this.state.data.fields[this.state.lang].startingDate} to {this.state.data.fields[this.state.lang].endingDate}</p>
+          <p>{langData.city} {langData.state} & {langData.country}</p>
+          <p className="VEdescription">{langData.description}</p>
+          <p className="tags">{langData.keywords && langData.keywords.join(' ')}</p>
           {this.props.speakerList && <div className="speakersList">
             <List subheader={<div className="speakersHeader"><p className="speakerCount">4 Speaker</p><IconButton iconClassName="material-icons" tooltip="Add">add</IconButton></div>}>
               {this.speakers.map((speaker, i) =>
