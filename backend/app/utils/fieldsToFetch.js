@@ -27,7 +27,7 @@ function forEntity(entityType, context, lang) {
 
   //Add language prefix to fields
   return toFetchFields.map(function(field) {
-    if (schema[field][lang]  && schema[field].type !== 'Date') {
+    if (schema[field].multiLingual) {
 
       return lang + '.' + field
 
@@ -36,7 +36,6 @@ function forEntity(entityType, context, lang) {
       return field
 
     }
-
   })
 }
 

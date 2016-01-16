@@ -12,10 +12,9 @@ module.exports = function(esDoc, lang) {
     _.keys(schema).forEach(function(field) {
 
       var fieldSchema = schema[field]
-
       if (!_.isArray(fieldSchema.type)) {
 
-        var fieldName = fieldSchema[lang] ? lang + '.' + field : field
+        var fieldName = fieldSchema.multiLingual ? lang + '.' + field : field
         var fieldData = esDoc.fields[fieldName]
         if (fieldData) {
           esDoc.fields[fieldName] = fieldData[0]

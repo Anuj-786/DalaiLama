@@ -10,7 +10,6 @@ var sanitize = require('./sanitizeEsResponse')
 module.exports = function(params) {
 
   var toFetchFields = fieldsToFetch.forEntities(configs.entityTypes, params.context, params.lang)
-
   var mustClauses = params.filters || []
   if (params.q) {
     mustClauses.push({

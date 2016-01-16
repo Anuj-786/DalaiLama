@@ -1,6 +1,7 @@
 module.exports = {
   name: {
     isRequired: true,
+    multiLingual: true,
     type: String,
     english: {
       label: 'Name',

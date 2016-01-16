@@ -20,7 +20,6 @@ configsToLoad.forEach(function(path) {
 
     deepGet(entityConfigs, path)[entityType] = require('./' + path.join('/') + '/' + entityType)
   })
-  console.log(entityConfigs)
 })
 
 function deepGet(o, path) {

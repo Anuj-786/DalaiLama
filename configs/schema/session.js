@@ -4,6 +4,7 @@ module.exports = {
   },
   title: {
     isRequired: true,
+    multiLingual: true,
     type: String,
     english: {
       label: 'Title'
@@ -14,6 +15,7 @@ module.exports = {
   },
   description: {
     isRequired: true,
+    multiLingual: true,
     type: String,
     english: {
       label: 'description'

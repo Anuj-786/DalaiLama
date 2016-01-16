@@ -2,6 +2,7 @@ module.exports = {
   title: {
     isRequired: true,
     type: String,
+    multiLingual: true,
     english: {
       label: 'Title',
     },
@@ -18,12 +19,14 @@ module.exports = {
   classification: {
     isRequired: true,
     type: String,
-    enum: ['Teaching', 'Talk', 'Address', 'Message', 'Interaction', 'Longlife'],
+    multiLingual: true,
     english: {
       label: 'Classification',
+      enum: ['Teaching', 'Talk', 'Address', 'Message', 'Interaction', 'Longlife'],
     },
     french: {
       label: 'Classification',
+      enum: ['TeachingFr', 'TalkFr', 'AddressFr', 'MessageFr', 'InteractionFr', 'LonglifeFr'],
     }
   },
   startingDate: {
@@ -46,6 +49,7 @@ module.exports = {
   },
   venue: {
     type: String,
+    multiLingual: true,
     english: {
       label: 'Venue',
     },
@@ -55,6 +59,7 @@ module.exports = {
   },
   city: {
     type: String,
+    multiLingual: true,
     english: {
       label: 'City',
     },
@@ -64,6 +69,7 @@ module.exports = {
   },
   state: {
     type: String,
+    multiLingual: true,
     english: {
       label: 'State',
     },
@@ -73,6 +79,7 @@ module.exports = {
   },
   country: {
     type: String,
+    multiLingual: true,
     english: {
       label: 'Country',
     },
@@ -82,6 +89,7 @@ module.exports = {
   },
   languages: {
     type: [String],
+    multiLingual: true,
     english: {
       label: 'Laguagues',
     },
@@ -92,6 +100,7 @@ module.exports = {
   description: {
     multiline: true,
     type: String,
+    multiLingual: true,
     english: {
       label: 'Description',
     },
@@ -108,7 +117,7 @@ module.exports = {
     french: {
       label: 'Heure de départ',
     }
-  },**/
+  },
   translation: {
     type: String,
     english: {
@@ -117,9 +126,10 @@ module.exports = {
     french: {
       label: 'Traduction',
     }
-  },
+  },**/
   keywords: {
     type: [String],
+    multiLingual: true,
     english: {
       label: 'Keywords',
     },
