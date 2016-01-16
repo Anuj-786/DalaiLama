@@ -45,7 +45,6 @@ export default class Home extends React.Component {
       dialogWarning: false,
       warningMessage: null,
       readData: {},
-      dataForEdit: {}, 
       edit: null,
     }
   }
@@ -102,15 +101,16 @@ export default class Home extends React.Component {
 
     var windowRef = ref.split('-')
      
+    console.log(data, windowRef)
     if(data) {
 
-      var ref = 'view-' + windowRef[1] + '-' + windowRef[2] + '-' + data._id
+      var ref = 'view-' + data._type + '-' + windowRef[1] + '-' + windowRef[2] + '-' + data._id
 
       if(!_.includes(this.state.currentlyEditingRefs, ref)) {
 
         this.state.readData[data._id] = data
 
-        this.state.currentlyEditingRefs.unshift(ref)
+        this.state.currentlyEditingRefs.push(ref)
 
         this.forceUpdate()
 
@@ -147,7 +147,7 @@ export default class Home extends React.Component {
 
       if(!_.includes(this.state.currentlyEditingRefs, windowRef) && _.isEmpty(existFields)) {
        
-        this.state.dataForEdit[data._id] = data
+        this.state.readData[data._id] = data
 
         this.state.currentlyEditingRefs.push(windowRef)
 
@@ -288,7 +288,6 @@ export default class Home extends React.Component {
         keyboardFocused={true}
         onTouchTap={this.onCloseWarningDialog} />
     ]
-    console.log(this.state.currentlyEditingRefs)
     return (
       <div className="row">
           <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
@@ -301,18 +300,18 @@ export default class Home extends React.Component {
 
               var path = ref.split('-')[1]
 
-              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} openReadWindow={this.openReadWindow}/>
+              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} openReadWindow={this.openReadWindow}/>
             } else if(_.includes(ref, 'view')) {
               
-              var path = ref.split('-')[3]
+              var path = ref.split('-')[4]
 
+              console.log(path, ref)
               return <ViewEvent key={key} windowRef={ref} data={this.state.readData[path]} closeWindow={this.closeWindow} editEntity={this.editEntity}/> 
             } else if(_.includes(ref, 'edit-')) {
               
               var path = ref.split('-')[4]
 
-              console.log(ref, path)
-              return <EditCreateEntity key={key} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.dataForEdit[path].fields}/> 
+              return <EditCreateEntity key={key} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[path].fields}/> 
             } else {
             
               return

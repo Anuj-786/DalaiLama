@@ -36,8 +36,9 @@ export default class WindowHeader extends React.Component {
             <p className="headerTitle">{this.props.subHeader}</p>
             <div>
             {!_.isEmpty(this.props.buttons) &&
-             <div><IconButton iconClassName="material-icons" tooltip={this.props.buttons[0]} onFocus={this.props.editEntity.bind(null, this.props.data, this.props.windowRef)}>{this.props.buttons[0]}</IconButton>
-             <IconButton iconClassName="material-icons" tooltip={this.props.buttons[1]}>{this.props.buttons[1]}</IconButton></div>
+             <div><IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip={this.props.buttons[0]} onFocus={this.props.editEntity.bind(null, this.props.data, this.props.windowRef)}>{this.props.buttons[0]}</IconButton>
+             <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip={this.props.buttons[1]}>{this.props.buttons[1]}</IconButton>
+             <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip='Link'>{this.props.buttons[2]}</IconButton></div>
             }
             </div>
           </div>}

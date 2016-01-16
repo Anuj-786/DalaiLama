@@ -34,6 +34,7 @@ module.exports = function(entityType, data, lang) {
     }
 
   })
+  console.log(formSchema)
   return formSchema
 }
 
@@ -60,6 +61,7 @@ function getDefaultValue(field, fieldSchema, lang, data) {
   if (defaultValue && fieldSchema.type === Date) {
     defaultValue = moment(defaultValue).toDate()
   }
+
   if(!defaultValue && _.isArray(fieldSchema.type)) {
     defaultValue = []
   }

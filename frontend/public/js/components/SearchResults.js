@@ -5,6 +5,9 @@ import List from 'material-ui/lib/lists/list';
 import Divider from 'material-ui/lib/divider';
 import ListItem from 'material-ui/lib/lists/list-item';
 import WindowHeader from './WindowHeader'
+import IconButton from 'material-ui/lib/icon-button';
+import _ from 'lodash'
+
 
 var styles = require('../../css/styles')
 
@@ -21,29 +24,32 @@ export default class SearchResults extends React.Component {
     }
   }
 
+  searchResultItem(field, i) {
+    return (
+      <ListItem
+        primaryText={field.fields[(this.props.selectedLang.toLowerCase())].title}
+        key={i}
+        onTouchTap={this.props.openReadWindow.bind(null, field, this.props.windowRef)}
+        rightIconButton={<IconButton touch={true}  tooltipPosition="bottom-left" iconClassName="material-icons" tooltip="Link">add</IconButton>}
+        secondaryText={
+          <div className="SReventInfo">
+            <p className="eitem">{field.fields.startingDate}</p>
+            <p className="eitem">{field.fields.french.classification}</p>
+            <p className="eitem">{field.fields.endingDate}</p>
+          </div>
+        }
+      secondaryTextLines={2} /> 
+    )
+  }
   render() {
-
     return (
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} button={this.state.button} searchBar={this.state.searchBar} windowRef={this.props.windowRef} closeWindow={this.props.closeWindow}>
         <div className="searchResultsCon">
           <div className="searchResults">
             <List subheader={'Found ' + this.props.searchResults.length + ' Search Results'}> 
-              {this.props.searchResults && this.props.searchResults.map(function(field, i) {
-                return (
-                  <ListItem
-                    primaryText={field.fields.french.title}
-                    key={i}
-                    onFocus={this.props.openReadWindow.bind(null, field, this.props.windowRef)}
-                    secondaryText={
-                      <div className="SReventInfo">
-                        <p className="eitem">{field.fields.startingDate}</p>
-                        <p className="eitem">{field.fields.french.classification}</p>
-                        <p className="eitem">{field.fields.endingDate}</p>
-                      </div>
-                    }
-                  secondaryTextLines={2} /> 
-                )
-              }.bind(this))}
+              {_.isArray(this.props.searchResults) && this.props.searchResults.map(function(field, i) {
+                return this.searchResultItem(field, i) 
+              }.bind(this)) || this.searchResultItem(this.props.searchResults, 1)}
               {this.props.searchResults.sessions && this.searchResults.sessions.map(function(session, i) {
                 return (
                   <ListItem

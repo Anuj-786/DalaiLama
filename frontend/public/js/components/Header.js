@@ -29,7 +29,7 @@ export default class Header extends React.Component {
 
   submitSearch() {
 
-    socket.emit('r-search', {q: this.state.value, lang: (this.props.langaugeOptions[this.props.selectedLangIndex]).toLowerCase(), context: 'web.search'})
+    socket.emit('r-search', {q: this.state.value, lang: (this.props.langaugeOptions[this.props.selectedLangIndex]).toLowerCase(), context: 'web.search', size: 10})
 
   }
 
