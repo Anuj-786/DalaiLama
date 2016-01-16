@@ -7,6 +7,7 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import WindowHeader from './WindowHeader'
 import IconButton from 'material-ui/lib/icon-button';
 import _ from 'lodash'
+import moment from 'moment'
 
 import configs from '../../../../configs'
 import fieldsToFetch from '../../../../backend/app/utils/fieldsToFetch'
@@ -29,14 +30,32 @@ export default class SearchResults extends React.Component {
   searchResultItem(item, i) {
     var config = configs.web.read[item._type]
     var primaryField = config[primaryField] || 'title' 
+    primaryField = this.props.selectedLang + '.' + primaryField
     var toDisplayFields = fieldsToFetch.forEntity(item._type, 'web.search', this.props.selectedLang)
-    console.log(toDisplayFields)
+    toDisplayFields = _.without(toDisplayFields, primaryField)
     return (
       <ListItem
-        primaryText={item._type + ': ' + item.fields[this.props.selectedLang][primaryField]}
+        primaryText={item._type + ': ' + _.get(item.fields, primaryField)}
         key={i}
         onTouchTap={this.props.openReadWindow.bind(null, item, this.props.windowRef)}
         rightIconButton={<IconButton touch={true}  tooltipPosition="bottom-left" iconClassName="material-icons" tooltip="Link">add</IconButton>}
+        secondaryText={
+          <div className="REventInfo">
+            {
+              toDisplayFields.map(function(field) {
+                var value = _.get(item.fields, field)
+                if (value) {
+                  var basicField = field.split('.')[1] || field
+                  if (configs.schema[item._type][basicField].type === Date) {
+                  console.log(basicField, value)
+                    value = moment(value).format('MMMM Do YYYY')
+                  }
+                  return <span className="eitem">{value}</span>
+                }
+              })
+            }
+          </div>
+        }
         secondaryTextLines={2} 
       /> 
     )

@@ -1,17 +1,17 @@
 import React from 'react';
-import FormGenerator from '../utils/form-generator'
 import FlatButton from 'material-ui/lib/flat-button'
 import TextField from 'material-ui/lib/text-field'
 import DropDownMenu from 'material-ui/lib/DropDownMenu'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import WindowHeader from './WindowHeader'
-import generateSchema from './generateSchema'
 import Dialog from 'material-ui/lib/dialog'
 import Snackbar from 'material-ui/lib/snackbar'
 import moment from 'moment'
-import socket from '../socket'
 import _ from 'lodash'
 
+import generateSchema from '../utils/generateSchema'
+import socket from '../socket'
+import FormGenerator from '../utils/form-generator'
 import configs from '../../../../configs'
 import styles from '../../css/styles.js'
 
