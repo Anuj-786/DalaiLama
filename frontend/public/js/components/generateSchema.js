@@ -34,7 +34,6 @@ module.exports = function(entityType, data, lang) {
     }
 
   })
-  console.log(formSchema)
   return formSchema
 }
 
@@ -58,8 +57,13 @@ function getDefaultValue(field, fieldSchema, lang, data) {
   } else {
     defaultValue = data && _.get(data, field)  
   }
+
   if (defaultValue && fieldSchema.type === Date) {
     defaultValue = moment(defaultValue).toDate()
+  } else if (defaultValue && (fieldSchema.enum || fieldSchema[lang].enum)) {
+    var enumValues = fieldSchema.enum || fieldSchema[lang].enum
+    var fieldValue = _.get(data, field)
+    defaultValue = enumValues.indexOf(fieldValue)
   }
 
   if(!defaultValue && _.isArray(fieldSchema.type)) {
