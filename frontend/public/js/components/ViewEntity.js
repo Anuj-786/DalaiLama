@@ -35,9 +35,13 @@ export default class ViewEvent extends React.Component {
     var refSplit = this.props.windowRef.split('-')
     socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1], lang: this.props.selectedLang, context: 'web.read'})
     socket.on('r-entity.done', function(data) {
-      this.setState({
-        data: data.response
-      })
+
+      if(data.response._id === refSplit[2]) {
+        this.setState({
+          data: data.response
+        })
+      }
+
     }.bind(this))
   }
 

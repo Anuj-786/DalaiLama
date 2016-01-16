@@ -1,16 +1,16 @@
-import Header from './Header'
-import EditCreateEntity from './EditCreateEntity'
-import SearchResults from './SearchResults'
 import Snackbar from 'material-ui/lib/snackbar';
-import Speaker from './Speakers'
-import ViewEntity from './ViewEntity'
-import socket from '../socket'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Dialog from 'material-ui/lib/dialog';
 import RaisedButton from 'material-ui/lib/raised-button';
 import _ from 'lodash';
+
+import Header from './Header'
+import EditCreateEntity from './EditCreateEntity'
+import SearchResults from './SearchResults'
+import ViewEntity from './ViewEntity'
 import configs from '../../../../configs' 
+import socket from '../socket'
 
 export default class Home extends React.Component {
 
@@ -71,9 +71,15 @@ export default class Home extends React.Component {
       }
     }.bind(this))
 
-    socket.on('r-search.error', function(result) {
-      this.setState({snackerMessage: result.message, openSnacker: true}) 
+    var errEvents = ['r-search.error', 'r-entity.error']
+    errEvents.forEach(function(event) {
+      socket.on(event, 
+        function(result) {
+          this.setState({snackerMessage: result.message, openSnacker: true}) 
+        }.bind(this)
+      )
     }.bind(this))
+  
 
   }
 
@@ -100,8 +106,6 @@ export default class Home extends React.Component {
 
   openReadWindow(data, ref, event) {
 
-    var windowRef = ref.split('-')
-     
     if(data) {
 
       var ref = 'view-' + data._type + '-' + data._id
@@ -118,7 +122,7 @@ export default class Home extends React.Component {
 
         this.setState({
           dialogWarning: true,
-          warningMessage: windowRef[1] + ' event is already viewed'
+          warningMessage: data._type + ' is already viewed'
         })
 
       }
@@ -172,7 +176,7 @@ export default class Home extends React.Component {
  
     return _.filter(this.state.refs, function(ref, i) {
 
-      return this.refs[ref].hasUncommittedChanges()
+      return this.refs[ref] && this.refs[ref].hasUncommittedChanges()
 
     }.bind(this))
 
@@ -288,34 +292,36 @@ export default class Home extends React.Component {
         onTouchTap={this.onCloseWarningDialog} />
     ]
     var selectedLang = this.state.langaugeOptions[this.state.selectedLangIndex].toLowerCase()
+
     return (
       <div className="row">
-          <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
+        <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
+          
+        {this.state.refs.map(function(ref, i) {
 
-          {this.state.refs.map(function(ref, key) {
-            if(_.includes(ref, 'create')) {
+          if(_.includes(ref, 'create')) {
 
-              return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={selectedLang} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
-            } else if(_.includes(ref, 'search')) {
+            return <EditCreateEntity key={ref} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={selectedLang} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
+          } else if(_.includes(ref, 'search')) {
 
-              var path = ref.split('-')[1]
+            var path = ref.split('-')[1]
 
-              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow}/>
-            } else if(_.includes(ref, 'view')) {
-              
-              var _id = ref.split('-')[2]
-
-              return <ViewEntity key={key} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} /> 
-            } else if(_.includes(ref, 'edit-')) {
-              
-              var _id = ref.split('-')[2]
-
-              return <EditCreateEntity key={key} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[_id].fields}/> 
-            } else {
+            return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow}/>
+          } else if(_.includes(ref, 'view')) {
             
-              return
-            }
-          }.bind(this))}
+            var _id = ref.split('-')[2]
+
+             return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} /> 
+          } else if(_.includes(ref, 'edit-')) {
+            
+            var _id = ref.split('-')[2]
+
+             return <EditCreateEntity key={ref} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[_id].fields}/> 
+          } else {
+          
+            return
+          }
+        }.bind(this))}          
 
         <Snackbar
           open={this.state.openSnacker}

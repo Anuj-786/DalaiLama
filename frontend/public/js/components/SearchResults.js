@@ -47,7 +47,6 @@ export default class SearchResults extends React.Component {
                 if (value) {
                   var basicField = field.split('.')[1] || field
                   if (configs.schema[item._type][basicField].type === Date) {
-                  console.log(basicField, value)
                     value = moment(value).format('MMMM Do YYYY')
                   }
                   return <span className="eitem">{value}</span>
