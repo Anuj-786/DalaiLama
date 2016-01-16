@@ -13,6 +13,7 @@ export default class ViewEvent extends React.Component {
 
   constructor(props) {
     super(props)
+    this.componentDidMount = this.componentDidMount.bind(this)
     var refSplit= this.props.windowRef.split('-')
     var primaryField = configs.web.read[refSplit[1]].primaryField || 'title' 
     this.state = {
@@ -29,27 +30,16 @@ export default class ViewEvent extends React.Component {
       searchBar: true
     }
   }
+  componentDidMount() {
+    var refSplit = this.props.windowRef.split('-')
+    socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1]})
+    socket.on('r-entity.done', function(data) {
+      this.setState({
+        data: data.response
+      })
+    }.bind(this))
+  }
 
-  speakers = [
-    {
-      speakerName: 'Dalai Lama',
-      speakerType: 'Tibetan Speaker'
-    },
-    {
-      speakerName: 'Lobsang',
-      speakerType: 'English Speaker'
-    },
-    {
-      speakerName: 'Tenzin Choejor',
-      speakerType: 'Hindi Translator'
-    },
-    {
-      speakerName: 'Don Eisenberg',
-      speakerType: 'Tibetan Translator'
-    }
-  ];
-
-  
   render() {
 
     var data = this.props.data.fields[this.state.lang];
