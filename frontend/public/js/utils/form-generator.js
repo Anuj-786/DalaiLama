@@ -24,13 +24,13 @@ var FormGenerator = {
    * @return {JSX} The FormGeneratorForm for this schema
    * @param {Boolean} reset empty all field
    */
-  create(schema, ref, onSubmit, onCancel, validateOnSubmit, reset) {
+  create(schema, ref, onSubmit, onReset, validateOnSubmit, reset) {
     return (
       <FormGeneratorForm
         schema={schema}
         ref={ref}
         onSubmit={onSubmit}
-        onCancel={onCancel}
+        onReset={onReset}
         reset={reset}
         validateOnSubmit={validateOnSubmit}/>
     )
@@ -355,8 +355,8 @@ export class FormGeneratorForm extends React.Component {
           disabled={buttonDisabled}
         />
         <RaisedButton
-          label="Cancel"
-          onClick={this.props.onCancel}
+          label="Reset"
+          onClick={this.props.onReset}
         />
       </form>
     );
