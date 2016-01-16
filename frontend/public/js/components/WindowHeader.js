@@ -22,7 +22,7 @@ export default class WindowHeader extends React.Component {
   }
 
   render() {
-    var columns = "large-" + this.props.columns + " columns contentContainer"
+    var columns = "large-" + 6 + " columns contentContainer"
     var header = "entityHeader " + this.props.bgcolor
     var entryDiv = 'viewEntry ' + this.props.bcolor
     return (

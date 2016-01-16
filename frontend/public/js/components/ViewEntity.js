@@ -6,7 +6,7 @@ import ListItem from 'material-ui/lib/lists/list-item';
 import FontIcon from 'material-ui/lib/font-icon'
 import IconButton from 'material-ui/lib/icon-button';
 import WindowHeader from './WindowHeader'
-
+import configs from '../../../../configs'
 import styles from '../../css/styles'
 
 export default class ViewEvent extends React.Component {
@@ -14,17 +14,17 @@ export default class ViewEvent extends React.Component {
   constructor(props) {
     super(props)
     var refSplit= this.props.windowRef.split('-')
-    console.log(refSplit[3], this.props.data)
+    var primaryField = configs.web.read[refSplit[1]].primaryField || 'title' 
     this.state = {
       title: _.capitalize(refSplit[0]) + ': ' + _.capitalize(refSplit[1]),
-      lang: refSplit[3],
+      lang: this.props.selectedLang,
       data: this.props.data,
       formType: refSplit[0],
       entityType: refSplit[1],
       columns: 8,
       bgcolor: 'bggreen',
       bcolor: 'bgreen',
-      subHeader: this.props.data.fields[refSplit[3]].title,
+      subHeader: this.props.data.fields[this.props.selectedLang][primaryField],
       buttons: ['edit', 'delete', 'add'],
       searchBar: true
     }

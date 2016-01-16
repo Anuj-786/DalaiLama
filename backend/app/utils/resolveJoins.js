@@ -9,7 +9,7 @@ var configs = require('../../../configs')
 module.exports = function(esDoc, lang, context) {
 
   var data = esDoc._source || esDoc.fields
-  var joins = configs[context][esDoc._type].joins
+  var joins = _.get(configs, context)[esDoc._type].joins
   var schema = configs['schema'][esDoc._type]
 
   return joins && async.each(joins, function(joinField) {

@@ -3,7 +3,7 @@ import EditCreateEntity from './EditCreateEntity'
 import SearchResults from './SearchResults'
 import Snackbar from 'material-ui/lib/snackbar';
 import Speaker from './Speakers'
-import ViewEvent from './ViewEntity'
+import ViewEntity from './ViewEntity'
 import socket from '../socket'
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -30,7 +30,7 @@ export default class Home extends React.Component {
         'English',
         'French',
       ],
-      currentlyEditingRefs: [],
+      refs: [],
       selectedLangIndex: 1,
       toChangeLangIndex: null, 
       entityOptions: _.keys(configs.schema),
@@ -53,11 +53,12 @@ export default class Home extends React.Component {
     socket.on('r-search.done', function(results) {
       var ref = 'search-' + results.params.q + '-' + results.params.lang
 
-      if(!_.includes(this.state.currentlyEditingRefs, ref)) {
+      if(!_.includes(this.state.refs, ref)) {
+
 
         this.state.searchResults[results.params.q] = results.response
 
-        this.state.currentlyEditingRefs.unshift(ref)
+        this.state.refs.unshift(ref)
 
         this.forceUpdate()
 
@@ -80,19 +81,19 @@ export default class Home extends React.Component {
 
     var windowRef = 'create-' + this.state.entityOptions[newlySelectedEntityIndex] 
 
-    if (!_.includes(this.state.currentlyEditingRefs, windowRef)) {
+    if (!this.refsWithText('create').length && !this.refsWithText('edit').length) {
 
-      this.state.currentlyEditingRefs.unshift(windowRef)
-
-      this.forceUpdate()
+      this.state.refs.unshift(windowRef)
 
       this.setState({
         selectedEntityIndex: newlySelectedEntityIndex,
         toCreateEntityIndex: null
       })
 
+      this.forceUpdate()
+
     } else {
-      this.setState({dialogWarning: true, warningMessage: 'The window you trying to Open is already opened.'})
+      this.setState({dialogWarning: true, warningMessage: 'You can edit or create only one Entity at a time'})
     }
 
   }
@@ -101,16 +102,15 @@ export default class Home extends React.Component {
 
     var windowRef = ref.split('-')
      
-    console.log(data, windowRef)
     if(data) {
 
-      var ref = 'view-' + data._type + '-' + windowRef[1] + '-' + windowRef[2] + '-' + data._id
+      var ref = 'view-' + data._type + '-' + data._id
 
-      if(!_.includes(this.state.currentlyEditingRefs, ref)) {
+      if(!_.includes(this.state.refs, ref)) {
 
         this.state.readData[data._id] = data
 
-        this.state.currentlyEditingRefs.push(ref)
+        this.state.refs.push(ref)
 
         this.forceUpdate()
 
@@ -126,30 +126,29 @@ export default class Home extends React.Component {
 
   }
 
-  checkTextExistInState(text) {
-     return _.filter(this.state.currentlyEditingRefs, function(field, i) {
+  refsWithText(text) {
+     return _.filter(this.state.refs, function(ref, i) {
 
-      return _.includes(field, text)
+      return _.includes(ref, text)
 
-    }.bind(this))
+    })
 
 
   }
 
   editEntity(data, ref, event) {
 
-    var refSplit = ref.split('-')
     if(data) {
       
-      var windowRef = 'edit-event-' + refSplit[1] + '-' + refSplit[2] + '-' + data._id
+      var windowRef = 'edit-' + data._type + '-' + data._id
 
-      var existFields = this.checkTextExistInState('edit')
+      var existingEditRefs = this.refsWithText('edit')
 
-      if(!_.includes(this.state.currentlyEditingRefs, windowRef) && _.isEmpty(existFields)) {
+      if(_.isEmpty(existingEditRefs)) {
        
         this.state.readData[data._id] = data
 
-        this.state.currentlyEditingRefs.push(windowRef)
+        this.state.refs.push(windowRef)
 
         this.forceUpdate()
 
@@ -169,11 +168,11 @@ export default class Home extends React.Component {
 
   }
 
-  checkFormValues() {
+  uncommittedForms() {
  
-    return _.filter(this.state.currentlyEditingRefs, function(field, i) {
+    return _.filter(this.state.refs, function(ref, i) {
 
-      return this.refs[field] && this.refs[field].hasUncommittedChanges()
+      return this.refs[ref].hasUncommittedChanges()
 
     }.bind(this))
 
@@ -181,7 +180,7 @@ export default class Home extends React.Component {
 
   changeLanguage(event, index) {
 
-    if (!_.isEmpty(this.refs) && !_.isEmpty(this.checkFormValues())) {
+    if (!_.isEmpty(this.refs) && !_.isEmpty(this.uncommittedForms())) {
       this.setState({
         showDiscardDialogue: true,
         toChangeLangIndex: index
@@ -200,7 +199,7 @@ export default class Home extends React.Component {
 
   closeWindow(windowRef) {
 
-    if(_.includes(this.state.currentlyEditingRefs, windowRef)) {
+    if(_.includes(this.state.refs, windowRef)) {
 
       if (this.refs[windowRef] && !_.isEmpty(this.refs) && this.refs[windowRef].hasUncommittedChanges()) {
 
@@ -210,8 +209,8 @@ export default class Home extends React.Component {
         })  
 
       } else {
-        var index = this.state.currentlyEditingRefs.indexOf(windowRef)
-        this.state.currentlyEditingRefs.splice(index , 1)
+        var index = this.state.refs.indexOf(windowRef)
+        this.state.refs.splice(index , 1)
         this.forceUpdate()
        
         if(this.refs[windowRef]) {
@@ -230,7 +229,7 @@ export default class Home extends React.Component {
 
   onDiscardPartialCreateEdit() { 
 
-    _.each(this.checkFormValues(), function(ref) {
+    _.each(this.uncommittedForms(), function(ref) {
       
       this.refs[ref].onCancel()
 
@@ -242,14 +241,14 @@ export default class Home extends React.Component {
 
     if(this.state.toCloseRef) {
 
-      var index = this.state.currentlyEditingRefs.indexOf(this.state.toCloseRef)
-      this.state.currentlyEditingRefs.splice(index , 1)
-
-      this.forceUpdate()
+      var index = this.state.refs.indexOf(this.state.toCloseRef)
+      this.state.refs.splice(index , 1)
 
       this.setState({
         toCloseRef: null
       })
+
+      this.forceUpdate()
     } 
     
     if (_.isNumber(this.state.toChangeLangIndex)) {
@@ -277,7 +276,7 @@ export default class Home extends React.Component {
 
 
         /**  {this.state.speaker && <Speaker closeWindow={this.closeWindow} lang={this.state.langaugeOptions[this.state.selectedLangIndex]}/>}
-      {this.state.viewEvent && <ViewEvent closeWindow={this.closeWindow}/>}
+      {this.state.ViewEntity && <ViewEntity closeWindow={this.closeWindow}/>}
       {this.state.searchResults && <SearchResults closeWindow={this.closeWindow}/>}
       **/
   render() {
@@ -288,30 +287,30 @@ export default class Home extends React.Component {
         keyboardFocused={true}
         onTouchTap={this.onCloseWarningDialog} />
     ]
+    var selectedLang = this.state.langaugeOptions[this.state.selectedLangIndex].toLowerCase()
     return (
       <div className="row">
           <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
 
-          {this.state.currentlyEditingRefs.map(function(ref, key) {
+          {this.state.refs.map(function(ref, key) {
             if(_.includes(ref, 'create')) {
 
-              return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
+              return <EditCreateEntity key={key} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={selectedLang} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
             } else if(_.includes(ref, 'search')) {
 
               var path = ref.split('-')[1]
 
-              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} openReadWindow={this.openReadWindow}/>
+              return <SearchResults key={key} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow}/>
             } else if(_.includes(ref, 'view')) {
               
-              var path = ref.split('-')[4]
+              var _id = ref.split('-')[2]
 
-              console.log(path, ref)
-              return <ViewEvent key={key} windowRef={ref} data={this.state.readData[path]} closeWindow={this.closeWindow} editEntity={this.editEntity}/> 
+              return <ViewEntity key={key} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} /> 
             } else if(_.includes(ref, 'edit-')) {
               
-              var path = ref.split('-')[4]
+              var _id = ref.split('-')[2]
 
-              return <EditCreateEntity key={key} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[path].fields}/> 
+              return <EditCreateEntity key={key} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[_id].fields}/> 
             } else {
             
               return
