@@ -42,14 +42,14 @@ export default class SearchResults extends React.Component {
         secondaryText={
           <div className="REventInfo">
             {
-              toDisplayFields.map(function(field) {
+              toDisplayFields.map(function(field, i) {
                 var value = _.get(item.fields, field)
                 if (value) {
                   var basicField = field.split('.')[1] || field
                   if (configs.schema[item._type][basicField].type === Date) {
                     value = moment(value).format('MMMM Do YYYY')
                   }
-                  return <span className="eitem">{value}</span>
+                  return <span key={i} className="eitem">{value}</span>
                 }
               })
             }
@@ -64,7 +64,7 @@ export default class SearchResults extends React.Component {
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} button={this.state.button} searchBar={this.state.searchBar} windowRef={this.props.windowRef} closeWindow={this.props.closeWindow}>
         <div className="searchResultsCon">
           <div className="searchResults">
-            <List subheader={'Found ' + this.props.searchResults.length + ' Search Results'}> 
+            <List subheader={'Found ' +  this.props.searchResults.length + ' Search Results'}> 
               {_.isArray(this.props.searchResults) && this.props.searchResults.map(function(field, i) {
                 return this.searchResultItem(field, i) 
               }.bind(this)) || this.searchResultItem(this.props.searchResults, 1)}

@@ -296,33 +296,33 @@ export default class Home extends React.Component {
     return (
       <div className="row">
         <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
-          
-        {this.state.refs.map(function(ref, i) {
+        <div className="row"> 
+          {this.state.refs.map(function(ref, i) {
 
-          if(_.includes(ref, 'create')) {
+            if(_.includes(ref, 'create')) {
 
-            return <EditCreateEntity key={ref} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={selectedLang} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
-          } else if(_.includes(ref, 'search')) {
+              return <EditCreateEntity key={ref} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={selectedLang} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
+            } else if(_.includes(ref, 'search')) {
 
-            var path = ref.split('-')[1]
+              var path = ref.split('-')[1]
 
-            return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow}/>
-          } else if(_.includes(ref, 'view')) {
+              return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow}/>
+            } else if(_.includes(ref, 'view')) {
+              
+              var _id = ref.split('-')[2]
+
+               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} /> 
+            } else if(_.includes(ref, 'edit-')) {
+              
+              var _id = ref.split('-')[2]
+
+               return <EditCreateEntity key={ref} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[_id].fields}/> 
+            } else {
             
-            var _id = ref.split('-')[2]
-
-             return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} /> 
-          } else if(_.includes(ref, 'edit-')) {
-            
-            var _id = ref.split('-')[2]
-
-             return <EditCreateEntity key={ref} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[_id].fields}/> 
-          } else {
-          
-            return
-          }
-        }.bind(this))}          
-
+              return
+            }
+          }.bind(this))}          
+      </div>
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}
