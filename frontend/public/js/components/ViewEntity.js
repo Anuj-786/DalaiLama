@@ -5,10 +5,13 @@ import Divider from 'material-ui/lib/divider';
 import ListItem from 'material-ui/lib/lists/list-item';
 import FontIcon from 'material-ui/lib/font-icon'
 import IconButton from 'material-ui/lib/icon-button';
+import moment from 'moment'
+
 import WindowHeader from './WindowHeader'
-import configs from '../../../../configs'
 import styles from '../../css/styles'
 import socket from '../socket'
+import configs from '../../../../configs'
+import fieldsToFetch from '../../../../backend/app/utils/fieldsToFetch'
 
 export default class ViewEvent extends React.Component {
 
@@ -46,16 +49,35 @@ export default class ViewEvent extends React.Component {
   }
 
   render() {
+
     var langData = this.state.data.fields[this.state.lang];
+    var refSplit= this.props.windowRef.split('-')
+    var primaryField = configs.web.read[refSplit[1]].primaryField || 'title' 
+    primaryField = this.props.selectedLang + '.' + primaryField
+
+    var toDisplayFields = fieldsToFetch.forEntity(this.state.data._type, 'web.read', this.props.selectedLang)
+
+    toDisplayFields = _.without(toDisplayFields, primaryField)
 
     return (
       <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data}>
         <div className="eventContent">
-          <p>{langData.classification}</p>
-          <p className="VEDate">{this.state.data.fields[this.state.lang].startingDate} to {this.state.data.fields[this.state.lang].endingDate}</p>
-          <p>{langData.city} {langData.state} & {langData.country}</p>
-          <p className="VEdescription">{langData.description}</p>
-          <p className="tags">{langData.keywords && langData.keywords.join(' ')}</p>
+          {
+            toDisplayFields.map(function(field, i) {
+              var value = _.get(this.state.data.fields, field)
+
+              if(value) {
+                var basicField = field.split('.')[1] || field
+
+                if(configs.schema[this.state.data._type][basicField].type === Date) {
+                  
+                  value = moment(value).format('MMMM Do YYYY')
+
+                }
+                return <p key={i}>{value}</p>
+              }
+            }.bind(this))
+          }
           {this.props.speakerList && <div className="speakersList">
             <List subheader={<div className="speakersHeader"><p className="speakerCount">4 Speaker</p><IconButton iconClassName="material-icons" tooltip="Add">add</IconButton></div>}>
               {this.speakers.map((speaker, i) =>
