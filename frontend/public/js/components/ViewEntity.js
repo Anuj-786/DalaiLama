@@ -13,7 +13,7 @@ import socket from '../socket'
 import configs from '../../../../configs'
 import fieldsToFetch from '../../../../backend/app/utils/fieldsToFetch'
 
-export default class ViewEvent extends React.Component {
+export default class ViewEntity extends React.Component {
 
   constructor(props) {
     super(props)
@@ -64,7 +64,6 @@ export default class ViewEvent extends React.Component {
 
     toDisplayFields = _.without(toDisplayFields, primaryField)
 
-    console.log(this.props.linkEntityStyle)
 
     return (
       <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.linkEntities}>
