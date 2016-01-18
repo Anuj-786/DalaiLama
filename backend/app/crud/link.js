@@ -24,18 +24,18 @@ module.exports = function(params, socket) {
     makeLink(params[0], entityKeys[1], params[1]._id),
     makeLink(params[1], entityKeys[0], params[0]._id)
   ).then(function(res) {
+  debug(res)
 
-    socket.emit('u-entity.done', {
+    socket.emit('u-entity-link.done', {
       message: 'linked successfully!',
       status: res.status || 201,
       response: res,
       params: params
     })
-
     return res
   }).catch(function(err) {
-
-    socket.emit('c-entity.error', {
+  debug(err)
+    socket.emit('u-entity-link.error', {
       message: 'Error in linking to database',
       status: err.status || 500,
       error: err,

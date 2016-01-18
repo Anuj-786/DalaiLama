@@ -12,7 +12,7 @@ var consumers = {
   'r-entity': 'crud/read',
   'r-search': 'crud/search',
   'u-entity': 'crud/update',
-  'u-entity': 'crud/link'
+  'u-entity-link': 'crud/link'
 }
 
 io.on('connection', function(socket) {
@@ -27,9 +27,6 @@ io.on('connection', function(socket) {
       var consume = require(evc)
       socket.on(ev, function(data) {
         consume(data, socket)
-          .catch(function(err) {
-            debug("error", err)
-          }).done()
       })
     })
   })
