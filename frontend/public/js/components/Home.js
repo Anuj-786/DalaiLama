@@ -17,6 +17,7 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props)
     this.selectEntityToCreate = this.selectEntityToCreate.bind(this)
+    this.selectEntityForLink = this.selectEntityForLink.bind(this)
     this.changeLanguage = this.changeLanguage.bind(this)
     this.closeWindow = this.closeWindow.bind(this)
     this.onDiscardPartialCreateEdit = this.onDiscardPartialCreateEdit.bind(this)
@@ -25,6 +26,7 @@ export default class Home extends React.Component {
     this.openReadWindow = this.openReadWindow.bind(this)
     this.onCloseWarningDialog = this.onCloseWarningDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
+    this.toggleCurrentlyLinking = this.toggleCurrentlyLinking.bind(this)
     this.state = {
       langaugeOptions: [
         'English',
@@ -46,6 +48,8 @@ export default class Home extends React.Component {
       warningMessage: null,
       readData: {},
       edit: null,
+      currentlyLinking: false,
+      linkEntityStyle: {},
     }
   }
 
@@ -102,6 +106,20 @@ export default class Home extends React.Component {
       this.setState({dialogWarning: true, warningMessage: 'You can edit or create only one Entity at a time'})
     }
 
+  }
+
+  selectEntityForLink() {
+
+    if(!this.state.linkEntityStyle) {
+
+      this.state.linkEntityStyle = { borderWidth: '1px', borderColor: 'yellow', border: 'solid'}
+    }
+    else {
+      
+      delete this.state.linkEntityStyle
+    }
+
+    this.forceUpdate()
   }
 
   openReadWindow(data, ref, event) {
@@ -170,6 +188,12 @@ export default class Home extends React.Component {
 
     }
 
+  }
+
+  toggleCurrentlyLinking(ref, event) {
+    this.setState({
+      currentlyLinking: !this.state.currentlyLinking,
+    })
   }
 
   uncommittedForms() {
@@ -292,11 +316,10 @@ export default class Home extends React.Component {
         onTouchTap={this.onCloseWarningDialog} />
     ]
     var selectedLang = this.state.langaugeOptions[this.state.selectedLangIndex].toLowerCase()
-
+    
     return (
       <div className="row">
         <Header entityOptions={this.state.entityOptions} langaugeOptions={this.state.langaugeOptions} selectedLangIndex={this.state.selectedLangIndex} selectedEntityIndex={this.state.selectedEntityIndex} selectEntityToCreate={this.selectEntityToCreate} changeLang={this.changeLanguage}/> 
-        <div className="row"> 
           {this.state.refs.map(function(ref, i) {
 
             if(_.includes(ref, 'create')) {
@@ -306,12 +329,12 @@ export default class Home extends React.Component {
 
               var path = ref.split('-')[1]
 
-              return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow}/>
+              return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow} currentlyLinking={this.state.currentlyLinking} linkEntityStyle={this.state.linkEntityStyle}/>
             } else if(_.includes(ref, 'view')) {
               
               var _id = ref.split('-')[2]
 
-               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} /> 
+               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} currentlyLinking={this.state.currentlyLinking} toggleCurrentlyLinking={this.toggleCurrentlyLinking} linkEntityStyle={this.state.linkEntityStyle}/> 
             } else if(_.includes(ref, 'edit-')) {
               
               var _id = ref.split('-')[2]
@@ -322,7 +345,6 @@ export default class Home extends React.Component {
               return
             }
           }.bind(this))}          
-      </div>
         <Snackbar
           open={this.state.openSnacker}
           message={this.state.snackerMessage}

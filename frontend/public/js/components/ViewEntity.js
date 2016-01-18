@@ -18,6 +18,7 @@ export default class ViewEvent extends React.Component {
   constructor(props) {
     super(props)
     this.componentDidMount = this.componentDidMount.bind(this)
+    this.onLinkingToggle = this.onLinkingToggle.bind(this) 
     var refSplit= this.props.windowRef.split('-')
     var primaryField = configs.web.read[refSplit[1]].primaryField || 'title' 
     this.state = {
@@ -31,15 +32,18 @@ export default class ViewEvent extends React.Component {
       bcolor: 'bgreen',
       subHeader: this.props.data.fields[this.props.selectedLang][primaryField],
       buttons: ['edit', 'delete', 'add'],
-      searchBar: true
+      searchBar: true,
+      currentlyBeingLinked: false
     }
   }
+
   componentDidMount() {
     var refSplit = this.props.windowRef.split('-')
     socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1], lang: this.props.selectedLang, context: 'web.read'})
     socket.on('r-entity.done', function(data) {
 
       if(data.response._id === refSplit[2]) {
+
         this.setState({
           data: data.response
         })
@@ -50,6 +54,7 @@ export default class ViewEvent extends React.Component {
 
   render() {
 
+    var windowRef = this.props.windowRef.split('-')
     var langData = this.state.data.fields[this.state.lang];
     var refSplit= this.props.windowRef.split('-')
     var primaryField = configs.web.read[refSplit[1]].primaryField || 'title' 
@@ -59,8 +64,10 @@ export default class ViewEvent extends React.Component {
 
     toDisplayFields = _.without(toDisplayFields, primaryField)
 
+    console.log(this.props.linkEntityStyle)
+
     return (
-      <WindowHeader title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data}>
+      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle}>
         <div className="eventContent">
           {
             toDisplayFields.map(function(field, i) {
@@ -98,29 +105,11 @@ export default class ViewEvent extends React.Component {
       </WindowHeader>
     )
   }
+
+  onLinkingToggle() {
+    this.setState({
+      currentlyBeingLinked: !this.state.currentlyBeingLinked
+    })
+    this.props.toggleCurrentlyLinking()
+  }
 } 
-/*<div className='linkedEntity'>
-            <div className="entityCount">
-              <p>4 Session</p>
-              <FlatButton label="Link" secondary={true}/>
-            </div>
-            <div className="entityCount">
-              <p className="entityName">4 Raw Video</p>
-              <FlatButton label="Link" secondary={true}/>
-            </div>
-            <div className="entityCount">
-              <p className="entityName">4 Raw Audio</p>
-              <FlatButton label="Link" secondary={true}/>
-            </div>
-            <div className="entityCount">
-              <p className="entityName">4 Edited Video</p>
-              <FlatButton label="Link" secondary={true}/>
-            </div>
-            <div className="entityCount">
-              <p className="entityName">4 Edited Audio</p>
-              <FlatButton label="Link" secondary={true}/>
-            </div>
-            <div className="entityCount">
-              <p className="entityName">4 Photos</p>
-              <FlatButton label="Link" secondary={true}/>
-            </div>*/

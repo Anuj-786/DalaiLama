@@ -37,8 +37,9 @@ export default class SearchResults extends React.Component {
       <ListItem
         primaryText={item._type + ': ' + _.get(item.fields, primaryField)}
         key={i}
+        style={this.props.linkEntityStyle}
         onTouchTap={this.props.openReadWindow.bind(null, item, this.props.windowRef)}
-        rightIconButton={<IconButton touch={true}  tooltipPosition="bottom-left" iconClassName="material-icons" tooltip="Link">add</IconButton>}
+        rightIconButton={this.props.currentlyLinking && <IconButton touch={true} tooltipPosition="bottom-left" onTouchTap={this.props.selectEntityForLink} iconClassName="material-icons" tooltip="Link">add</IconButton>}
         secondaryText={
           <div className="REventInfo">
             {

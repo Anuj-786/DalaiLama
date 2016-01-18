@@ -122,6 +122,9 @@ label {
 .bsky {
   border: 1px solid #75A9F9;
 }
+.bred {
+  border: 1px solid red;
+}
 .createEntityHeader {
     color: rgba(0, 0, 0, 0.87);
     display: block;
