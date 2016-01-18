@@ -27,6 +27,7 @@ export default class Home extends React.Component {
     this.onCloseWarningDialog = this.onCloseWarningDialog.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.toggleCurrentlyLinking = this.toggleCurrentlyLinking.bind(this)
+    this.linkEntities = this.linkEntities.bind(this)
     this.state = {
       langaugeOptions: [
         'English',
@@ -49,6 +50,7 @@ export default class Home extends React.Component {
       readData: {},
       edit: null,
       currentlyLinking: false,
+      currentlyLinkingRef: null,
       linkEntityStyle: {},
     }
   }
@@ -66,17 +68,13 @@ export default class Home extends React.Component {
 
         this.forceUpdate()
 
-        this.setState({
-          snackerMessage: results.message,
-          openSnacker: true,
-        }) 
       } else {
         this.setState({dialogWarning: true, warningMessage: 'Search Results ' + results.params.q + ' are already opened.'})
       }
     }.bind(this))
 
-    var errEvents = ['r-search.error', 'r-entity.error']
-    errEvents.forEach(function(event) {
+    var snackerEvents = ['r-search.error', 'r-entity.error', 'r-search.done', 'u-entity-link.done', 'u-entity-link.error','c-entity.done', 'c-entity.error', 'u-entity.done', 'u-entity.error']
+    snackerEvents.forEach(function(event) {
       socket.on(event, 
         function(result) {
           this.setState({snackerMessage: result.message, openSnacker: true}) 
@@ -193,7 +191,16 @@ export default class Home extends React.Component {
   toggleCurrentlyLinking(ref, event) {
     this.setState({
       currentlyLinking: !this.state.currentlyLinking,
+      currentlyLinkingRef: ref
     })
+  }
+
+  linkEntities(backlinkType, backlinkId) {
+    var currentlyLinkingRefSplit = this.state.currentlyLinkingRef.split('-')
+    socket.emit('u-entity-link', [
+      {_id: currentlyLinkingRefSplit[2], _type: currentlyLinkingRefSplit[1]},
+      {_id: backlinkId, _type: backlinkType}
+    ]) 
   }
 
   uncommittedForms() {
@@ -329,12 +336,12 @@ export default class Home extends React.Component {
 
               var path = ref.split('-')[1]
 
-              return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow} currentlyLinking={this.state.currentlyLinking} linkEntityStyle={this.state.linkEntityStyle}/>
+              return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow} currentlyLinking={this.state.currentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities}/>
             } else if(_.includes(ref, 'view')) {
               
               var _id = ref.split('-')[2]
 
-               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} currentlyLinking={this.state.currentlyLinking} toggleCurrentlyLinking={this.toggleCurrentlyLinking} linkEntityStyle={this.state.linkEntityStyle}/> 
+               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} currentlyLinking={this.state.currentlyLinking} toggleCurrentlyLinking={this.toggleCurrentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities}/> 
             } else if(_.includes(ref, 'edit-')) {
               
               var _id = ref.split('-')[2]

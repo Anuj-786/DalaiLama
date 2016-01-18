@@ -5,7 +5,6 @@ import DropDownMenu from 'material-ui/lib/DropDownMenu'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import WindowHeader from './WindowHeader'
 import Dialog from 'material-ui/lib/dialog'
-import Snackbar from 'material-ui/lib/snackbar'
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -39,7 +38,6 @@ export default class EditCreateEntity extends React.Component {
       columns: 5,
       bgcolor: 'bgorange',
       bcolor: 'borange',
-      openSnacker: false,
       resultMessage: '', 
       discardChanges: false
     }
@@ -70,17 +68,6 @@ export default class EditCreateEntity extends React.Component {
     else {
       socket.emit('c-entity', {type: this.state.entityType, body: finalData})
     }
-
-    _.forEach(['c-entity.done', 'c-entity.error', 'u-entity.done', 'u-entity.error'], function(event) {
-
-      socket.on(event, function(data) {
-        this.setState({
-          resultMessage: data.message,
-          openSnacker: true,
-        })
-      }.bind(this))
-
-    }.bind(this))
 
     this.refs.myFormRef.reset()
     this.refs.myFormRef.reset()

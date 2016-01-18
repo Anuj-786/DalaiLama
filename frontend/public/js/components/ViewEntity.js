@@ -67,7 +67,7 @@ export default class ViewEvent extends React.Component {
     console.log(this.props.linkEntityStyle)
 
     return (
-      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle}>
+      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.linkEntities}>
         <div className="eventContent">
           {
             toDisplayFields.map(function(field, i) {
@@ -110,6 +110,6 @@ export default class ViewEvent extends React.Component {
     this.setState({
       currentlyBeingLinked: !this.state.currentlyBeingLinked
     })
-    this.props.toggleCurrentlyLinking()
+    this.props.toggleCurrentlyLinking(this.props.windowRef)
   }
 } 
