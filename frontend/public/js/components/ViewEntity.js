@@ -84,22 +84,6 @@ export default class ViewEntity extends React.Component {
               }
             }.bind(this))
           }
-          {this.props.speakerList && <div className="speakersList">
-            <List subheader={<div className="speakersHeader"><p className="speakerCount">4 Speaker</p><IconButton iconClassName="material-icons" tooltip="Add">add</IconButton></div>}>
-              {this.speakers.map((speaker, i) =>
-              <ListItem key={i} primaryText={speaker.speakerName} rightIconButton={
-                <IconButton
-                  key={i}
-                  iconClassName="material-icons"
-                  tooltip="delete">
-                    close
-                </IconButton>}
-                secondaryText={
-                  <p>{speaker.speakerType}</p>
-                }   
-              />)}
-            </List>
-          </div>}
         </div>
       </WindowHeader>
     )
