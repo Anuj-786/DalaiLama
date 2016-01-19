@@ -5,11 +5,11 @@
   align-items: center;
   justify-content: center;
 }
-.speakersHeader {
+.sessionHeader {
   display: flex;
   align-items: center;
 }
-.speakerCount {
+.sessionCount {
   flex: 1;
 }
 .speaker {

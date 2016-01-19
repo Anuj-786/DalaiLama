@@ -33,7 +33,7 @@ export default class ViewEntity extends React.Component {
       subHeader: this.props.data.fields[this.props.selectedLang][primaryField],
       buttons: ['edit', 'delete', 'add'],
       searchBar: true,
-      currentlyBeingLinked: false
+      currentlyBeingLinked: false,
     }
   }
 
@@ -45,11 +45,12 @@ export default class ViewEntity extends React.Component {
       if(data.response._id === refSplit[2]) {
 
         this.setState({
-          data: data.response
+          data: data.response,
         })
       }
 
     }.bind(this))
+
   }
 
   render() {
@@ -58,22 +59,23 @@ export default class ViewEntity extends React.Component {
     var langData = this.state.data.fields[this.state.lang];
     var refSplit= this.props.windowRef.split('-')
     var primaryField = configs.web.read[refSplit[1]].primaryField || 'title' 
+    var entityPrimaryField = configs.web.read.session.primaryField
+    var entitiesValues = {}
     primaryField = this.props.selectedLang + '.' + primaryField
 
     var toDisplayFields = fieldsToFetch.forEntity(this.state.data._type, 'web.read', this.props.selectedLang)
 
     toDisplayFields = _.without(toDisplayFields, primaryField)
 
-
     return (
-      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} windowRef={this.props.windowRef} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.linkEntities}>
+      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.props.linkEntities}>
         <div className="eventContent">
           {
             toDisplayFields.map(function(field, i) {
               var value = _.get(this.state.data.fields, field)
+              var basicField = field.split('.')[1] || field
 
-              if(value) {
-                var basicField = field.split('.')[1] || field
+              if(!(basicField === 'sessions') && value) {
 
                 if(configs.schema[this.state.data._type][basicField].type === Date) {
                   
@@ -81,9 +83,65 @@ export default class ViewEntity extends React.Component {
 
                 }
                 return <p key={i}>{value}</p>
+              } else if(basicField === 'sessions' && value) {
+
+                entitiesValues[basicField] = value
               }
             }.bind(this))
           }
+          {
+            entitiesValues && 
+            _.keys(entitiesValues).map(function(entityKey, i) {
+
+                var entityValues  = entitiesValues[entityKey]
+
+              return entityValues.map(function(entityValue) {
+                return (
+                  <List key={entityValue._type + entityValue._id} subheader={
+                    <div className="sessionHeader">
+                      <p className="sessionCount">{entityKey} {entityValue.fields.length}</p>
+                      <IconButton iconClassName="material-icons" tooltip="Add">add</IconButton>
+                    </div>
+                  }>
+
+                  {["french.title"].map(function(field, i) {
+
+                    var value = _.get(entityValue.fields, field)
+
+                    var primaryText = _.get(entityValue.fields[this.props.selectedLang], entityPrimaryField)
+
+                    if(value) {
+                      var basicField = field.split('.')[1] || field
+
+                      if(configs.schema[this.state.data._type][basicField].type === Date) {
+                        
+                        value = moment(value).format('MMMM Do YYYY')
+
+                      }
+                      return (
+                        <ListItem key={i} primaryText={primaryText} rightIconButton={
+
+                          <IconButton
+                            key={i}
+                            iconClassName="material-icons"
+                            tooltip="delete">
+                              close
+                          </IconButton>}
+                          secondaryText={
+                            <p>{value}</p>
+                          }   
+                        />
+                      )
+                    }
+
+                  }.bind(this))}
+
+                </List>)
+
+              }.bind(this))
+
+            }.bind(this))
+          } 
         </div>
       </WindowHeader>
     )
