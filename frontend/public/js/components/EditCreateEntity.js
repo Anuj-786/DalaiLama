@@ -62,7 +62,7 @@ export default class EditCreateEntity extends React.Component {
       var refSplit = this.props.windowRef.split('-')
 
 
-      socket.emit('u-entity', {type: this.state.entityType, _id: refSplit[4], update: {set: finalData}})
+      socket.emit('u-entity', {type: this.state.entityType, _id: refSplit[2], update: {set: finalData}})
     } 
     else {
       socket.emit('c-entity', {type: this.state.entityType, body: finalData})
