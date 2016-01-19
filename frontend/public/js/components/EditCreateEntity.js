@@ -29,7 +29,6 @@ export default class EditCreateEntity extends React.Component {
     this.closeMessage = this.closeMessage.bind(this);
     this.onCancel = this.onCancel.bind(this);
     var refSplit = this.props.windowRef.split('-')//create-entityType OR edit-entityType-entityId
-    console.log(this.props.data)
     this.state = {
       title: _.capitalize(refSplit[0]) + ' ' + refSplit[1],
       initialData: this.props.data || {},
@@ -58,7 +57,6 @@ export default class EditCreateEntity extends React.Component {
   onSubmit(formData) {
 
     var finalData = this.sanitizeFormData(formData, this.props.selectedLang)
-    
     if(this.props.edit) {
 
       var refSplit = this.props.windowRef.split('-')
@@ -85,7 +83,7 @@ export default class EditCreateEntity extends React.Component {
     //Sanitize date and enum fields in data
     _.keys(data).forEach(function(key) {
       var fieldData = data[key]
-      if (!fieldData) {
+      if (fieldData !== 0 && !fieldData) {//for enums. first entry has zero value
         return
       }
       if (_.isDate(fieldData)) {
