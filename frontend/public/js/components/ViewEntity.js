@@ -81,6 +81,10 @@ export default class ViewEntity extends React.Component {
                   
                   value = moment(value).format('MMMM Do YYYY')
 
+                } else if(_.isArray(value)) {
+
+                  value = value.join(' ')
+
                 }
                 return <p key={i}>{value}</p>
               } else if(basicField === 'sessions' && value) {
@@ -90,16 +94,17 @@ export default class ViewEntity extends React.Component {
             }.bind(this))
           }
           {
-            entitiesValues && 
+            _.keys(entitiesValues).length && 
             _.keys(entitiesValues).map(function(entityKey, i) {
 
                 var entityValues  = entitiesValues[entityKey]
 
               return entityValues.map(function(entityValue) {
+
                 return (
                   <List key={entityValue._type + entityValue._id} subheader={
                     <div className="sessionHeader">
-                      <p className="sessionCount">{entityKey} {entityValue.fields.length}</p>
+                      <p className="sessionCount">{entityValues.length} {entityValues.length > 1 && entityKey || entityKey.slice(0, -1)}</p>
                       <IconButton iconClassName="material-icons" tooltip="Add">add</IconButton>
                     </div>
                   }>

@@ -201,6 +201,12 @@ export default class Home extends React.Component {
       {_id: currentlyLinkingRefSplit[2], _type: currentlyLinkingRefSplit[1]},
       {_id: backlinkId, _type: backlinkType}
     ]) 
+    socket.emit('r-entity', {
+      _id: currentlyLinkingRefSplit[2],
+      type: currentlyLinkingRefSplit[1],
+      lang: this.state.langaugeOptions[this.state.selectedLangIndex].toLowerCase(),
+      context: 'web.read'
+    })
   }
 
   uncommittedForms() {
