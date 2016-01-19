@@ -6,9 +6,13 @@ module.exports = {
     fields: ["title"],
     primaryField: 'title'
   }, {
+    fieldName: 'persons',
+    fields: ['name'],
+    primaryField: 'name',
+  }, {
     fieldName: 'speakers',
     fields: ['type', 'language'],
-    primaryField: 'person',
+    primaryField: 'person.name',
     joins: [{
       fieldName: 'person',
       fields: ["name"]

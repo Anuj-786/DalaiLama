@@ -27,6 +27,12 @@ module.exports = {
   },
   person: {
     isRequired: true,
-    type: 'person'
+    type: 'person',
+    english: {
+      label: 'Person',
+    },
+    french: {
+      label: 'PersonFr',
+    }
   }
 }

@@ -13,6 +13,9 @@ module.exports = {
   sessions: {
     type: ['session']
   },
+  persons: {
+    type: ['person']
+  },
   speakers: {
     type: ['speaker']
   },
