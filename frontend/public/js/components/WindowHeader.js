@@ -27,13 +27,13 @@ export default class WindowHeader extends React.Component {
     var header = "entityHeader " + this.props.bgcolor
     var entryDiv = 'viewEntry ' + this.props.bcolor
     var linkingButtonLabel = this.props.currentlyLinking? 'Done Linking' : 'Start Linking'
-    var windowType = this.props.windowRef.split('-')[0]
+    var windowRefSplit = this.props.windowRef.split('-')
     return (
       <div className={columns}>
         <div className={entryDiv}>
           <div className={header}>
             <p className="createEntityHeader">{this.props.type} {this.props.title}</p>
-            {windowType === 'view' && (!this.props.currentlyLinking || this.props.currentlyBeingLinked) && <RaisedButton label={linkingButtonLabel} secondary={true} onTouchTap={this.props.onLinkingToggle}/>}
+            {windowRefSplit[0] === 'view' && (!this.props.currentlyLinking || this.props.currentlyBeingLinked) && <RaisedButton label={linkingButtonLabel} secondary={true} onTouchTap={this.props.onLinkingToggle}/>}
             <IconButton iconClassName="material-icons icon" onFocus={this.props.closeWindow.bind(this, this.props.windowRef)}>close</IconButton>
           </div>
           {this.props.subHeader && <div className="headerTitleDiv">
@@ -42,7 +42,7 @@ export default class WindowHeader extends React.Component {
             {!_.isEmpty(this.props.buttons) &&
              <div><IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip={this.props.buttons[0]} onFocus={this.props.editEntity.bind(null, this.props.data, this.props.windowRef)}>{this.props.buttons[0]}</IconButton>
              <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip={this.props.buttons[1]}>{this.props.buttons[1]}</IconButton>
-             {windowType === 'view' && this.props.currentlyLinking && !this.props.currentlyBeingLinked && <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip='Link' onTouchTap={this.props.linkEntities.bind(null, this.props.windowRef)}>{this.props.buttons[2]}</IconButton>}</div>
+             {windowRefSplit[0] === 'view' && this.props.currentlyLinking && !this.props.currentlyBeingLinked && <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip='Link' onTouchTap={this.props.linkEntities.bind(null, windowRefSplit[1], windowRefSplit[2])}>{this.props.buttons[2]}</IconButton>}</div>
             }
             </div>
           </div>}
