@@ -112,14 +112,17 @@ export default class ViewEntity extends React.Component {
 
                       }
                       return (
-                        <ListItem key={i} primaryText={primaryText} rightIconButton={
-
-                          <IconButton
-                            key={i}
-                            iconClassName="material-icons"
-                            tooltip="delete">
-                              close
-                          </IconButton>}
+                        <ListItem 
+                          key={i} 
+                          primaryText={primaryText} 
+                          onTouchTap={this.props.openReadWindow.bind(null, joinedEntity)}
+                          rightIconButton={
+                            <IconButton
+                              key={i}
+                              iconClassName="material-icons"
+                              tooltip="delete">
+                                close
+                            </IconButton>}
                           secondaryText={
                             <p>{value}</p>
                           }   

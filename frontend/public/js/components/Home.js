@@ -347,7 +347,7 @@ export default class Home extends React.Component {
               
               var _id = ref.split('-')[2]
 
-               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} currentlyLinking={this.state.currentlyLinking} toggleCurrentlyLinking={this.toggleCurrentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities}/> 
+               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} currentlyLinking={this.state.currentlyLinking} toggleCurrentlyLinking={this.toggleCurrentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities} openReadWindow={this.openReadWindow}/> 
             } else if(_.includes(ref, 'edit-')) {
               
               var _id = ref.split('-')[2]
