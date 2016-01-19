@@ -78,6 +78,7 @@ export default class Home extends React.Component {
       socket.on(event, 
         function(result) {
           this.setState({snackerMessage: result.message, openSnacker: true}) 
+
         }.bind(this)
       )
     }.bind(this))
@@ -136,11 +137,13 @@ export default class Home extends React.Component {
 
       } else {
 
-        this.setState({
+        /*this.setState({
           dialogWarning: true,
           warningMessage: data._type + ' is already viewed'
-        })
+        })*/
+        this.state.readData[data._id] = data
 
+        this.forceUpdate()
       }
     }
 
@@ -337,7 +340,7 @@ export default class Home extends React.Component {
 
             if(_.includes(ref, 'create')) {
 
-              return <EditCreateEntity key={ref} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={selectedLang} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog}/> 
+              return <EditCreateEntity key={ref} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={selectedLang} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} openReadWindow={this.openReadWindow}/> 
             } else if(_.includes(ref, 'search')) {
 
               var path = ref.split('-')[1]
@@ -352,7 +355,7 @@ export default class Home extends React.Component {
               
               var _id = ref.split('-')[2]
 
-               return <EditCreateEntity key={ref} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[_id].fields}/> 
+               return <EditCreateEntity key={ref} edit={this.state.edit} ref={ref} windowRef={ref} closeWindow={this.closeWindow} selectedLang={this.state.langaugeOptions[this.state.selectedLangIndex]} showDiscardDialogue={this.state.showDiscardDialogue} onDiscard={this.onDiscardPartialCreateEdit} onCloseDialog={this.onCloseDialog} data={this.state.readData[_id].fields} openReadWindow={this.openReadWindow}/> 
             } else {
             
               return

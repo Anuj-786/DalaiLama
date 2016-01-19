@@ -18,9 +18,11 @@ export default class ViewEntity extends React.Component {
   constructor(props) {
     super(props)
     this.componentDidMount = this.componentDidMount.bind(this)
+    this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this)
     this.onLinkingToggle = this.onLinkingToggle.bind(this) 
     var refSplit= this.props.windowRef.split('-')
     var primaryField = configs.web.read[refSplit[1]].primaryField || 'title' 
+
     this.state = {
       title: _.capitalize(refSplit[0]) + ': ' + _.capitalize(refSplit[1]),
       lang: this.props.selectedLang,
@@ -39,7 +41,7 @@ export default class ViewEntity extends React.Component {
 
   componentDidMount() {
     var refSplit = this.props.windowRef.split('-')
-    socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1], lang: this.props.selectedLang, context: 'web.read'})
+    socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1], lang: this.props.selectedLang.toLowerCase(), context: 'web.read'})
     socket.on('r-entity.done', function(data) {
 
       if(data.response._id === refSplit[2]) {
@@ -51,6 +53,13 @@ export default class ViewEntity extends React.Component {
 
     }.bind(this))
 
+  }
+
+  componentWillReceiveProps(nextProps) {
+    
+    this.setState({
+      data: nextProps.data
+    })
   }
 
   render() {

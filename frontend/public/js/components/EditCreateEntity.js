@@ -1,7 +1,6 @@
 import React from 'react';
 import FlatButton from 'material-ui/lib/flat-button'
 import TextField from 'material-ui/lib/text-field'
-import Snackbar from 'material-ui/lib/snackbar'
 import DropDownMenu from 'material-ui/lib/DropDownMenu'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import WindowHeader from './WindowHeader'
@@ -26,7 +25,6 @@ export default class EditCreateEntity extends React.Component {
   constructor(props) {
     super(props)
     this.onSubmit = this.onSubmit.bind(this);
-    this.closeMessage = this.closeMessage.bind(this);
     this.onCancel = this.onCancel.bind(this);
     var refSplit = this.props.windowRef.split('-')//create-entityType OR edit-entityType-entityId
     this.state = {
@@ -39,7 +37,8 @@ export default class EditCreateEntity extends React.Component {
       bgcolor: 'bgorange',
       bcolor: 'borange',
       resultMessage: '', 
-      discardChanges: false
+      discardChanges: false,
+      viewEntityId: null
     }
   }
 
@@ -50,26 +49,65 @@ export default class EditCreateEntity extends React.Component {
       title: _.capitalize(refSplit[0]) + ' ' + refSplit[1],
       entityType: refSplit[1],
       formType: refSplit[0],
-      windowRef: nextProps.windowRef 
+      windowRef: nextProps.windowRef,
     })
+
+  }
+
+  componentDidMount() {
+    var refSplit = this.props.windowRef.split('-')
+    if(refSplit[2]) {
+      socket.emit('r-entity', {_id: refSplit[2], type: refSplit[1], lang: this.props.selectedLang.toLowerCase(), context: 'web.read'})
+      socket.on('r-entity.done', function(data) {
+
+        if(data.response._id === refSplit[2]) {
+          this.setState({
+            initialData: data.response.fields,
+          })
+        }
+
+      }.bind(this))
+    }
   }
 
   onSubmit(formData) {
 
+    var refSplit = this.props.windowRef.split('-')
+
     var finalData = this.sanitizeFormData(formData, this.props.selectedLang)
     if(this.props.edit) {
-
-      var refSplit = this.props.windowRef.split('-')
-
 
       socket.emit('u-entity', {type: this.state.entityType, _id: refSplit[2], update: {set: finalData}})
     } 
     else {
       socket.emit('c-entity', {type: this.state.entityType, body: finalData})
+
     }
 
     this.refs.myFormRef.reset()
     this.refs.myFormRef.reset()
+
+    socket.once('c-entity.done', function(data) {
+
+      this.props.closeWindow(this.props.windowRef)
+
+      var readData = {_id: data.response._id, fields: data.params.body, _type: refSplit[1]}
+
+      this.props.openReadWindow(readData)
+
+    }.bind(this))
+
+    socket.once('u-entity.done', function(data) {
+
+      this.props.closeWindow(this.props.windowRef)
+
+      var readData = {_id: data.params._id, fields: data.params.update.set, _type: refSplit[1]}
+
+      this.props.openReadWindow(readData)
+
+    }.bind(this))
+
+
   }
   
   sanitizeFormData(data, lang) {
@@ -129,9 +167,6 @@ export default class EditCreateEntity extends React.Component {
     this.refs.myFormRef.reset()
   }
 
-  closeMessage() {
-    this.setState({openSnacker: false})
-  }
   
   schema() {
     return generateSchema(this.state.entityType, this.state.initialData, this.props.selectedLang.toLowerCase())
@@ -164,13 +199,6 @@ export default class EditCreateEntity extends React.Component {
         <div className="createEntityContainer">
           {formElement}
         </div>
-        <Snackbar
-          open={this.state.openSnacker}
-          message={this.state.resultMessage}
-          action="ok"
-          onRequestClose={this.closeMessage}
-          autoHideDuration={3000}
-        />
         <Dialog
           title="Discard Changes"
           actions={actions}
