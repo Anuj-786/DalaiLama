@@ -1,6 +1,7 @@
 import React from 'react';
 import FlatButton from 'material-ui/lib/flat-button'
 import TextField from 'material-ui/lib/text-field'
+import Snackbar from 'material-ui/lib/snackbar'
 import DropDownMenu from 'material-ui/lib/DropDownMenu'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import WindowHeader from './WindowHeader'
