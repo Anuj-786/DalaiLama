@@ -15,8 +15,10 @@ module.exports = function(params, socket) {
   if (missingArgumentMessage) {
     socket.emit('u-entity.error', {
       message: "Illegal Argument Exception: " + missingArgumentMessage,
-      status: 400
+      status: 400,
+      params: params
     })
+    return
   }
 
   return update(params)

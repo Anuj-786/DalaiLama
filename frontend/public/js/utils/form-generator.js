@@ -57,9 +57,10 @@ var FormGenerator = {
     var fields = [];
     for (var key in schema) {
       var field = schema[key];
+      defaultValue = defaultValue || {}
       // Lower level default values take precedence
-      defaultValue = defaultValue || {};
-      var defaultVal = field.defaultValue || defaultValue[key] || '';
+      var defaultVal = field.defaultValue === 0 ? 0 : field.defaultValue || '';
+ console.log(key, defaultValue)
       if (typeof field.type === 'object') {
         // Validate that it's an array
         if (field.type.length && field.type.length === 1) {
