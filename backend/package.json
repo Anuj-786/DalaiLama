@@ -12,6 +12,8 @@
     "epicsearch": "^1.4.6",
     "exiftool": "0.0.3",
     "express": "^4.13.3",
+    "filewalker": "^0.1.2",
+    "fluent-ffmpeg": "^2.0.1",
     "js-object-updater": "^1.0.1",
     "jsonwebtoken": "^5.4.1",
     "lodash": "^3.10.1",
