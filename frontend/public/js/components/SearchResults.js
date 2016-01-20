@@ -39,7 +39,7 @@ export default class SearchResults extends React.Component {
         key={i}
         style={this.props.linkEntityStyle}
         onTouchTap={this.props.openReadWindow.bind(null, item, this.props.windowRef)}
-        rightIconButton={this.props.currentlyLinking && <IconButton touch={true} tooltipPosition="bottom-left" onTouchTap={this.props.linkEntities.bind(null, item._type, item._id)} iconClassName="material-icons" tooltip="Link">add</IconButton>}
+        rightIconButton={this.props.currentlyLinking && this.props.alreadyLinkedEntity(item._id) && <IconButton touch={true} tooltipPosition="bottom-left" onTouchTap={this.props.linkEntities.bind(null, item._type, item._id)} iconClassName="material-icons" tooltip="Link">add</IconButton>}
         secondaryText={
           <div className="REventInfo">
             {

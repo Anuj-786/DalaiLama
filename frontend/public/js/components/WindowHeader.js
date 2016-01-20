@@ -42,7 +42,7 @@ export default class WindowHeader extends React.Component {
             {!_.isEmpty(this.props.buttons) &&
              <div><IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip={this.props.buttons[0]} onFocus={this.props.editEntity.bind(null, this.props.data, this.props.windowRef)}>{this.props.buttons[0]}</IconButton>
              <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip={this.props.buttons[1]}>{this.props.buttons[1]}</IconButton>
-             {windowRefSplit[0] === 'view' && this.props.currentlyLinking && !this.props.currentlyBeingLinked && <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip='Link' onTouchTap={this.props.linkEntities.bind(null, windowRefSplit[1], windowRefSplit[2])}>{this.props.buttons[2]}</IconButton>}</div>
+             {windowRefSplit[0] === 'view' && this.props.currentlyLinking && this.props.alreadyLinkedEntity(windowRefSplit[2]) && !this.props.currentlyBeingLinked && <IconButton touch={true} tooltipPosition="bottom-left" iconClassName="material-icons" tooltip='Link' onTouchTap={this.props.linkEntities.bind(null, windowRefSplit[1], windowRefSplit[2])}>{this.props.buttons[2]}</IconButton>}</div>
             }
             </div>
           </div>}

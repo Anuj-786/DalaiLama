@@ -56,14 +56,17 @@ export default class ViewEntity extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    
-    this.setState({
-      data: nextProps.data
-    })
+    /*if(nextProps.data._id === this.state.data._id) { 
+      console.log(nextProps.data._id, this.state.data._id)
+      this.setState({
+        data: nextProps.data
+      })
+    }*/
   }
 
   render() {
 
+    var subheader = this.state.data.fields[this.props.selectedLang][primaryField]
     var langData = this.state.data.fields[this.state.lang];
     var refSplit= this.props.windowRef.split('-')
     var entityReadConfig = configs.web.read[refSplit[1]]
@@ -74,7 +77,7 @@ export default class ViewEntity extends React.Component {
     var relationshipsToMap =  _.pluck(entityReadConfig.joins, 'fieldName')
     simpleFields = _.chain(simpleFields).difference(relationshipsToMap).without(primaryField).value()
     return (
-      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.props.linkEntities}>
+      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={subheader || this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.props.linkEntities} alreadyLinkedEntity={this.props.alreadyLinkedEntity}>
         <div className="eventContent">
           {
             simpleFields.map(function(field, i) {
@@ -152,6 +155,6 @@ export default class ViewEntity extends React.Component {
     this.setState({
       currentlyBeingLinked: !this.state.currentlyBeingLinked
     })
-    this.props.toggleCurrentlyLinking(this.props.windowRef)
+    this.props.toggleCurrentlyLinking(this.props.windowRef, this.state.data)
   }
 } 

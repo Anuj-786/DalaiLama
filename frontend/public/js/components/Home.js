@@ -28,6 +28,7 @@ export default class Home extends React.Component {
     this.componentDidMount = this.componentDidMount.bind(this)
     this.toggleCurrentlyLinking = this.toggleCurrentlyLinking.bind(this)
     this.linkEntities = this.linkEntities.bind(this)
+    this.alreadyLinkedEntity = this.alreadyLinkedEntity.bind(this)
     this.state = {
       langaugeOptions: [
         'English',
@@ -52,6 +53,7 @@ export default class Home extends React.Component {
       currentlyLinking: false,
       currentlyLinkingRef: null,
       linkEntityStyle: {},
+      currentlyLinkingEntityData: {}
     }
   }
 
@@ -191,10 +193,11 @@ export default class Home extends React.Component {
 
   }
 
-  toggleCurrentlyLinking(ref, event) {
+  toggleCurrentlyLinking(ref, data, event) {
     this.setState({
       currentlyLinking: !this.state.currentlyLinking,
-      currentlyLinkingRef: ref
+      currentlyLinkingRef: ref,
+      currentlyLinkingEntityData: data,
     })
   }
 
@@ -210,6 +213,28 @@ export default class Home extends React.Component {
       lang: this.state.langaugeOptions[this.state.selectedLangIndex].toLowerCase(),
       context: 'web.read'
     })
+  }
+
+  alreadyLinkedEntity(entityId) {
+    
+    var entityReadConfig = configs.web.read[this.state.currentlyLinkingEntityData._type]
+
+    var joinedFields =  _.pluck(entityReadConfig.joins, 'fieldName')
+    var existsJoinedFields = []
+ 
+    joinedFields.forEach(function(joinedField) {
+      
+      existsJoinedFields.push(_.find(this.state.currentlyLinkingEntityData.fields[joinedField], {_id: entityId}))
+
+    }.bind(this))
+
+    if(!_.compact(existsJoinedFields).length) {
+
+      return true
+    } else {
+
+      return false
+    }
   }
 
   uncommittedForms() {
@@ -345,12 +370,12 @@ export default class Home extends React.Component {
 
               var path = ref.split('-')[1]
 
-              return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow} currentlyLinking={this.state.currentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities}/>
+              return <SearchResults key={ref} windowRef={ref} closeWindow={this.closeWindow} searchResults={this.state.searchResults[path]} selectedLang={selectedLang} openReadWindow={this.openReadWindow} currentlyLinking={this.state.currentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities} alreadyLinkedEntity={this.alreadyLinkedEntity}/>
             } else if(_.includes(ref, 'view')) {
               
               var _id = ref.split('-')[2]
 
-               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} currentlyLinking={this.state.currentlyLinking} toggleCurrentlyLinking={this.toggleCurrentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities} openReadWindow={this.openReadWindow}/> 
+               return <ViewEntity key={ref} windowRef={ref} data={this.state.readData[_id]} closeWindow={this.closeWindow} editEntity={this.editEntity} selectedLang={selectedLang} currentlyLinking={this.state.currentlyLinking} toggleCurrentlyLinking={this.toggleCurrentlyLinking} linkEntityStyle={this.state.linkEntityStyle} linkEntities={this.linkEntities} openReadWindow={this.openReadWindow} alreadyLinkedEntity={this.alreadyLinkedEntity}/> 
             } else if(_.includes(ref, 'edit-')) {
               
               var _id = ref.split('-')[2]
