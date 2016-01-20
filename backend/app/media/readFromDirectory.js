@@ -26,7 +26,7 @@ module.exports = function(path) {
   })
 }
 
-function readFiles(files, fileInfo, ignoredTypes) {
+function readFiles(files, fileInfoOutput, ignoredTypesOutput) {
   return async.eachLimit(files, 2, function(file) {
     if (file.name.charAt(0) === '.') {
       return Q()
@@ -39,26 +39,26 @@ function readFiles(files, fileInfo, ignoredTypes) {
     var filePath = file.root + '/' + file.name
     //Video
     if (_.includes(['mov', 'mp4', 'avi'], fileExtension)) {
-      return readFfmpegMetadata(filePath)
+      return readFfmpegMetadata(filePath, file)
       .then(function(video) {
-        fileInfo.video.push(video)
+        fileInfoOutput.video.push(video)
       })
     }
     //Audio
     if (_.includes(['wav', 'mp3'], fileExtension)) {
-      return readFfmpegMetadata(filePath)
+      return readFfmpegMetadata(filePath, file)
       .then(function(audio) {
-        fileInfo.audio.push(audio)
+        fileInfoOutput.audio.push(audio)
       })
     }
     //Image
     if (_.includes(['dng', 'jpg', 'jpeg', 'tiff', 'png'], fileExtension)) {
-      return readExifMetadata(filePath)
+      return readExifMetadata(filePath, file)
       .then(function(image) {
-        fileInfo.images.push(image)
+        fileInfoOutput.images.push(image)
       })
     }
-    ignoredTypes.push(fileExtension)
+    ignoredTypesOutput.push(fileExtension)
     return Q()
   })
   .then(function(fileInformation) {
@@ -66,11 +66,14 @@ function readFiles(files, fileInfo, ignoredTypes) {
   })
 }
 
-function readFfmpegMetadata(filePath) {
+function readFfmpegMetadata(filePath, fileBasicInfo) {
   var deferred = Q.defer()
   ffmpeg.ffprobe(filePath, function(err, res) {
     if (!err) {
-      deferred.resolve(res)
+      deferred.resolve({
+        mediaInfo: res,
+        basicInfo: fileBasicInfo
+      })
     } else if (err.toString().indexOf('Invalid data') === -1) {
       console.log('found invalid file. ignoring', err)
       deferred.resolve()
@@ -81,7 +84,7 @@ function readFfmpegMetadata(filePath) {
   return deferred.promise
 }
 
-function readExifMetadata(filePath) {
+function readExifMetadata(filePath, fileBasicInfo) {
   return readFilePart(filePath, 20 * 1024 * 1024)
   .then(function(data) {
     var deferred = Q.defer()
@@ -90,9 +93,12 @@ function readExifMetadata(filePath) {
         deferred.reject(err)
       }
       else {
-        delete metadata.profileHueSatMapData2
-        delete metadata.profileHueSatMapData1
-        deferred.resolve(metadata)
+//      delete metadata.profileHueSatMapData2
+//      delete metadata.profileHueSatMapData1
+        deferred.resolve({
+          mediaInfo: metadata,
+          basicInfo: fileBasicInfo
+        })
       }
     })
     return deferred.promise
@@ -135,9 +141,7 @@ if (require.main === module) {
 
       console.log('found ' + res.fileInfo[type].length + ' ' + type + ' files of ' + formats.length + ' types ' + formats)
 
-      _.keys(res.fileInfo[type][0]).forEach(function(key) {
-        console.log(key, res.fileInfo[type][0][key])
-      })
+      console.log(JSON.stringify(res.fileInfo[type][0]))
 
     })
   })
