@@ -77,7 +77,7 @@ export default class ViewEntity extends React.Component {
     var relationshipsToMap =  _.pluck(entityReadConfig.joins, 'fieldName')
     simpleFields = _.chain(simpleFields).difference(relationshipsToMap).without(primaryField).value()
     return (
-      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={subheader || this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} editEntity={this.props.editEntity} data={this.props.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.props.linkEntities} alreadyLinkedEntity={this.props.alreadyLinkedEntity}>
+      <WindowHeader windowRef={this.props.windowRef} title={this.state.title} columns={this.state.columns} bgcolor={this.state.bgcolor} linkEntityStyle={this.props.linkEntityStyle} bcolor={this.state.bcolor} subHeader={subheader || this.state.subHeader} buttons={this.state.buttons} closeWindow={this.props.closeWindow} editEntity={this.props.editEntity} data={this.state.data} currentlyLinking={this.props.currentlyLinking} currentlyBeingLinked={this.state.currentlyBeingLinked} onLinkingToggle={this.onLinkingToggle} linkEntities={this.props.linkEntities} alreadyLinkedEntity={this.props.alreadyLinkedEntity}>
         <div className="eventContent">
           {
             simpleFields.map(function(field, i) {

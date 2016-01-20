@@ -29,7 +29,7 @@ module.exports = function(params) {
 
       fields: toFetchFields,
       from: params.from || 0,
-      size: params.size || 2,
+      size: params.size || 20,
       body: {
         query: {
           bool: {

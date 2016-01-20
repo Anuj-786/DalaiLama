@@ -3,6 +3,7 @@ var moment = require('moment')
 var configs = require('../../../../configs/')
 
 module.exports = function(entityType, data, lang) {
+
   var entitySchema = configs.schema[entityType]
   var formSchema = {}
 
@@ -38,7 +39,6 @@ module.exports = function(entityType, data, lang) {
 }
 
 function getDefaultValue(field, fieldSchema, lang, data) {
-  
   if (fieldSchema[lang]) {
     field = lang + '.' + field
   }
@@ -55,7 +55,7 @@ function getDefaultValue(field, fieldSchema, lang, data) {
     }
     
   } else {
-    defaultValue = data && _.get(data, field)  
+    defaultValue = data && _.get(data, field) || _.get(data, (field.split('.')[1])) 
   }
 
   if (defaultValue && fieldSchema.type === Date) {

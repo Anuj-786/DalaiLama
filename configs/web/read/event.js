@@ -1,5 +1,5 @@
 module.exports = {
-  fields: ['title', 'classification', 'description', 'startingDate', 'endingDate', 'country', 'city', 'venue', 'keywords'],
+  fields: ['title', 'classification', 'description', 'startingDate', 'endingDate', 'country', 'city', 'state', 'venue', 'keywords', 'languages'],
   primaryField: 'title',
   joins: [{
     fieldName: 'sessions',

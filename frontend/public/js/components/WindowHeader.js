@@ -28,6 +28,7 @@ export default class WindowHeader extends React.Component {
     var entryDiv = 'viewEntry ' + this.props.bcolor
     var linkingButtonLabel = this.props.currentlyLinking? 'Done Linking' : 'Start Linking'
     var windowRefSplit = this.props.windowRef.split('-')
+
     return (
       <div className={columns}>
         <div className={entryDiv}>

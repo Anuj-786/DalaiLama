@@ -49,7 +49,6 @@ var FormGenerator = {
     if (_.isArray(schema)) {
       return [
         <ArrayField
-          ref={key}
           schema={schema[0]}
           onChange={onChange}/>
       ];
@@ -60,7 +59,6 @@ var FormGenerator = {
       defaultValue = defaultValue || {}
       // Lower level default values take precedence
       var defaultVal = field.defaultValue === 0 ? 0 : field.defaultValue || '';
- console.log(key, defaultValue)
       if (typeof field.type === 'object') {
         // Validate that it's an array
         if (field.type.length && field.type.length === 1) {
@@ -119,6 +117,7 @@ var FormGenerator = {
       return (
         <FlatField
           type='hidden'
+          key={name}
           ref={name}
           defaultValue={defaultValue}/>
       );
@@ -130,6 +129,7 @@ var FormGenerator = {
           <FlatField
             type='select'
             ref={name}
+            key={name}
             label={field.label || ''}
             placeholder={field.enum[0]}
             defaultValue={defaultValue}
@@ -146,6 +146,7 @@ var FormGenerator = {
           <FlatField
             type='multiselect'
             ref={name}
+            key={name}
             label={field.label}
             placeholder={field.label || ''}
             defaultValue={defaultValue}
@@ -161,6 +162,7 @@ var FormGenerator = {
           <FlatField
             type={field.isPassword ? 'password' : 'text'}
             ref={name}
+            key={name}
             label={field.label}
             placeholder={field.label || ''}
             defaultValue={defaultValue}
@@ -180,6 +182,7 @@ var FormGenerator = {
           type='checkbox'
           label={field.label}
           ref={name}
+          key={name}
           defaultValue={defaultValue}
           validators={validators}
           onChange={onChange}
@@ -193,6 +196,7 @@ var FormGenerator = {
           type='date'
           label={field.label}
           ref={name}
+          key={name}
           reset={reset}
           defaultValue={defaultValue}
           validators={validators}
@@ -206,6 +210,7 @@ var FormGenerator = {
           type='time'
           label={field.label}
           ref={name}
+          key={name}
           reset={reset}
           defaultValue={defaultValue}
           validators={validators}
@@ -650,7 +655,7 @@ var FlatField = React.createClass({
     label: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     children: React.PropTypes.array,
-    defaultValue: React.PropTypes.string,
+    //defaultValue: React.PropTypes.string,
     validators: React.PropTypes.arrayOf(React.PropTypes.func),
     onChange: React.PropTypes.func,
     isRequired: React.PropTypes.bool,

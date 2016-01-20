@@ -26,6 +26,7 @@ export default class EditCreateEntity extends React.Component {
     super(props)
     this.onSubmit = this.onSubmit.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
     var refSplit = this.props.windowRef.split('-')//create-entityType OR edit-entityType-entityId
     this.state = {
       title: _.capitalize(refSplit[0]) + ' ' + refSplit[1],
@@ -70,6 +71,12 @@ export default class EditCreateEntity extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.setState({
+      initialData: {} 
+    })
+  }
+
   onSubmit(formData) {
 
     var refSplit = this.props.windowRef.split('-')
@@ -93,17 +100,19 @@ export default class EditCreateEntity extends React.Component {
 
       var readData = {_id: data.response._id, fields: data.params.body, _type: refSplit[1]}
 
+      console.log(readData)
       this.props.openReadWindow(readData)
 
     }.bind(this))
 
     socket.once('u-entity.done', function(data) {
 
-      this.props.closeWindow(this.props.windowRef)
 
       var readData = {_id: data.params._id, fields: data.params.update.set, _type: refSplit[1]}
 
       this.props.openReadWindow(readData)
+
+      this.props.closeWindow(this.props.windowRef)
 
     }.bind(this))
 
@@ -192,6 +201,7 @@ export default class EditCreateEntity extends React.Component {
       var onSubmit = this.onSubmit;
       var onCancel = this.onCancel
       var formElement = FormGenerator.create(schema, ref, onSubmit, onCancel, true, false);
+      console.log(schema)
     }
 
     return (
