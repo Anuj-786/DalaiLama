@@ -24,7 +24,8 @@ function sanitize(filesInfo, mediaType) {
       name: file.basicInfo.name,
       creationTime: +moment(file.basicInfo.stat.ctime),
       size: file.basicInfo.stat.size,
-      raw: _.includes(file.basicInfo.name, 'raw') || _.includes(file.basicInfo.root, 'raw')
+      raw: _.includes(file.basicInfo.name, 'raw') || _.includes(file.basicInfo.root, 'raw'),
+      extension: file.basicInfo.name.substring(file.basicInfo.name.lastIndexOf('\.') + 1).toLowerCase()
     }
 
     var sanitizedAudioInfo = mediaSanitizers[mediaType](file.mediaInfo)
