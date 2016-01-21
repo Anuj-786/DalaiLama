@@ -12,7 +12,7 @@ module.exports = function(path) {
   var fileInfo = {
     video: [],
     audio: [],
-    images: []
+    image: []
   }
   return walk(path)
   .then(function(files) {
@@ -55,7 +55,7 @@ function readFiles(files, fileInfoOutput, ignoredTypesOutput) {
     if (_.includes(['dng', 'jpg', 'jpeg', 'tiff', 'png'], fileExtension)) {
       return readExifMetadata(filePath, file)
       .then(function(image) {
-        fileInfoOutput.images.push(image)
+        fileInfoOutput.image.push(image)
       })
     }
     ignoredTypesOutput.push(fileExtension)

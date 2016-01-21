@@ -27,11 +27,11 @@ module.exports = {
     },
     timeouts: {
       bulk: 2000,
-      index: 1000,
+      index: 100,
       index_by_unique: 1000,
       get_first: 20,
       bulk_index: 1000,
-      get: 0,
+      get: 50,
       mget: 50,
       msearch: 1000
     }

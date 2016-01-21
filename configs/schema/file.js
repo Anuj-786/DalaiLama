@@ -39,7 +39,7 @@ module.exports = {
       label: 'Urls',
     }
   },
-  hardDiskLocations: {
+  hdLocations: {
     type: [{
       name: {
         isRequired: true,
@@ -69,5 +69,4 @@ module.exports = {
       label: 'Disques durs'
     }
   }
-
 }
