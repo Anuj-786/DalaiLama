@@ -68,8 +68,8 @@ function sync(filesInfo) {
 }
 
 if (require.main === module) {
-
-  module.exports('/home/master/Videos/music jams', 'master')
+  console.log(process.argv[2])
+  module.exports(process.argv[2], process.argv[3])//'/home/master/Videos/music jams', 'master'
   .then(console.log)
   .catch(console.log)
 }
